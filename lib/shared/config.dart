@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../views/welcome_page.dart';
 import 'constants.dart';
 
 // dynamic get user => GetStorage().read('user');
@@ -32,6 +33,13 @@ String makeApiUrl(String path) {
 
 //todo https://app.quicktype.io/
 List<GetPage<dynamic>> routes = <GetPage<dynamic>>[
+  GetPage(
+    name: WelcomePage.routeName,
+    page: () => WelcomePage(),
+    transition: Transition.topLevel,
+    transitionDuration: const Duration(milliseconds: 300),
+    curve: Curves.easeInOut,
+  ),
   // GetPage(
   //   name: LoginPage.routeName,
   //   page: () => LoginPage(),

@@ -5,6 +5,7 @@ import 'package:flutter_tools/tools_models.dart';
 import 'package:flutter_tools/ui/splash_screens.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:riderman/views/welcome_page.dart';
 
 import '../shared/config.dart';
 import '../shared/constants.dart';
@@ -42,7 +43,8 @@ class MyApp extends StatelessWidget {
           imageUrl: 'assets/images/logo-for-splash.png',
           loadingWidgetType: LoadingWidgetType.wave,
           loadingColor: Colors.white,
-          nextPage: MyHomePage(title: 'MyHomePage'),
+          nextPage: WelcomePage(),
+          // nextPage: MyHomePage(title: 'MyHomePage'),
           // toRunWhilstLoading: () => print('INSIDE YES DONE'),
           // toRunWhilstLoading: () async => await Future.delayed(
           //         const Duration(seconds: 10), () => print('INSIDE YES DONE'))
