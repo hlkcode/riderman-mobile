@@ -3,7 +3,8 @@ import 'package:flutter_tools/ui/widgets.dart';
 import 'package:flutter_tools/utilities/utils.dart';
 import 'package:get/get.dart';
 import 'package:introduction_screen/introduction_screen.dart';
-import 'package:riderman/shared/constants.dart';
+
+import '../shared/constants.dart';
 
 class WelcomePage extends StatelessWidget {
   static const routeName = '/WelcomePage';
@@ -47,7 +48,7 @@ class WelcomePage extends StatelessWidget {
                     decoration: pageDecor,
                   ),
                   PageViewModel(
-                    title: "Plan ahead",
+                    title: "Planning ahead",
                     body:
                         "Setup your estimations for each category so you are in control",
                     image: Center(

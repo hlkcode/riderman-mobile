@@ -9,6 +9,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.2.3"
+  another_flushbar:
+    dependency: transitive
+    description:
+      name: another_flushbar
+      sha256: "19bf9520230ec40b300aaf9dd2a8fefcb277b25ecd1c4838f530566965befc2a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.12.30"
   ansicolor:
     dependency: transitive
     description:
@@ -89,6 +97,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.19.1"
+  cool_stepper:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: "3ed09e5a9327d3266a0486c5c159776b88bed0d0"
+      resolved-ref: "3ed09e5a9327d3266a0486c5c159776b88bed0d0"
+      url: "https://github.com/mateen-demah/flutter-cool-stepper.git"
+    source: git
+    version: "1.2.1"
   cross_file:
     dependency: transitive
     description:

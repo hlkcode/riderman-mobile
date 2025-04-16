@@ -58,7 +58,8 @@ List<GetPage<dynamic>> routes = <GetPage<dynamic>>[
 ];
 
 class Themes {
-  static final ThemeData lightTheme = ThemeData.light().copyWith();
+  static final ThemeData lightTheme =
+      ThemeData.light().copyWith(primaryColor: kPurpleColor);
 
   static final ThemeData darkTheme = ThemeData.dark().copyWith();
 }

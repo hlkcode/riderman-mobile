@@ -3,12 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_tools/common.dart';
 import 'package:flutter_tools/tools_models.dart';
 import 'package:flutter_tools/ui/splash_screens.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:riderman/views/welcome_page.dart';
+import 'package:riderman/views/signup_page.dart';
 
 import '../shared/config.dart';
 import '../shared/constants.dart';
+import 'controllers/auth_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,11 +17,13 @@ void main() async {
       overlays: <SystemUiOverlay>[SystemUiOverlay.bottom, SystemUiOverlay.top]);
   await GetStorage.init();
 
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final authController = Get.put(AuthController());
+
+  MyApp({super.key});
 
   // This widget is the root of your application.
   @override
@@ -43,7 +46,7 @@ class MyApp extends StatelessWidget {
           imageUrl: 'assets/images/logo-for-splash.png',
           loadingWidgetType: LoadingWidgetType.wave,
           loadingColor: Colors.white,
-          nextPage: WelcomePage(),
+          nextPage: SignUpPage(),
           // nextPage: MyHomePage(title: 'MyHomePage'),
           // toRunWhilstLoading: () => print('INSIDE YES DONE'),
           // toRunWhilstLoading: () async => await Future.delayed(

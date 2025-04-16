@@ -37,6 +37,10 @@ dependencies:
   flutter_tools:
 #    path: /Users/halik/Files/Code/Mobile/flutter_tools
     git: https://github.com/hlkcode/flutter_tools.git
+  cool_stepper:
+    git:
+      url: https://github.com/mateen-demah/flutter-cool-stepper.git
+      ref: 3ed09e5a9327d3266a0486c5c159776b88bed0d0
 
   flutter:
     sdk: flutter
