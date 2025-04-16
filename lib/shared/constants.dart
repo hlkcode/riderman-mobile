@@ -16,4 +16,6 @@ class Constants {
 
   static const String TOKEN_KEY = 'token';
   static const String USER_DATA = 'userData';
+
+  static const String USER_ONBOARDED = 'userOnboarded';
 }

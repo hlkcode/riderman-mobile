@@ -4,7 +4,10 @@ import 'package:flutter_tools/ui/widgets.dart';
 import 'package:flutter_tools/utilities/extension_methods.dart';
 import 'package:flutter_tools/utilities/utils.dart';
 import 'package:get/get.dart';
+import 'package:riderman/shared/config.dart';
 import 'package:riderman/shared/constants.dart';
+import 'package:riderman/views/login_page.dart';
+import 'package:riderman/views/welcome_page.dart';
 import 'package:riderman/widgets/company_form.dart';
 import 'package:riderman/widgets/dropdown_selector.dart';
 
@@ -126,7 +129,15 @@ class SignUpPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        leading: Icon(Icons.arrow_back_outlined),
+        leading: IconButton(
+            onPressed: () {
+              if (isUserOnboarded) {
+                Get.offNamed(LoginPage.routeName);
+              } else {
+                Get.offNamed(WelcomePage.routeName);
+              }
+            },
+            icon: Icon(Icons.arrow_back_outlined)),
         title: Text('Sign Up'),
         centerTitle: true,
       ),

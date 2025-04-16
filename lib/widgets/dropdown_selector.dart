@@ -5,12 +5,12 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:get/get_utils/src/get_utils/get_utils.dart';
 
 class DropDownSelector extends StatelessWidget {
-  DropDownSelector(
-      {super.key,
-      required this.list,
-      required this.onSelectionChange,
-      required this.instruction,
-      required});
+  DropDownSelector({
+    super.key,
+    required this.list,
+    required this.onSelectionChange,
+    required this.instruction,
+  });
 
   final List<String> list;
   final Function(String? newValue) onSelectionChange;
@@ -29,10 +29,7 @@ class DropDownSelector extends StatelessWidget {
             hint: Align(
               child: Text(
                 getString(GetUtils.capitalize(instruction)),
-                style: const TextStyle(
-                  fontSize: 16,
-                  // color: Colors.black,
-                ),
+                style: const TextStyle(fontSize: 16),
               ),
             ),
             validator: requiredValidator,

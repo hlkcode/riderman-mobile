@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../views/login_page.dart';
+import '../views/signup_page.dart';
+import '../views/verification_page.dart';
 import '../views/welcome_page.dart';
+import 'common.dart';
 import 'constants.dart';
 
 // dynamic get user => GetStorage().read('user');
@@ -23,6 +27,8 @@ import 'constants.dart';
 //   return !GetUtils.isNullOrBlank(token)! && !JwtDecoder.isExpired(token);
 // }
 
+bool get isUserOnboarded => storage.read(Constants.USER_ONBOARDED) ?? false;
+
 String makeApiUrl(String path) {
   var baseUrl = Constants.BASE_API.endsWith('/')
       ? Constants.BASE_API
@@ -40,13 +46,27 @@ List<GetPage<dynamic>> routes = <GetPage<dynamic>>[
     transitionDuration: const Duration(milliseconds: 300),
     curve: Curves.easeInOut,
   ),
-  // GetPage(
-  //   name: LoginPage.routeName,
-  //   page: () => LoginPage(),
-  //   transition: Transition.topLevel,
-  //   transitionDuration: const Duration(milliseconds: 300),
-  //   curve: Curves.easeInOut,
-  // ),
+  GetPage(
+    name: SignUpPage.routeName,
+    page: () => SignUpPage(),
+    transition: Transition.topLevel,
+    transitionDuration: const Duration(milliseconds: 300),
+    curve: Curves.easeInOut,
+  ),
+  GetPage(
+    name: LoginPage.routeName,
+    page: () => LoginPage(),
+    transition: Transition.topLevel,
+    transitionDuration: const Duration(milliseconds: 300),
+    curve: Curves.easeInOut,
+  ),
+  GetPage(
+    name: VerificationPage.routeName,
+    page: () => VerificationPage(),
+    transition: Transition.topLevel,
+    transitionDuration: const Duration(milliseconds: 300),
+    curve: Curves.easeInOut,
+  ),
   //
   // GetPage(
   //   name: HomePage.routeName,
