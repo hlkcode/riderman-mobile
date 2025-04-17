@@ -4,14 +4,14 @@ import 'package:flutter_tools/ui/widgets.dart';
 import 'package:flutter_tools/utilities/extension_methods.dart';
 import 'package:flutter_tools/utilities/utils.dart';
 import 'package:get/get.dart';
-import 'package:riderman/shared/config.dart';
-import 'package:riderman/shared/constants.dart';
-import 'package:riderman/views/login_page.dart';
-import 'package:riderman/views/welcome_page.dart';
-import 'package:riderman/widgets/company_form.dart';
-import 'package:riderman/widgets/dropdown_selector.dart';
 
 import '../shared/common.dart';
+import '../shared/config.dart';
+import '../shared/constants.dart';
+import '../views/login_page.dart';
+import '../views/welcome_page.dart';
+import '../widgets/company_form.dart';
+import '../widgets/dropdown_selector.dart';
 
 class SignUpPage extends StatelessWidget {
   static const String routeName = '/SignUpPage';
@@ -161,7 +161,7 @@ class SignUpPage extends StatelessWidget {
                   text: 'Sign Up',
                   isLoading: false,
                   buttonColor: kPurpleColor,
-                  style: const TextStyle(color: Colors.white),
+                  style: kWhiteTextStyle,
                   buttonRadius: 12,
                   onTapped: () {},
                 ),

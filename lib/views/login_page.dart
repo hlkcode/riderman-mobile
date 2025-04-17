@@ -7,6 +7,7 @@ import '../shared/common.dart';
 import '../shared/config.dart';
 import '../shared/constants.dart';
 import '../views/signup_page.dart';
+import '../views/verification_page.dart';
 import '../views/welcome_page.dart';
 import '../widgets/dropdown_selector.dart';
 
@@ -85,13 +86,27 @@ class LoginPage extends StatelessWidget {
               text: 'Login',
               isLoading: false,
               buttonColor: kPurpleColor,
-              style: const TextStyle(color: Colors.white),
+              style: kWhiteTextStyle,
               buttonRadius: 12,
               onTapped: () {},
             ),
             verticalSpace(0.02),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                var isPhoneValid =
+                    phoneNumberValidator(_phoneNumberCtrl.text) == null;
+                if (!isPhoneValid) {
+                  HlkDialog.showSnackBar(
+                    title: 'Attention',
+                    message: 'Please enter a valid phone number',
+                    color: kPurpleLightColor,
+                  );
+                  return;
+                }
+                // todo: send request for verification code to number but do not await it
+
+                Get.toNamed(VerificationPage.routeName);
+              },
               child: Text(
                 'Forget Password ?',
                 style: TextStyle(

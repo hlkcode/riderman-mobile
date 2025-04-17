@@ -3,9 +3,9 @@ import 'package:flutter_tools/ui/widgets.dart';
 import 'package:flutter_tools/utilities/utils.dart';
 import 'package:get/get.dart';
 import 'package:introduction_screen/introduction_screen.dart';
-import 'package:riderman/views/signup_page.dart';
 
 import '../shared/constants.dart';
+import '../views/signup_page.dart';
 import 'login_page.dart';
 
 class WelcomePage extends StatelessWidget {
@@ -71,7 +71,7 @@ class WelcomePage extends StatelessWidget {
               text: 'Sign Up',
               isLoading: false,
               buttonColor: kPurpleColor,
-              style: const TextStyle(color: Colors.white),
+              style: kWhiteTextStyle,
               buttonRadius: 12,
               onTapped: () => Get.toNamed(SignUpPage.routeName),
             ).marginSymmetric(horizontal: 10, vertical: 10),
@@ -79,7 +79,7 @@ class WelcomePage extends StatelessWidget {
               text: 'Login',
               isLoading: false,
               buttonColor: kPurpleLightColor,
-              style: const TextStyle(color: kPurpleColor),
+              style: kPurpleTextStyle,
               buttonRadius: 12,
               onTapped: () => Get.toNamed(LoginPage.routeName),
             ).marginSymmetric(horizontal: 10, vertical: 10),
