@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../views/login_page.dart';
+import '../views/reset_password_page.dart';
 import '../views/signup_page.dart';
-import '../views/verification_page.dart';
 import '../views/welcome_page.dart';
 import 'common.dart';
 import 'constants.dart';
@@ -60,13 +60,21 @@ List<GetPage<dynamic>> routes = <GetPage<dynamic>>[
     transitionDuration: const Duration(milliseconds: 300),
     curve: Curves.easeInOut,
   ),
+  // GetPage(
+  //   name: VerificationPage.routeName,
+  //   page: () => VerificationPage(),
+  //   transition: Transition.topLevel,
+  //   transitionDuration: const Duration(milliseconds: 300),
+  //   curve: Curves.easeInOut,
+  // ),
   GetPage(
-    name: VerificationPage.routeName,
-    page: () => VerificationPage(),
+    name: ResetPasswordPage.routeName,
+    page: () => ResetPasswordPage(),
     transition: Transition.topLevel,
     transitionDuration: const Duration(milliseconds: 300),
     curve: Curves.easeInOut,
   ),
+
   //
   // GetPage(
   //   name: HomePage.routeName,

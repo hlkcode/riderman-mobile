@@ -9,7 +9,8 @@ import '../shared/constants.dart';
 class VerificationPage extends StatelessWidget {
   static const String routeName = '/VerificationPage';
 
-  const VerificationPage({super.key});
+  const VerificationPage({super.key, required this.nextPage});
+  final String nextPage;
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +102,9 @@ class VerificationPage extends StatelessWidget {
             buttonColor: kPurpleColor,
             style: kWhiteTextStyle,
             buttonRadius: 12,
-            onTapped: () {},
+            onTapped: () {
+              Get.offNamed(nextPage);
+            },
           ),
         ],
       ).marginSymmetric(horizontal: 12),

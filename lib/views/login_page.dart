@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tools/ui/widgets.dart';
 import 'package:flutter_tools/utilities/utils.dart';
 import 'package:get/get.dart';
+import 'package:riderman/views/reset_password_page.dart';
 
 import '../shared/common.dart';
 import '../shared/config.dart';
@@ -105,7 +106,9 @@ class LoginPage extends StatelessWidget {
                 }
                 // todo: send request for verification code to number but do not await it
 
-                Get.toNamed(VerificationPage.routeName);
+                // Get.toNamed(VerificationPage.routeName);
+                Get.to(() =>
+                    VerificationPage(nextPage: ResetPasswordPage.routeName));
               },
               child: Text(
                 'Forget Password ?',
