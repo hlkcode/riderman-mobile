@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_tools/common.dart';
 import 'package:flutter_tools/tools_models.dart';
 import 'package:flutter_tools/ui/splash_screens.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:riderman/views/login_page.dart';
-import 'package:riderman/views/welcome_page.dart';
+import 'package:riderman/views/company_chooser.dart';
 
 import '../controllers/auth_controller.dart';
 import '../shared/config.dart';
 import '../shared/constants.dart';
+import 'controllers/main_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,15 +20,19 @@ void main() async {
   runApp(MyApp());
 }
 
+/// NOTE: when company is not active, they can view available data,
+/// and riders can make payment to them, but owners can not withdraw until
+/// issue is sorted out. This is to allow business to keep running.
+
 class MyApp extends StatelessWidget {
   final authController = Get.put(AuthController());
+  final mainController = Get.put(MainController());
 
   MyApp({super.key});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    isLoggedIn();
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       // theme: isInDakTheme ? Themes.darkTheme : Themes.lightTheme,
@@ -47,8 +50,8 @@ class MyApp extends StatelessWidget {
           imageUrl: 'assets/images/logo-for-splash.png',
           loadingWidgetType: LoadingWidgetType.wave,
           loadingColor: Colors.white,
-          // nextPage: ResetPasswordPage(),
-          nextPage: isUserOnboarded ? LoginPage() : WelcomePage(),
+          nextPage: CompanyChooserPage(),
+          // nextPage: isUserOnboarded ? LoginPage() : WelcomePage(),
           // nextPage: MyHomePage(title: 'MyHomePage'),
           // toRunWhilstLoading: () => print('INSIDE YES DONE'),
           // toRunWhilstLoading: () async => await Future.delayed(
