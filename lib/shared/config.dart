@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tools/common.dart';
 import 'package:get/get.dart';
 
 import '../views/company_chooser.dart';
 import '../views/login_page.dart';
+import '../views/main_page.dart';
 import '../views/reset_password_page.dart';
 import '../views/signup_page.dart';
 import '../views/welcome_page.dart';
@@ -28,12 +30,12 @@ import 'constants.dart';
 //   return !GetUtils.isNullOrBlank(token)! && !JwtDecoder.isExpired(token);
 // }
 
-bool get isUserOnboarded => storage.read(Constants.USER_ONBOARDED) ?? false;
+bool get isUserOnboarded => storage.read(AppConstants.USER_ONBOARDED) ?? false;
 
 String makeApiUrl(String path) {
-  var baseUrl = Constants.BASE_API.endsWith('/')
-      ? Constants.BASE_API
-      : '${Constants.BASE_API}/';
+  var baseUrl = AppConstants.BASE_API.endsWith('/')
+      ? AppConstants.BASE_API
+      : '${AppConstants.BASE_API}/';
 
   return '$baseUrl$path';
 }
@@ -63,7 +65,14 @@ List<GetPage<dynamic>> routes = <GetPage<dynamic>>[
   ),
   GetPage(
     name: CompanyChooserPage.routeName,
-    page: () => CompanyChooserPage(),
+    page: () => isLoggedIn() ? CompanyChooserPage() : LoginPage(),
+    transition: Transition.topLevel,
+    transitionDuration: const Duration(milliseconds: 300),
+    curve: Curves.easeInOut,
+  ),
+  GetPage(
+    name: MainPage.routeName,
+    page: () => isLoggedIn() ? MainPage() : LoginPage(),
     transition: Transition.topLevel,
     transitionDuration: const Duration(milliseconds: 300),
     curve: Curves.easeInOut,

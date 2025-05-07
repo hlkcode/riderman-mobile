@@ -4,7 +4,7 @@ import 'package:flutter_tools/tools_models.dart';
 import 'package:flutter_tools/ui/splash_screens.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:riderman/views/company_chooser.dart';
+import 'package:riderman/views/main_page.dart';
 
 import '../controllers/auth_controller.dart';
 import '../shared/config.dart';
@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
           imageUrl: 'assets/images/logo-for-splash.png',
           loadingWidgetType: LoadingWidgetType.wave,
           loadingColor: Colors.white,
-          nextPage: CompanyChooserPage(),
+          nextPage: MainPage(),
           // nextPage: isUserOnboarded ? LoginPage() : WelcomePage(),
           // nextPage: MyHomePage(title: 'MyHomePage'),
           // toRunWhilstLoading: () => print('INSIDE YES DONE'),

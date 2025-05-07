@@ -319,12 +319,10 @@ packages:
   flutter_tools:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "214139591aa86c964745ccb9902c46688c70643c"
-      url: "https://github.com/hlkcode/flutter_tools.git"
-    source: git
-    version: "0.0.2"
+      path: "/Users/halik/Files/Code/Mobile/flutter_tools"
+      relative: false
+    source: path
+    version: "0.0.3"
   flutter_web_plugins:
     dependency: transitive
     description: flutter

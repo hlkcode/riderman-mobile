@@ -7,9 +7,9 @@ const Color kPurpleLightColor = Color(0xFFEACEDD);
 const kWhiteTextStyle = TextStyle(color: Colors.white, fontSize: 16);
 const kPurpleTextStyle = TextStyle(color: kPurpleColor, fontSize: 16);
 
-String makeApiUrl(String path) => '${Constants.BASE_API}$path';
+String makeApiUrl(String path) => '${AppConstants.BASE_API}$path';
 
-class Constants {
+class AppConstants {
   static const String APP_NAME = 'RiderMan'; // TODO SET VALUE
   static const String APP_PACKAGE = 'com.zerolafrica.riderman';
   static const String BASE_API =

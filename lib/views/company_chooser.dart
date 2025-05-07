@@ -47,7 +47,8 @@ class CompanyChooserPage extends StatelessWidget {
             onTap: item.isActive
                 ? () async {
                     // Action
-                    await storage.write(Constants.COMPANY_DATA, item.toMap());
+                    await storage.write(
+                        AppConstants.COMPANY_DATA, item.toMap());
                   }
                 : null,
           );
