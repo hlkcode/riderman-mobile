@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:riderman/shared/constants.dart';
 
 import '../controllers/main_controller.dart';
+import '../widgets/dashboard.dart';
 
 class MainPage extends StatelessWidget {
   static const String routeName = '/MainPage';
@@ -16,7 +17,7 @@ class MainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: SimpleBottomTabsPage.noDrawer(
-        appBar: AppBar(),
+        // appBar: AppBar(),
         floatingActionButton: FloatingActionButton(
           shape: CircleBorder(),
           backgroundColor: kPurpleColor,
@@ -36,11 +37,12 @@ class MainPage extends StatelessWidget {
           BottomTabItem(
             tabTitle: 'Home',
             icon: Icon(Icons.home_outlined),
-            widget: Center(child: Text('HOME', style: kPurpleTextStyle)),
+            widget: Dashboard(),
           ),
           BottomTabItem(
             tabTitle: 'Riders',
-            icon: Icon(Icons.compare_arrows_outlined),
+            // icon: Icon(Icons.traffic_outlined),
+            icon: Icon(Icons.token),
             widget: Center(child: Text('RIDERS', style: kPurpleTextStyle)),
           ),
           BottomTabItem(

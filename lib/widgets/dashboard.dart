@@ -1,0 +1,232 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_tools/utilities/extension_methods.dart';
+import 'package:flutter_tools/utilities/utils.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get_utils/get_utils.dart';
+
+import '../shared/constants.dart';
+
+class Dashboard extends StatelessWidget {
+  const Dashboard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final blackStyle =
+        kBlackTextStyle.copyWith(fontWeight: FontWeight.w500, fontSize: 18);
+    final smallWhiteStyle =
+        kWhiteTextStyle.copyWith(fontWeight: FontWeight.w500);
+    final bigWhiteStyle =
+        kWhiteTextStyle.copyWith(fontWeight: FontWeight.w600, fontSize: 20);
+    return Container(
+      color: kPurpleLightColor.withOpacity(.2),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text.rich(
+            // style: blackStyle,
+            TextSpan(
+              children: [
+                TextSpan(text: 'Hello, ', style: blackStyle),
+                TextSpan(
+                  text: 'Halik',
+                  style: kPurpleTextStyle.copyWith(
+                      fontWeight: FontWeight.w800, fontSize: 18),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: DashboardCard(
+              title: 'Total Earnings',
+              titleStyle: bigWhiteStyle,
+              smallStyle: bigWhiteStyle,
+              amountStyle: bigWhiteStyle.copyWith(fontSize: 24),
+              amount: 123490.toMoney('GHS'),
+              vehicleCount: 200.toString(),
+              transactionCount: 109.toString(),
+            ).marginSymmetric(vertical: 16),
+          ),
+          verticalSpace(0.015),
+          Text(
+            'Transportation Types',
+            style: blackStyle,
+          ),
+          verticalSpace(0.015),
+          Expanded(
+            flex: 3,
+            child: Row(
+              children: [
+                Expanded(
+                  child: DashboardCard(
+                    smallStyle: smallWhiteStyle,
+                    amountStyle: bigWhiteStyle,
+                    amount: 1789.toMoney('GHC'),
+                    vehicleCount: 200.toString(),
+                    transactionCount: 109.toString(),
+                    titleIconSize: 36,
+                    titleIcon: FontAwesomeIcons.car,
+                  ),
+                ),
+                horizontalSpace(0.025),
+                Expanded(
+                    child: Column(
+                  children: [
+                    Expanded(
+                      child: DashboardCard(
+                        smallStyle: smallWhiteStyle,
+                        amountStyle: bigWhiteStyle,
+                        amount: 7000.toMoney('GHS'),
+                        vehicleCount: 200.toString(),
+                        transactionCount: 109.toString(),
+                        // titleIconSize: 42,
+                        titleIcon: FontAwesomeIcons.motorcycle,
+                        cardColor: kPurpleColor.withOpacity(0.8),
+                      ),
+                    ),
+                    verticalSpace(0.015),
+                    Expanded(
+                      child: DashboardCard(
+                          smallStyle: smallWhiteStyle,
+                          amountStyle: bigWhiteStyle,
+                          amount: 9000.toMoney('GHS'),
+                          vehicleCount: 200.toString(),
+                          transactionCount: 109.toString(),
+                          // titleIconSize: 42,
+                          titleIcon: FontAwesomeIcons.truck,
+                          cardColor: kPurpleLightColor,
+                          smallIconColor: kPurpleColor,
+                          mainIconBackgroundColor: Colors.white
+                          // mainIconColor: Colors.white,
+                          ),
+                    ),
+                  ],
+                ))
+              ],
+            ),
+          ),
+          verticalSpace(0.04),
+        ],
+      ).paddingSymmetric(horizontal: 20, vertical: 24),
+    );
+  }
+}
+
+class DashboardCard extends StatelessWidget {
+  final String title;
+  final TextStyle? smallStyle;
+  final TextStyle? titleStyle;
+  final TextStyle? amountStyle;
+  final Color cardColor;
+  final Color? mainIconBackgroundColor;
+  final Color smallIconColor;
+  final IconData titleIcon;
+  final double? titleIconSize;
+  final String amount;
+  final String vehicleCount;
+  final String transactionCount;
+
+  const DashboardCard(
+      {super.key,
+      this.title = '',
+      this.smallStyle,
+      this.titleStyle,
+      this.amountStyle,
+      this.cardColor = kPurpleColor,
+      this.mainIconBackgroundColor,
+      this.smallIconColor = Colors.white,
+      this.titleIconSize,
+      this.titleIcon = Icons.diamond_outlined,
+      required this.amount,
+      required this.vehicleCount,
+      required this.transactionCount});
+
+  @override
+  Widget build(BuildContext context) {
+    // final miniWhiteStyle = kWhiteTextStyle.copyWith(
+    //     fontWeight: FontWeight.w700, fontSize: 24, color: textColor);
+
+    var leftMargin = title.isNotEmpty ? 16.0 : 6.0;
+    var spacing = title.isNotEmpty ? 8.0 : 4.0;
+    var miniIconSize = title.isNotEmpty ? 32.0 : null;
+    var maxChar = title.isNotEmpty ? 12 : 7;
+
+    var textAmount = Text(
+      amount,
+      style: amountStyle,
+      maxLines: 1,
+      // overflow: TextOverflow.ellipsis,
+    );
+
+    return Container(
+      decoration: BoxDecoration(
+        color: cardColor,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (title.isNotEmpty)
+            Text(title, style: titleStyle).marginOnly(left: leftMargin),
+          if (title.isEmpty)
+            CircleAvatar(
+              backgroundColor: mainIconBackgroundColor ?? kPurpleLightColor,
+              radius: titleIconSize != null ? (titleIconSize! - 8) : null,
+              child:
+                  FaIcon(titleIcon, size: titleIconSize, color: kPurpleColor),
+              // child: Icon(titleIcon, size: titleIconSize, color: kPurpleColor),
+              // child: ImageIcon(
+              //   AssetImage(titleIcon),
+              //   color: kPurpleColor,
+              // ),
+            ),
+          // Wrap the Text with Expanded and Row. When you don't wrap it with
+          // Expanded, the Text tries to take up as much space as it needs,
+          // and if that exceeds the available space, it can lead to overflow issues.
+          // By wrapping it with Expanded inside a Row, you're telling Flutter to
+          // allocate the remaining space to Text widget
+          Row(
+            children: [
+              Expanded(
+                child: (amount.length >= maxChar
+                        ? FittedBox(child: textAmount)
+                        : textAmount)
+                    .marginOnly(left: leftMargin),
+              ),
+            ],
+          ),
+          verticalSpace(.01),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                spacing: spacing,
+                children: [
+                  // Icon(Icons.diamond_outlined,color: smallIconColor, ),
+                  ImageIcon(AssetImage(AppConstants.ICON_RIDE_COUNT),
+                      color: smallIconColor, size: miniIconSize),
+                  Text(vehicleCount, style: smallStyle),
+                ],
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                spacing: spacing,
+                children: [
+                  // Icon(Icons.payments_outlined, color: smallIconColor, size: miniIconSize),
+                  ImageIcon(AssetImage(AppConstants.ICON_TR_COUNT),
+                      color: smallIconColor, size: miniIconSize),
+                  Text(transactionCount, style: smallStyle),
+                ],
+              ),
+            ],
+          ).paddingSymmetric(horizontal: title.isNotEmpty ? 16 : 2.0),
+        ],
+      ),
+    );
+  }
+}
