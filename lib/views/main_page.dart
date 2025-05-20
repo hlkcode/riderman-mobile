@@ -42,7 +42,9 @@ class MainPage extends StatelessWidget {
           BottomTabItem(
             tabTitle: 'Riders',
             // icon: Icon(Icons.traffic_outlined),
-            icon: Icon(Icons.token),
+            // icon: Icon(Icons.token),
+            icon: Icon(Icons.support_outlined),
+            // icon: Icon(Icons.diamond_outlined),
             widget: Center(child: Text('RIDERS', style: kPurpleTextStyle)),
           ),
           BottomTabItem(

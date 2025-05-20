@@ -18,7 +18,7 @@ class Dashboard extends StatelessWidget {
     final bigWhiteStyle =
         kWhiteTextStyle.copyWith(fontWeight: FontWeight.w600, fontSize: 20);
     return Container(
-      color: kPurpleLightColor.withOpacity(.2),
+      color: kPurpleLightColor.withOpacity(.1),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -43,8 +43,8 @@ class Dashboard extends StatelessWidget {
               smallStyle: bigWhiteStyle,
               amountStyle: bigWhiteStyle.copyWith(fontSize: 24),
               amount: 123490.toMoney('GHS'),
-              vehicleCount: 200.toString(),
-              transactionCount: 109.toString(),
+              vehicleCount: 2000.toString(),
+              transactionCount: 1090.toString(),
             ).marginSymmetric(vertical: 16),
           ),
           verticalSpace(0.015),
