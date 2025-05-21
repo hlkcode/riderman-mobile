@@ -7,11 +7,11 @@ import 'package:riderman/shared/constants.dart';
 
 import '../controllers/main_controller.dart';
 
-class CompanyChooserPage extends StatelessWidget {
+class CompaniesPage extends StatelessWidget {
   static const String routeName = '/CompanyChooserPage';
   final MainController mainController = Get.find();
 
-  CompanyChooserPage({super.key});
+  CompaniesPage({super.key});
 
   @override
   Widget build(BuildContext context) {

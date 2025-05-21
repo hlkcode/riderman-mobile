@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:riderman/shared/constants.dart';
 
 import '../controllers/main_controller.dart';
+import '../widgets/assets_list.dart';
 import '../widgets/dashboard.dart';
 
 class MainPage extends StatelessWidget {
@@ -40,12 +41,12 @@ class MainPage extends StatelessWidget {
             widget: Dashboard(),
           ),
           BottomTabItem(
-            tabTitle: 'Riders',
+            tabTitle: 'Assets',
             // icon: Icon(Icons.traffic_outlined),
-            // icon: Icon(Icons.token),
-            icon: Icon(Icons.support_outlined),
+            icon: Icon(Icons.token),
+            // icon: Icon(Icons.support_outlined),
             // icon: Icon(Icons.diamond_outlined),
-            widget: Center(child: Text('RIDERS', style: kPurpleTextStyle)),
+            widget: AssetsList(),
           ),
           BottomTabItem(
             tabTitle: 'Settings',

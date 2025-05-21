@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tools/common.dart';
 import 'package:get/get.dart';
 
-import '../views/company_chooser.dart';
+import '../views/companies_page.dart';
 import '../views/login_page.dart';
 import '../views/main_page.dart';
 import '../views/reset_password_page.dart';
@@ -64,8 +64,8 @@ List<GetPage<dynamic>> routes = <GetPage<dynamic>>[
     curve: Curves.easeInOut,
   ),
   GetPage(
-    name: CompanyChooserPage.routeName,
-    page: () => isLoggedIn() ? CompanyChooserPage() : LoginPage(),
+    name: CompaniesPage.routeName,
+    page: () => isLoggedIn() ? CompaniesPage() : LoginPage(),
     transition: Transition.topLevel,
     transitionDuration: const Duration(milliseconds: 300),
     curve: Curves.easeInOut,
