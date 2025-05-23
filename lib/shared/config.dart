@@ -84,11 +84,9 @@ List<GetPage<dynamic>> routes = <GetPage<dynamic>>[
     transitionDuration: const Duration(milliseconds: 300),
     curve: Curves.easeInOut,
   ),
-  // CompanyChooserPage
-  //
   // GetPage(
-  //   name: HomePage.routeName,
-  //   page: () => isLoggedIn() ? HomePage() : LoginPage(),
+  //   name: BusinessPage.routeName,
+  //   page: () => isLoggedIn() ? BusinessPage() : LoginPage(),
   //   transition: Transition.topLevel,
   //   transitionDuration: const Duration(milliseconds: 300),
   //   curve: Curves.easeInOut,

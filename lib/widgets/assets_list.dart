@@ -3,6 +3,7 @@ import 'package:flutter_tools/utilities/utils.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:riderman/shared/common.dart';
+import 'package:riderman/views/business_page.dart';
 
 import '../controllers/main_controller.dart';
 import '../shared/constants.dart';
@@ -45,14 +46,15 @@ class AssetsList extends StatelessWidget {
               itemBuilder: (ctx, index) {
                 var item = mainController.properties[index];
                 return InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    Get.to(() => BusinessPage(property: item));
+                  },
                   child: Card(
                     elevation: 0.0,
                     color: Colors.white54,
                     child: Row(
                       children: [
                         Card(
-                          // elevation: 1,
                           color: kPurpleLightColor,
                           child: SizedBox(
                             height: getHeight(0.05),
