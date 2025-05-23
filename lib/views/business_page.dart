@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:riderman/shared/constants.dart';
 
 import '../models/core_models.dart';
+import '../widgets/business_overview.dart';
 
 class BusinessPage extends StatelessWidget {
   static const routeName = '/BusinessPage';
@@ -48,7 +49,7 @@ class BusinessPage extends StatelessWidget {
         ),
         body: const TabBarView(
           children: [
-            Center(child: Text('Inbox Page')),
+            BusinessOverview(),
             Center(child: Text('Archived Page')),
             Center(child: Text('Deleted Page')),
           ],
