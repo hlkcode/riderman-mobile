@@ -3,16 +3,19 @@ import 'package:flutter_tools/utilities/utils.dart';
 import 'package:get/get_utils/get_utils.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
+import '../models/core_models.dart';
 import '../shared/constants.dart';
 
 class BusinessOverview extends StatelessWidget {
-  const BusinessOverview({super.key});
+  final OverviewData data;
+  const BusinessOverview({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
+    var purple20 = kPurpleTextStyle.copyWith(fontSize: 20);
     var boldPurple =
-        kPurpleTextStyle.copyWith(fontSize: 20, fontWeight: FontWeight.bold);
-    var amount = 'GHS 10000';
+        purple20.copyWith(fontSize: 20, fontWeight: FontWeight.bold);
+    var amount = 'GHS ${data.paid}';
     var textAmount = Text(amount, style: boldPurple);
     return Column(
       children: [
@@ -34,10 +37,10 @@ class BusinessOverview extends StatelessWidget {
             Expanded(
               child: SizedBox(
                 child: CircularPercentIndicator(
-                  radius: 42,
+                  radius: 48,
                   lineWidth: 8.0,
-                  percent: 0.76,
-                  center: Text('76%', style: boldPurple),
+                  percent: data.paidPercentage / 100,
+                  center: Text('${data.paidPercentage}%', style: boldPurple),
                   progressColor: kPurpleColor,
                   backgroundColor: Colors.white,
                   animation: true,
@@ -51,19 +54,59 @@ class BusinessOverview extends StatelessWidget {
           content: [
             Expanded(
               child: VerticalText(
-                  amount: 'GHS1000', title: 'Total', dotColor: kPurpleColor),
+                  amount: 'GHS${data.totalExpected}',
+                  title: 'Total',
+                  dotColor: kPurpleColor),
             ),
             Expanded(
               child: VerticalText(
-                  amount: 'GHS1000', title: 'Paid', dotColor: Colors.green),
+                  amount: 'GHS${data.paid}',
+                  title: 'Paid',
+                  dotColor: Colors.green),
             ),
             Expanded(
               child: VerticalText(
-                  amount: 'GHS1000',
+                  amount: 'GHS${data.remaining}',
                   title: 'Remaining',
                   dotColor: Colors.deepOrange),
             ),
           ],
+        ),
+        verticalSpace(0.02),
+        BusinessCard(
+          singleContent: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  DottedText(dotColor: Colors.green, title: 'Paid'),
+                  FittedBox(
+                    child: Text('GHS ${data.paid}', style: purple20),
+                  ),
+                ],
+              ),
+              verticalSpace(0.01),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  DottedText(dotColor: Colors.deepOrange, title: 'Remaining'),
+                  FittedBox(
+                    child: Text('GHS ${data.remaining}', style: purple20),
+                  ),
+                ],
+              ),
+              verticalSpace(0.01),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  DottedText(dotColor: kPurpleColor, title: 'Total'),
+                  FittedBox(
+                    child: Text('GHS ${data.totalExpected}', style: purple20),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
         verticalSpace(0.02),
         GestureDetector(
@@ -74,7 +117,7 @@ class BusinessOverview extends StatelessWidget {
               'View Detailed Information',
               style: kWhiteTextStyle.copyWith(
                   fontWeight: FontWeight.w500, fontSize: 20),
-            ),
+            ).paddingSymmetric(vertical: 36),
           ),
         ),
       ],
@@ -97,7 +140,7 @@ class BusinessCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
-      height: getHeight(0.15),
+      height: content.isNotEmpty ? getHeight(0.15) : null,
       width: getDisplayWidth(),
       decoration: BoxDecoration(
         color: cardColor,
@@ -127,27 +170,38 @@ class VerticalText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var textAmount =
-        Text(amount, style: kPurpleTextStyle.copyWith(fontSize: 20));
+        Text(amount, style: kPurpleTextStyle /*.copyWith(fontSize: 20)*/);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         amount.length >= 8 ? FittedBox(child: textAmount) : textAmount,
         verticalSpace(0.01),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: dotColor,
-                borderRadius: BorderRadius.circular(24),
-                // shape: BoxShape.circle,
-              ),
-              child: SizedBox(height: 10, width: 10),
-            ),
-            horizontalSpace(0.02),
-            Text(title, style: kPurpleTextStyle)
-          ],
+        DottedText(title: title, dotColor: dotColor),
+      ],
+    );
+  }
+}
+
+class DottedText extends StatelessWidget {
+  final Color dotColor;
+  final String title;
+  const DottedText({super.key, required this.dotColor, required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: dotColor,
+            borderRadius: BorderRadius.circular(24),
+            // shape: BoxShape.circle,
+          ),
+          child: SizedBox(height: 10, width: 10),
         ),
+        horizontalSpace(0.02),
+        Text(title, style: kPurpleTextStyle)
       ],
     );
   }

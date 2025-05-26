@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:riderman/shared/constants.dart';
 
-import '../models/core_models.dart';
+import '../controllers/main_controller.dart';
 import '../widgets/business_overview.dart';
+import '../widgets/rider_info.dart';
 
 class BusinessPage extends StatelessWidget {
   static const routeName = '/BusinessPage';
-  final Property property;
-  const BusinessPage({super.key, required this.property});
+  final int index;
+  BusinessPage({super.key, required this.index});
+  final MainController mainController = Get.find();
 
   @override
   Widget build(BuildContext context) {
+    var property = mainController.properties[index];
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -39,19 +43,20 @@ class BusinessPage extends StatelessWidget {
                 labelColor: kPurpleLightColor,
                 unselectedLabelColor: kPurpleColor,
                 tabs: const [
-                  Tab(text: 'Business'),
-                  Tab(text: 'Profile'),
+                  Tab(text: 'Overview'),
+                  Tab(text: 'Rider\'s Info'),
                   Tab(text: 'Transactions'),
                 ],
               ),
             ),
           ),
         ),
-        body: const TabBarView(
+        body: TabBarView(
           children: [
-            BusinessOverview(),
-            Center(child: Text('Archived Page')),
-            Center(child: Text('Deleted Page')),
+            Obx(() =>
+                BusinessOverview(data: mainController.overviewData.value)),
+            RiderInfo(property: property),
+            const Center(child: Text('Deleted Page')),
           ],
         ),
       ),

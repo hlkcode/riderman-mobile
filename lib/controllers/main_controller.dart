@@ -10,6 +10,16 @@ class MainController extends GetxController {
   String get _accountUrl => makeApiUrl('accounts');
   String get _guardiansUrl => makeApiUrl('Guardians');
 
+  Rx<OverviewData> overviewData = OverviewData(
+    paid: 1200,
+    amountAgreed: 2350,
+    deposit: 12340,
+    paidPercentage: 69.5,
+    propertyId: 1,
+    remaining: 2390,
+    totalExpected: 2038,
+  ).obs;
+
   final RxList<Company> companies = [
     Company(id: 1, email: 'email.com', isActive: true, name: 'CompanyName'),
     Company(
@@ -32,7 +42,6 @@ class MainController extends GetxController {
   final RxList<Property> properties = <Property>[
     Property(
         plateNumber: 'QA-1830-GH',
-        riderPhoneNumber: '0279337459',
         propertyType: PropertyType.Car.name,
         contractType: ContractType.Continuous.name,
         amountAgreed: 2984,
@@ -50,7 +59,6 @@ class MainController extends GetxController {
         id: 6),
     Property(
         plateNumber: 'QA-1830-GH',
-        riderPhoneNumber: '0279337459',
         propertyType: PropertyType.Truck.name,
         contractType: ContractType.WorkAndPay.name,
         amountAgreed: 2984,
@@ -68,7 +76,6 @@ class MainController extends GetxController {
         id: 6),
     Property(
         plateNumber: 'QA-1830-GH',
-        riderPhoneNumber: '0279337459',
         propertyType: PropertyType.Motorcycle.name,
         contractType: ContractType.Continuous.name,
         amountAgreed: 2984,
@@ -86,7 +93,6 @@ class MainController extends GetxController {
         id: 6),
     Property(
         plateNumber: 'QA-1830-GH',
-        riderPhoneNumber: '0279337459',
         propertyType: PropertyType.Tricycle.name,
         contractType: ContractType.WorkAndPay.name,
         amountAgreed: 2984,

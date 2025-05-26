@@ -9,8 +9,8 @@ enum ContractType { WorkAndPay, Continuous }
 enum PropertyStatus { CONNECTING, VERIFYING, READY, ONGOING, PAUSED, COMPLETED }
 
 class Property {
+  final int userId;
   final String plateNumber;
-  final String riderPhoneNumber;
   final String propertyType;
   final String contractType;
   final int amountAgreed;
@@ -19,17 +19,17 @@ class Property {
   final String paymentFrequency;
   final DateTime startDate;
   final int companyId;
-  final int userId;
-  final String propertyStatus;
-  final int expectedSalesCount;
   final int guarantorsNeeded;
+  final int expectedSalesCount;
+  final Rider? rider;
+  final String propertyStatus;
   final DateTime createdAt;
   final DateTime? updatedAt;
   final int id;
 
   Property({
+    required this.userId,
     required this.plateNumber,
-    required this.riderPhoneNumber,
     required this.propertyType,
     required this.contractType,
     required this.amountAgreed,
@@ -38,22 +38,23 @@ class Property {
     required this.paymentFrequency,
     required this.startDate,
     required this.companyId,
-    required this.userId,
-    required this.propertyStatus,
-    required this.expectedSalesCount,
     required this.guarantorsNeeded,
+    required this.expectedSalesCount,
+    this.rider,
+    required this.propertyStatus,
     required this.createdAt,
-    this.updatedAt,
+    required this.updatedAt,
     required this.id,
   });
 
-  factory Property.fromJson(String str) => Property.fromMap(json.decode(str));
+  // factory Property fromJson(String str) => Property.fromJson(json.decode(str));
+  factory Property.fromJson(String str) => Property.fromJson(json.decode(str));
 
-  String toJson() => json.encode(toMap());
+  String toJson() => json.encode(toJson());
 
   factory Property.fromMap(Map<String, dynamic> json) => Property(
+        userId: json["userId"],
         plateNumber: json["plateNumber"],
-        riderPhoneNumber: json["riderPhoneNumber"],
         propertyType: json["propertyType"],
         contractType: json["contractType"],
         amountAgreed: json["amountAgreed"],
@@ -62,10 +63,10 @@ class Property {
         paymentFrequency: json["paymentFrequency"],
         startDate: DateTime.parse(json["startDate"]),
         companyId: json["companyId"],
-        userId: json["userId"],
-        propertyStatus: json["propertyStatus"],
-        expectedSalesCount: json["expectedSalesCount"],
         guarantorsNeeded: json["guarantorsNeeded"],
+        expectedSalesCount: json["expectedSalesCount"],
+        rider: Rider.fromMap(json["rider"]),
+        propertyStatus: json["propertyStatus"],
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: json["updatedAt"] != null
             ? DateTime.parse(json["updatedAt"])
@@ -74,8 +75,8 @@ class Property {
       );
 
   Map<String, dynamic> toMap() => {
+        "userId": userId,
         "plateNumber": plateNumber,
-        "riderPhoneNumber": riderPhoneNumber,
         "propertyType": propertyType,
         "contractType": contractType,
         "amountAgreed": amountAgreed,
@@ -84,13 +85,78 @@ class Property {
         "paymentFrequency": paymentFrequency,
         "startDate": startDate.toIso8601String(),
         "companyId": companyId,
-        "userId": userId,
-        "propertyStatus": propertyStatus,
-        "expectedSalesCount": expectedSalesCount,
         "guarantorsNeeded": guarantorsNeeded,
+        "expectedSalesCount": expectedSalesCount,
+        "rider": rider?.toMap(),
+        "propertyStatus": propertyStatus,
         "createdAt": createdAt.toIso8601String(),
         "updatedAt": updatedAt?.toIso8601String(),
         "id": id,
+      };
+}
+
+class Rider {
+  final String phoneNumber;
+  final String fullName;
+  final String photoUrl;
+  final List<Guarantor> guarantors;
+  final int id;
+
+  Rider({
+    required this.phoneNumber,
+    required this.fullName,
+    required this.photoUrl,
+    required this.guarantors,
+    required this.id,
+  });
+
+  factory Rider.fromJson(String str) => Rider.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory Rider.fromMap(Map<String, dynamic> json) => Rider(
+        phoneNumber: json["phoneNumber"],
+        fullName: json["fullName"],
+        photoUrl: json["photoUrl"],
+        guarantors: List<Guarantor>.from(
+            json["guarantors"].map((x) => Guarantor.fromMap(x))),
+        id: json["id"],
+      );
+
+  Map<String, dynamic> toMap() => {
+        "phoneNumber": phoneNumber,
+        "fullName": fullName,
+        "photoUrl": photoUrl,
+        "guarantors": List<dynamic>.from(guarantors.map((x) => x.toMap())),
+        "id": id,
+      };
+}
+
+class Guarantor {
+  final String phoneNumber;
+  final String fullName;
+  final String photoUrl;
+
+  Guarantor({
+    required this.phoneNumber,
+    required this.fullName,
+    required this.photoUrl,
+  });
+
+  factory Guarantor.fromJson(String str) => Guarantor.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory Guarantor.fromMap(Map<String, dynamic> json) => Guarantor(
+        phoneNumber: json["phoneNumber"],
+        fullName: json["fullName"],
+        photoUrl: json["photoUrl"],
+      );
+
+  Map<String, dynamic> toMap() => {
+        "phoneNumber": phoneNumber,
+        "fullName": fullName,
+        "photoUrl": photoUrl,
       };
 }
 
@@ -189,5 +255,45 @@ class Company {
         "name": name,
         "email": email,
         "isActive": isActive,
+      };
+}
+
+class OverviewData {
+  double amountAgreed;
+  double totalExpected;
+  double deposit;
+  double paid;
+  double paidPercentage;
+  int propertyId;
+  double remaining;
+
+  OverviewData({
+    this.amountAgreed = 0,
+    this.totalExpected = 0,
+    this.deposit = 0,
+    this.paid = 0,
+    this.paidPercentage = 0,
+    this.propertyId = 0,
+    this.remaining = 0,
+  });
+
+  factory OverviewData.fromMap(Map<String, dynamic> json) => OverviewData(
+        amountAgreed: json["amountAgreed"],
+        totalExpected: json["totalExpected"],
+        deposit: json["deposit"],
+        paid: json["paid"],
+        paidPercentage: json["paidPercentage"],
+        propertyId: json["propertyId"],
+        remaining: json["remaining"],
+      );
+
+  Map<String, dynamic> toMap() => {
+        "amountAgreed": amountAgreed,
+        "totalExpected": totalExpected,
+        "deposit": deposit,
+        "paid": paid,
+        "paidPercentage": paidPercentage,
+        "propertyId": propertyId,
+        "remaining": remaining,
       };
 }

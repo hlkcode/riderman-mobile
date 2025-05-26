@@ -47,7 +47,7 @@ class AssetsList extends StatelessWidget {
                 var item = mainController.properties[index];
                 return InkWell(
                   onTap: () {
-                    Get.to(() => BusinessPage(property: item));
+                    Get.to(() => BusinessPage(index: index));
                   },
                   child: Card(
                     elevation: 0.0,
@@ -92,7 +92,7 @@ class AssetsList extends StatelessWidget {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    item.riderPhoneNumber,
+                                    item.rider?.fullName ?? 'No rider info yet',
                                     maxLines: 1,
                                   ),
                                   Text(
