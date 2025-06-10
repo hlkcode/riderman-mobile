@@ -55,7 +55,8 @@ class BusinessPage extends StatelessWidget {
           children: [
             Obx(() =>
                 BusinessOverview(data: mainController.overviewData.value)),
-            RiderInfo(property: property),
+            RiderInfo(rider: property.rider),
+            // RiderInfo(),
             const Center(child: Text('Deleted Page')),
           ],
         ),

@@ -41,23 +41,21 @@ class MainController extends GetxController {
 
   final RxList<Property> properties = <Property>[
     Property(
-        plateNumber: 'QA-1830-GH',
-        propertyType: PropertyType.Car.name,
-        contractType: ContractType.Continuous.name,
-        amountAgreed: 2984,
-        totalExpected: 294,
-        deposit: 294749,
-        paymentFrequency: PaymentFrequency.Daily.name,
-        startDate: DateTime.now(),
-        companyId: 20,
-        userId: 98,
-        propertyStatus: PropertyStatus.ONGOING.name,
-        expectedSalesCount: 100,
-        guarantorsNeeded: 1,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-        id: 6),
-    Property(
+        rider: Rider(
+          phoneNumber: '23390447850',
+          fullName: 'RiderName',
+          photoUrl:
+              'https://img.freepik.com/premium-vector/simple-vector-id-card-illustration_869472-801.jpg',
+          guarantors: [
+            Guarantor(
+              phoneNumber: '23390447850',
+              fullName: 'Garantor 1 name',
+              photoUrl:
+                  'https://img.freepik.com/premium-vector/simple-vector-id-card-illustration_869472-801.jpg',
+            )
+          ],
+          id: 2,
+        ),
         plateNumber: 'QA-1830-GH',
         propertyType: PropertyType.Truck.name,
         contractType: ContractType.WorkAndPay.name,
@@ -69,6 +67,23 @@ class MainController extends GetxController {
         companyId: 20,
         userId: 98,
         propertyStatus: PropertyStatus.READY.name,
+        expectedSalesCount: 100,
+        guarantorsNeeded: 1,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+        id: 6),
+    Property(
+        plateNumber: 'QA-1830-GH',
+        propertyType: PropertyType.Car.name,
+        contractType: ContractType.Continuous.name,
+        amountAgreed: 2984,
+        totalExpected: 294,
+        deposit: 294749,
+        paymentFrequency: PaymentFrequency.Daily.name,
+        startDate: DateTime.now(),
+        companyId: 20,
+        userId: 98,
+        propertyStatus: PropertyStatus.ONGOING.name,
         expectedSalesCount: 100,
         guarantorsNeeded: 1,
         createdAt: DateTime.now(),

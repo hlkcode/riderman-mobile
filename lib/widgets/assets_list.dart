@@ -92,7 +92,10 @@ class AssetsList extends StatelessWidget {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    item.rider?.fullName ?? 'No rider info yet',
+                                    getBoolean(GetUtils.isNullOrBlank(
+                                            item.rider?.fullName))
+                                        ? 'No rider linked yet'
+                                        : '${item.rider?.fullName} | ${item.rider?.phoneNumber}',
                                     maxLines: 1,
                                   ),
                                   Text(
@@ -111,10 +114,10 @@ class AssetsList extends StatelessWidget {
               },
               separatorBuilder: (BuildContext context, int index) =>
                   verticalSpace(0.008),
-            ).marginAll(6),
+            ).marginAll(4),
           ),
         ],
-      ).paddingSymmetric(horizontal: 20, vertical: 24),
+      ).paddingSymmetric(horizontal: 16, vertical: 24),
     );
   }
 }

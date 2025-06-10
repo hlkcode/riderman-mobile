@@ -7,6 +7,10 @@ const Color kPurpleLightColor = Color(0xFFEACEDD);
 const kWhiteTextStyle = TextStyle(color: Colors.white, fontSize: 16);
 const kPurpleTextStyle = TextStyle(color: kPurpleColor, fontSize: 16);
 const kBlackTextStyle = TextStyle(color: Colors.black, fontSize: 16);
+final purpleBorder = OutlineInputBorder(
+  borderRadius: BorderRadius.circular(6),
+  borderSide: const BorderSide(color: kPurpleColor),
+);
 
 String makeApiUrl(String path) => '${AppConstants.BASE_API}$path';
 

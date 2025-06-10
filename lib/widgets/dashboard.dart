@@ -20,7 +20,7 @@ class Dashboard extends StatelessWidget {
     return Container(
       color: kPurpleLightColor.withOpacity(.1),
       child: Column(
-        // crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text.rich(
             // style: blackStyle,

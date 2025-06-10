@@ -21,33 +21,36 @@ class BusinessOverview extends StatelessWidget {
       children: [
         verticalSpace(0.02),
         BusinessCard(
-          content: [
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  amount.length >= 10
-                      ? FittedBox(child: textAmount)
-                      : textAmount,
-                  Text('Amount paid so far', style: kPurpleTextStyle),
-                ],
-              ),
-            ),
-            Expanded(
-              child: SizedBox(
-                child: CircularPercentIndicator(
-                  radius: 48,
-                  lineWidth: 8.0,
-                  percent: data.paidPercentage / 100,
-                  center: Text('${data.paidPercentage}%', style: boldPurple),
-                  progressColor: kPurpleColor,
-                  backgroundColor: Colors.white,
-                  animation: true,
+          singleContent: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    amount.length >= 10
+                        ? FittedBox(child: textAmount)
+                        : textAmount,
+                    Text('Amount paid so far', style: kPurpleTextStyle),
+                  ],
                 ),
               ),
-            ),
-          ],
+              Expanded(
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: CircularPercentIndicator(
+                    radius: 48,
+                    lineWidth: 8.0,
+                    percent: data.paidPercentage / 100,
+                    center: Text('${data.paidPercentage}%', style: boldPurple),
+                    progressColor: kPurpleColor,
+                    backgroundColor: Colors.white,
+                    animation: true,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
         verticalSpace(0.02),
         BusinessCard(
