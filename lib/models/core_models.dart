@@ -170,6 +170,8 @@ class Sale {
   final String saleStatus;
   final String paymentRef;
   final int invoiceId;
+  final String chargeStatus;
+  final String partnerChargeStatus;
   final DateTime createdAt;
   final DateTime? updatedAt;
   final int id;
@@ -185,6 +187,8 @@ class Sale {
     required this.paymentRef,
     required this.invoiceId,
     required this.createdAt,
+    required this.chargeStatus,
+    required this.partnerChargeStatus,
     this.updatedAt,
     required this.id,
   });
@@ -200,6 +204,8 @@ class Sale {
         paymentRef: json["paymentRef"],
         invoiceId: json["invoiceId"],
         createdAt: DateTime.parse(json["createdAt"]),
+        chargeStatus: json["chargeStatus"],
+        partnerChargeStatus: json["partnerChargeStatus"],
         updatedAt: json["updatedAt"] != null
             ? DateTime.parse(json["updatedAt"])
             : null,
@@ -215,6 +221,8 @@ class Sale {
         "plateNumber": plateNumber,
         "saleStatus": saleStatus,
         "paymentRef": paymentRef,
+        "partnerChargeStatus": partnerChargeStatus,
+        "chargeStatus": chargeStatus,
         "invoiceId": invoiceId,
         "createdAt": createdAt.toIso8601String(),
         "updatedAt": updatedAt?.toIso8601String(),

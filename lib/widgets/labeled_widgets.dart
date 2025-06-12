@@ -68,21 +68,32 @@ class LabeledTextField extends StatelessWidget {
 class LabeledWidget extends StatelessWidget {
   final String title;
   final Widget widget;
+  final bool isVertical;
   const LabeledWidget({
     super.key,
     required this.title,
     required this.widget,
+    this.isVertical = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title, style: kPurpleTextStyle),
-        widget,
-      ],
-    );
+    return isVertical
+        ? Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: kPurpleTextStyle),
+              widget,
+            ],
+          )
+        : Row(
+            mainAxisSize: MainAxisSize.min,
+            // crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              widget,
+              Text(title, style: kPurpleTextStyle),
+            ],
+          );
   }
 }

@@ -41,8 +41,8 @@ class Dashboard extends StatelessWidget {
               title: 'Total Earnings',
               titleStyle: bigWhiteStyle,
               smallStyle: bigWhiteStyle,
-              amountStyle: bigWhiteStyle.copyWith(fontSize: 24),
-              amount: 123490.toMoney('GHS'),
+              amountStyle: bigWhiteStyle, //.copyWith(fontSize: 24),
+              amount: 5500.toMoney('GHS'),
               vehicleCount: 2000.toString(),
               transactionCount: 1090.toString(),
             ).marginSymmetric(vertical: 16),
@@ -150,10 +150,14 @@ class DashboardCard extends StatelessWidget {
     var spacing = title.isNotEmpty ? 8.0 : 4.0;
     var miniIconSize = title.isNotEmpty ? 32.0 : null;
     var maxChar = title.isNotEmpty ? 12 : 7;
-
+    var isMax = amount.length >= maxChar;
     var textAmount = Text(
       amount,
-      style: amountStyle,
+      style: isMax
+          ? amountStyle?.copyWith(
+              fontSize: getNumber(amountStyle?.fontSize) - 16)
+          : amountStyle?.copyWith(
+              fontSize: getNumber(amountStyle?.fontSize) + 10),
       maxLines: 1,
       // overflow: TextOverflow.ellipsis,
     );
@@ -188,11 +192,12 @@ class DashboardCard extends StatelessWidget {
           // By wrapping it with Expanded inside a Row, you're telling Flutter to
           // allocate the remaining space to Text widget
           Row(
+            // mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Expanded(
-                child: (amount.length >= maxChar
+                child: (isMax
                         ? FittedBox(child: textAmount)
-                        : textAmount)
+                        : Center(child: textAmount))
                     .marginOnly(left: leftMargin),
               ),
             ],
