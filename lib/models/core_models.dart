@@ -305,3 +305,49 @@ class OverviewData {
         "remaining": remaining,
       };
 }
+
+class Expense {
+  final String description;
+  final int amount;
+  final DateTime date;
+  final int propertyId;
+  final DateTime createdAt;
+  final DateTime? updatedAt;
+  final int id;
+
+  Expense({
+    required this.description,
+    required this.amount,
+    required this.date,
+    required this.propertyId,
+    required this.createdAt,
+    this.updatedAt,
+    required this.id,
+  });
+
+  factory Expense.fromJson(String str) => Expense.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory Expense.fromMap(Map<String, dynamic> json) => Expense(
+        description: json["description"],
+        amount: json["amount"],
+        date: DateTime.parse(json["date"]),
+        propertyId: json["propertyId"],
+        createdAt: DateTime.parse(json["createdAt"]),
+        updatedAt: json["updatedAt"] != null
+            ? DateTime.parse(json["updatedAt"])
+            : null,
+        id: json["id"],
+      );
+
+  Map<String, dynamic> toMap() => {
+        "description": description,
+        "amount": amount,
+        "date": date.toIso8601String(),
+        "propertyId": propertyId,
+        "createdAt": createdAt.toIso8601String(),
+        "updatedAt": updatedAt?.toIso8601String(),
+        "id": id,
+      };
+}

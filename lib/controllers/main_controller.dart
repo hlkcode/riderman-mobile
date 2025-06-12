@@ -39,6 +39,41 @@ class MainController extends GetxController {
         name: 'Light Company'),
   ].obs;
 
+  final RxList<Expense> expenses = [
+    Expense(
+        propertyId: 1,
+        description: 'Expense 1',
+        amount: 500,
+        date: DateTime.now(),
+        updatedAt: DateTime.now(),
+        createdAt: DateTime.now(),
+        id: 1),
+    Expense(
+        propertyId: 2,
+        description: 'Expense 2',
+        amount: 1500,
+        date: DateTime.now(),
+        updatedAt: null,
+        createdAt: DateTime.now(),
+        id: 2),
+    Expense(
+        propertyId: 2,
+        description: 'Expense 3',
+        amount: 9834,
+        date: DateTime.now(),
+        updatedAt: null,
+        createdAt: DateTime.now(),
+        id: 3),
+    Expense(
+        propertyId: 1,
+        description: 'Expense 1',
+        amount: 9500,
+        date: DateTime.now(),
+        updatedAt: DateTime.now(),
+        createdAt: DateTime.now(),
+        id: 4),
+  ].obs;
+
   final RxList<Sale> sales = [
     Sale(
         propertyId: 1,

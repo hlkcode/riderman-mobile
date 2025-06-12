@@ -4,6 +4,7 @@ import 'package:riderman/shared/constants.dart';
 
 import '../controllers/main_controller.dart';
 import '../widgets/business_overview.dart';
+import '../widgets/expenses_list.dart';
 import '../widgets/rider_info.dart';
 import '../widgets/sales_list.dart';
 
@@ -62,7 +63,7 @@ class BusinessPage extends StatelessWidget {
             Obx(() =>
                 BusinessOverview(data: mainController.overviewData.value)),
             SalesList(),
-            SalesList(),
+            ExpensesList(),
             RiderInfo(rider: property.rider),
             // RiderInfo(),
           ],

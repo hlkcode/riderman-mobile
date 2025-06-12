@@ -5,29 +5,29 @@ import 'package:riderman/widgets/selectable_widgets.dart';
 
 import '../controllers/main_controller.dart';
 
-class SalesList extends StatelessWidget {
-  SalesList({super.key});
+class ExpensesList extends StatelessWidget {
+  ExpensesList({super.key});
 
   final MainController mainController = Get.find();
 
   @override
   Widget build(BuildContext context) {
-    var rowsMap = mainController.sales
+    var rowsMap = mainController.expenses
         .map((item) => {
               'Amount': item.amount.toMoney('GHS'),
-              'Expected Date': item.dueDate.toLongDate(),
-              'Status': item.saleStatus,
-              'Reference': item.paymentRef,
+              'Description': item.description,
+              'Occurrence Date': item.date.toLongDate(),
+              'Recorded': item.createdAt.toLongDateTime(),
               'Last Updated': item.updatedAt?.toLongDateTime() ?? '-',
             })
         .toList();
     //
     return SelectableListPage(
-      cardFor: 'Payment',
-      cardActionText: 'Select to Pay',
-      dataList: mainController.sales,
+      cardFor: 'Expense',
+      cardActionText: 'Select to Delete',
+      dataList: mainController.expenses,
       rowsList: rowsMap,
-      submitText: 'Pay Now',
+      submitText: 'Delete',
       onSubmit: () {},
     );
   }
