@@ -6,9 +6,10 @@ import '../models/core_models.dart';
 
 GetStorage get storage => GetStorage();
 
-InputDecoration getInputDecoration(String hint, {bool fill = false}) =>
+InputDecoration getInputDecoration(String hint,
+        {bool fill = false, double radius = 12}) =>
     InputDecoration(
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(radius)),
       // hintText: hint,
       labelText: hint,
       filled: fill,

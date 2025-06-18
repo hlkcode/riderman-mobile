@@ -7,6 +7,7 @@ import 'package:riderman/shared/constants.dart';
 import '../controllers/main_controller.dart';
 import '../widgets/assets_list.dart';
 import '../widgets/dashboard.dart';
+import 'new_asset_page.dart';
 
 class MainPage extends StatelessWidget {
   static const String routeName = '/MainPage';
@@ -22,7 +23,7 @@ class MainPage extends StatelessWidget {
         floatingActionButton: FloatingActionButton(
           shape: CircleBorder(),
           backgroundColor: kPurpleColor,
-          onPressed: () {},
+          onPressed: () => Get.toNamed(NewAssetPage.routeName),
           child: const Icon(
             size: 36,
             Icons.add,

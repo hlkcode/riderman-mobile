@@ -12,8 +12,6 @@ final purpleBorder = OutlineInputBorder(
   borderSide: const BorderSide(color: kPurpleColor),
 );
 
-String makeApiUrl(String path) => '${AppConstants.BASE_API}$path';
-
 class AppConstants {
   static const String APP_NAME = 'RiderMan'; // TODO SET VALUE
   static const String APP_PACKAGE = 'com.zerolafrica.riderman';

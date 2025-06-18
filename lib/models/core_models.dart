@@ -351,3 +351,95 @@ class Expense {
         "id": id,
       };
 }
+
+class UserData {
+  UserData({
+    required this.user,
+    required this.token,
+  });
+
+  User user;
+  String token;
+
+  factory UserData.fromJson(String str) => UserData.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory UserData.fromMap(Map<String, dynamic> json) => UserData(
+        user: User.fromMap(json["user"]),
+        token: json["token"],
+      );
+
+  Map<String, dynamic> toMap() => {
+        "user": user.toMap(),
+        "token": token,
+      };
+}
+
+class User {
+  int ownerId;
+  int riderId;
+  int companyId;
+  bool isRiderActive;
+  bool isOwnerActive;
+  String surname;
+  String otherNames;
+  String phoneNumber;
+  String email;
+  DateTime since;
+  String profile;
+  int plannedSales;
+  int hoursToUnpaid;
+
+  User({
+    required this.ownerId,
+    required this.riderId,
+    required this.companyId,
+    required this.isRiderActive,
+    required this.isOwnerActive,
+    required this.surname,
+    required this.otherNames,
+    required this.phoneNumber,
+    required this.email,
+    required this.since,
+    required this.profile,
+    required this.plannedSales,
+    required this.hoursToUnpaid,
+  });
+
+  factory User.fromJson(String str) => User.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory User.fromMap(Map<String, dynamic> json) => User(
+        ownerId: json["ownerId"],
+        riderId: json["riderId"],
+        companyId: json["companyId"],
+        isRiderActive: json["isRiderActive"],
+        isOwnerActive: json["isOwnerActive"],
+        surname: json["surname"],
+        otherNames: json["otherNames"],
+        phoneNumber: json["phoneNumber"],
+        email: json["email"],
+        since: DateTime.parse(json["since"]),
+        profile: json["profile"],
+        plannedSales: json["plannedSales"],
+        hoursToUnpaid: json["hoursToUnpaid"],
+      );
+
+  Map<String, dynamic> toMap() => {
+        "ownerId": ownerId,
+        "riderId": riderId,
+        "companyId": companyId,
+        "isRiderActive": isRiderActive,
+        "isOwnerActive": isOwnerActive,
+        "surname": surname,
+        "otherNames": otherNames,
+        "phoneNumber": phoneNumber,
+        "email": email,
+        "since": since.toIso8601String(),
+        "profile": profile,
+        "plannedSales": plannedSales,
+        "hoursToUnpaid": hoursToUnpaid,
+      };
+}
