@@ -21,6 +21,8 @@ class AuthController extends GetxController {
 
   String get _accountUrl => makeApiUrl('companies/users');
 
+  UserCreateDto? _createDto;
+
   // 1 => sign up // request code // verify // login
 
   // 2 => login if not verified => request code (resend = true), verify
@@ -46,6 +48,7 @@ class AuthController extends GetxController {
       if (res.isSuccess) {
         HlkDialog.showSuccessSnackBar(
             res.message ?? 'Account created successfully');
+        _createDto = dto;
         getCode(dto.phoneNumber);
       } else {
         HlkDialog.showErrorSnackBar(res.message ?? 'Please retry shortly');
@@ -95,7 +98,11 @@ class AuthController extends GetxController {
       if (res.isSuccess) {
         HlkDialog.showSuccessSnackBar(
             res.message ?? 'Account verified successfully');
-        Get.offAllNamed(LoginPage.routeName);
+        if (getBoolean(_createDto?.canLogin)) {
+          await login(phoneNumber, _createDto!.password, _createDto!.profile);
+        } else {
+          Get.offAllNamed(LoginPage.routeName);
+        }
       } else {
         HlkDialog.showErrorSnackBar(res.message ?? 'Please retry shortly');
       }

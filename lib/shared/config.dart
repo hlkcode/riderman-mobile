@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tools/common.dart';
 import 'package:flutter_tools/utilities/extension_methods.dart';
 import 'package:get/get.dart';
+import 'package:intl_phone_field/countries.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 import '../models/core_models.dart';
@@ -14,19 +15,6 @@ import '../views/signup_page.dart';
 import '../views/welcome_page.dart';
 import 'common.dart';
 import 'constants.dart';
-
-// dynamic get user => GetStorage().read('user');
-// int get timeZoneOffset => DateTime.now().toLocal().timeZoneOffset.inHours;
-//
-// const numberPerPage = 10;
-
-// dynamic get userData => GetStorage().read(Constants.USER_DATA);
-// Map<String, String> get headers {
-//   final uData = GetStorage().read(Constants.USER_DATA);
-//   final token = uData[Constants.TOKEN_KEY];
-//   // logInfo('token = $token');
-//   return getHeaders(token ?? '');
-// }
 
 bool get isLoggedIn {
   final String token = storage.hasData('user') ? user[Constants.TOKEN_KEY] : '';
@@ -50,6 +38,10 @@ String makeApiUrl(String path) {
 
   return '$baseUrl$path';
 }
+
+List<Country> get allowedCountries => countries
+    .where((c) => AppConstants.allowCountryCodes.contains(c.code))
+    .toList();
 
 //todo https://app.quicktype.io/
 List<GetPage<dynamic>> routes = <GetPage<dynamic>>[

@@ -1,13 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tools/utilities/utils.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:intl_phone_field/countries.dart';
 
 import '../models/core_models.dart';
+import 'constants.dart';
 
 GetStorage get storage => GetStorage();
 
+// String? phoneNumberValidator(String? text) =>
+//     GetUtils.isPhoneNumber(getString(text)) ? null : 'Invalid Phone Number';
+
+String? zPhoneNumberValidator(String? text) {
+  if (!GetUtils.isPhoneNumber(getString(text))) return 'Invalid Phone Number';
+  var countryCodes = countries.map((c) => c.dialCode).toList();
+
+  return countryCodes.any((code) => getString(text).startsWith(code))
+      ? null
+      : 'Unknown country code';
+}
+
+InputDecoration passDecoration(String label, RxBool obscurePassword) =>
+    InputDecoration(
+      labelText: label,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(6.0),
+      ),
+      suffixIcon: InkWell(
+        onTap: () => obscurePassword.toggle(),
+        child: Icon(
+          obscurePassword.value ? Icons.visibility_off : Icons.visibility,
+          color: kPurpleLightColor,
+        ),
+      ),
+    );
+
 InputDecoration getInputDecoration(String hint,
-        {bool fill = false, double radius = 12}) =>
+        {bool fill = false, double radius = 6}) =>
     InputDecoration(
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(radius)),
       // hintText: hint,

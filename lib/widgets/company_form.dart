@@ -5,11 +5,15 @@ import 'package:get/get.dart';
 import '../shared/common.dart';
 
 class CompanyForm extends StatelessWidget {
-  CompanyForm({super.key, required this.formKey});
+  const CompanyForm(
+      {super.key,
+      required this.formKey,
+      required this.companyNameCtrl,
+      required this.emailCtrl});
 
-  final TextEditingController _emailCtrl = TextEditingController();
-  final TextEditingController _companyCtrl = TextEditingController();
   final GlobalKey<FormState> formKey;
+  final TextEditingController companyNameCtrl;
+  final TextEditingController emailCtrl;
 
   @override
   Widget build(BuildContext context) {
@@ -18,15 +22,15 @@ class CompanyForm extends StatelessWidget {
       child: Column(
         children: [
           TextFormField(
+            controller: companyNameCtrl,
             decoration: getInputDecoration('Company Name'),
             validator: requiredValidator,
-            controller: _companyCtrl,
             keyboardType: TextInputType.name,
           ).paddingAll(10),
           TextFormField(
+            controller: emailCtrl,
             decoration: getInputDecoration('Email Address'),
             validator: emailValidator,
-            controller: _emailCtrl,
             keyboardType: TextInputType.emailAddress,
           ).paddingAll(10),
         ],

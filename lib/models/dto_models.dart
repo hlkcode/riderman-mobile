@@ -70,8 +70,8 @@ class UserCreateDto {
   String surname;
   String otherNames;
   String password;
-  String email;
-  String promoCode;
+  String? email;
+  String? promoCode;
   String companyName;
   String profile;
   bool isCompany;
@@ -81,8 +81,8 @@ class UserCreateDto {
     required this.surname,
     required this.otherNames,
     required this.password,
-    required this.email,
-    required this.promoCode,
+    this.email,
+    this.promoCode,
     required this.companyName,
     required this.profile,
     required this.isCompany,
@@ -116,4 +116,7 @@ class UserCreateDto {
         "profile": profile,
         "isCompany": isCompany,
       };
+
+  bool get canLogin =>
+      phoneNumber.isNotEmpty && password.isNotEmpty && profile.isNotEmpty;
 }

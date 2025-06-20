@@ -35,4 +35,13 @@ class AppConstants {
   static const String COMPANY_DATA = 'companyData';
 
   static const String USER_ONBOARDED = 'userOnboarded';
+
+  static const List<String> allowCountryCodes = [
+    'GH',
+    'BJ',
+    'TG',
+    'CI',
+    'BF',
+    'SN'
+  ];
 }
