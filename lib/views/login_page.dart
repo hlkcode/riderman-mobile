@@ -116,6 +116,7 @@ class LoginPage extends StatelessWidget {
                     zPhoneNumberValidator(_phoneNumberCtrl.text) == null;
                 if (!isPhoneValid) {
                   HlkDialog.showSnackBar(
+                    title: 'Info',
                     message: 'Please enter a valid phone number',
                     color: kPurpleLightColor,
                   );
