@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter_tools/utilities/extension_methods.dart';
+
 enum PropertyType { Motorcycle, Tricycle, Car, Truck }
 
 enum PaymentFrequency { Daily, Weekly, Monthly, Yearly }
@@ -442,4 +444,8 @@ class User {
         "plannedSales": plannedSales,
         "hoursToUnpaid": hoursToUnpaid,
       };
+
+  bool get isOwner => profile.containsIgnoreCase('owner');
+
+  bool get isRider => profile.containsIgnoreCase('rider');
 }

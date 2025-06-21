@@ -5,9 +5,11 @@ import 'package:flutter_tools/ui/widgets.dart';
 import 'package:flutter_tools/utilities/utils.dart';
 import 'package:get/get.dart';
 import 'package:pinput/pinput.dart';
+import 'package:riderman/views/main_page.dart';
 import 'package:riderman/views/reset_password_page.dart';
 
 import '../controllers/auth_controller.dart';
+import '../shared/common.dart';
 import '../shared/constants.dart';
 
 class VerificationPage extends StatelessWidget {
@@ -164,7 +166,11 @@ class VerificationPage extends StatelessWidget {
                 if (authController.canTempUserLogin) {
                   await authController.autoLogin();
                 } else {
-                  Get.offAllNamed(nextPage);
+                  if (nextPage == MainPage.routeName) {
+                    goToMainPage();
+                  } else {
+                    Get.offAllNamed(nextPage);
+                  }
                 }
               },
             ),

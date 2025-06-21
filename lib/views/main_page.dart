@@ -24,11 +24,7 @@ class MainPage extends StatelessWidget {
           shape: CircleBorder(),
           backgroundColor: kPurpleColor,
           onPressed: () => Get.toNamed(NewAssetPage.routeName),
-          child: const Icon(
-            size: 36,
-            Icons.add,
-            color: Colors.white,
-          ),
+          child: const Icon(size: 36, Icons.add, color: Colors.white),
         ),
         // bottomTabsType: SimpleBottomTabsType.bottomSelection,
         selectedColor: kPurpleColor,

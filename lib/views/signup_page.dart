@@ -69,13 +69,14 @@ class SignUpPage extends StatelessWidget {
             IntlPhoneField(
               controller: _phoneNumberCtrl,
               countries: allowedCountries,
+              dropdownTextStyle: kBlackTextStyle,
               // validator: (phone) =>
               //     zPhoneNumberValidator(phone?.completeNumber),
               decoration: getInputDecoration('Phone Number'),
               // autovalidateMode: AutovalidateMode.onUnfocus,
               initialCountryCode: 'GH',
               onChanged: (phone) {
-                logInfo(phone.completeNumber);
+                // logInfo(phone.completeNumber);
                 phoneNumber = phone.completeNumber.replaceAll('+', '').trim();
               },
             ).paddingAll(10),

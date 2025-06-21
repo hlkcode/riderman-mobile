@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tools/common.dart';
 import 'package:flutter_tools/ui/widgets.dart';
 import 'package:flutter_tools/utilities/extension_methods.dart';
+import 'package:flutter_tools/utilities/utils.dart';
 import 'package:get/get.dart';
+import 'package:riderman/shared/config.dart';
 import 'package:riderman/shared/constants.dart';
 
 import '../controllers/main_controller.dart';
@@ -25,6 +27,8 @@ class CompaniesPage extends StatelessWidget {
         itemCount: mainController.companies.length,
         itemBuilder: (ctx, index) {
           var item = mainController.companies[index];
+          var isIndividual = item.name.contains(currentUser.phoneNumber) ||
+              item.email.contains(currentUser.phoneNumber);
           return ListTile(
             leading: RoundedText(
               text: item.name.toInitials(),
@@ -37,20 +41,25 @@ class CompaniesPage extends StatelessWidget {
               ),
             ),
             title: Text(
-              item.name,
+              isIndividual ? 'Individual Account' : item.name,
               style: const TextStyle(fontWeight: FontWeight.w500),
             ),
-            subtitle: Text(item.email),
+            // i expect the name to be the phone number for individual account
+            subtitle: Text(isIndividual ? item.name : item.email),
             trailing: item.isActive
                 ? Icon(Icons.check_circle, color: kPurpleColor)
                 : Icon(Icons.block_rounded, color: Colors.grey),
-            onTap: item.isActive
-                ? () async {
-                    // Action
-                    await storage.write(
-                        AppConstants.COMPANY_DATA, item.toMap());
-                  }
-                : null,
+            onTap: () async {
+              if (item.isActive == false && currentUser.isOwner) {
+                HlkDialog.showErrorSnackBar(
+                  'Action can only be performed on active company',
+                  title: 'Alert',
+                );
+                return;
+              }
+              // Action
+              await storage.write(AppConstants.COMPANY_DATA, item.toMap());
+            },
           );
         },
       ).marginAll(12),

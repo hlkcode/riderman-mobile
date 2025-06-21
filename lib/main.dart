@@ -4,6 +4,7 @@ import 'package:flutter_tools/common.dart';
 import 'package:flutter_tools/tools_models.dart';
 import 'package:flutter_tools/ui/splash_screens.dart';
 import 'package:get/get.dart';
+import 'package:riderman/views/companies_page.dart';
 import 'package:riderman/views/main_page.dart';
 import 'package:riderman/views/welcome_page.dart';
 
@@ -17,7 +18,8 @@ void main() async {
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
       overlays: <SystemUiOverlay>[SystemUiOverlay.bottom, SystemUiOverlay.top]);
   await initStorage();
-  await storage.erase();
+  // await storage.erase();
+
   runApp(MyApp());
 }
 
@@ -52,7 +54,11 @@ class MyApp extends StatelessWidget {
           loadingWidgetType: LoadingWidgetType.wave,
           loadingColor: Colors.white,
           // nextPage: VerificationPage(nextPage: '', phoneNumber: '233265336549'),
-          nextPage: isUserOnboarded ? MainPage() : WelcomePage(),
+          nextPage: isUserOnboarded
+              ? isCompanySet
+                  ? MainPage()
+                  : CompaniesPage()
+              : WelcomePage(),
           // nextPage: MyHomePage(title: 'MyHomePage'),
           // toRunWhilstLoading: () => print('INSIDE YES DONE'),
           // toRunWhilstLoading: () async => await Future.delayed(

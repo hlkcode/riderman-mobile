@@ -184,7 +184,8 @@ class AuthController extends GetxController {
       // ensure user doesn't see onboarding screen on next startup
       await storage.write(AppConstants.USER_ONBOARDED, true);
       await storage.save();
-      Get.offAllNamed(MainPage.routeName);
+      // Get.offAllNamed(MainPage.routeName);
+      goToMainPage();
     } catch (e) {
       logInfo(e);
       handleException(e, null, true);
@@ -202,7 +203,8 @@ class AuthController extends GetxController {
   Future<void> changePassword(String oldPassword, String newPassword) async {
     try {
       loading.value = true;
-      var userId = isOwner ? currentUser.ownerId : currentUser.riderId;
+      var userId =
+          currentUser.isOwner ? currentUser.ownerId : currentUser.riderId;
       final url = '$_accountUrl/change-password/$userId';
       final calRes = await _requestManager.sendPostRequest(url,
           jsonEncode({'oldPassword': oldPassword, 'newPassword': newPassword}),

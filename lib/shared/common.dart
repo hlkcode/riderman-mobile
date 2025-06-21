@@ -3,9 +3,20 @@ import 'package:flutter_tools/utilities/utils.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl_phone_field/countries.dart';
+import 'package:riderman/shared/config.dart';
+import 'package:riderman/views/companies_page.dart';
+import 'package:riderman/views/main_page.dart';
 
 import '../models/core_models.dart';
 import 'constants.dart';
+
+void goToMainPage() {
+  if (isCompanySet) {
+    Get.offAllNamed(MainPage.routeName);
+  } else {
+    Get.offAllNamed(CompaniesPage.routeName);
+  }
+}
 
 void showSuccessMessage(String message) => HlkDialog.showSnackBar(
     message: message, title: 'Success', color: kPurpleLightColor);

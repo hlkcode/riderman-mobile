@@ -27,10 +27,9 @@ class LoginPage extends StatelessWidget {
 
   final RxBool obscurePassword = true.obs;
   final options1 = ['Owner', 'Rider'];
-
+  String role = '', phoneNumber = '';
   @override
   Widget build(BuildContext context) {
-    String role = '', phoneNumber = '';
     //
     return Scaffold(
       appBar: AppBar(
@@ -51,12 +50,11 @@ class LoginPage extends StatelessWidget {
             IntlPhoneField(
               controller: _phoneNumberCtrl,
               countries: allowedCountries,
-              // validator: (phone) =>
-              //     zPhoneNumberValidator(phone?.completeNumber),
+              dropdownTextStyle: kBlackTextStyle,
               decoration: getInputDecoration('Phone Number'),
               initialCountryCode: 'GH',
               onChanged: (phone) {
-                logInfo(phone.completeNumber);
+                // logInfo(phone.completeNumber);
                 phoneNumber = phone.completeNumber.replaceAll('+', '').trim();
               },
             ).marginSymmetric(horizontal: 16),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tools/common.dart';
-import 'package:flutter_tools/utilities/extension_methods.dart';
 import 'package:get/get.dart';
 import 'package:intl_phone_field/countries.dart';
 
@@ -13,21 +12,16 @@ import '../views/signup_page.dart';
 import '../views/welcome_page.dart';
 import 'constants.dart';
 
-// bool get isLoggedIn {
-//   final String token =
-//       storage.hasData(AppConstants.USER_DATA) ? user[Constants.TOKEN_KEY] : '';
-//   return !GetUtils.isNullOrBlank(token)! && !JwtDecoder.isExpired(token);
-// }
-
 UserData get currentUserData => UserData.fromMap(userData);
 
-User get currentUser => User.fromMap(user);
+User get currentUser => User.fromMap(currentUserData.user.toMap());
 
-bool get isOwner => currentUser.profile.containsIgnoreCase('owner');
-
-bool get isRider => currentUser.profile.containsIgnoreCase('rider');
+Company get currentCompany =>
+    Company.fromMap(storage.read(AppConstants.COMPANY_DATA));
 
 bool get isUserOnboarded => storage.read(AppConstants.USER_ONBOARDED) ?? false;
+
+bool get isCompanySet => storage.hasData(AppConstants.COMPANY_DATA);
 
 String makeApiUrl(String path) {
   var baseUrl = AppConstants.BASE_API.endsWith('/')
@@ -73,7 +67,7 @@ List<GetPage<dynamic>> routes = <GetPage<dynamic>>[
   ),
   GetPage(
     name: MainPage.routeName,
-    page: () => isLoggedIn(logToken: true) ? MainPage() : LoginPage(),
+    page: () => isLoggedIn() ? MainPage() : LoginPage(),
     transition: Transition.topLevel,
     transitionDuration: const Duration(milliseconds: 300),
     curve: Curves.easeInOut,
