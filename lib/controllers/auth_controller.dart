@@ -6,7 +6,6 @@ import 'package:flutter_tools/utilities/extension_methods.dart';
 import 'package:flutter_tools/utilities/request_manager.dart';
 import 'package:flutter_tools/utilities/utils.dart';
 import 'package:get/get.dart';
-import 'package:riderman/shared/common.dart';
 import 'package:riderman/shared/config.dart';
 
 import '../models/dto_models.dart';
@@ -21,7 +20,10 @@ class AuthController extends GetxController {
 
   String get _accountUrl => makeApiUrl('companies/users');
 
-  UserCreateDto? _createDto;
+  String _phoneNumber = '', _password = '', _profile = '';
+
+  bool get canTempUserLogin =>
+      _phoneNumber.isNotEmpty && _password.isNotEmpty && _profile.isNotEmpty;
 
   // 1 => sign up // request code // verify // login
 
@@ -41,15 +43,25 @@ class AuthController extends GetxController {
     try {
       loading.value = true;
       final url = '$_accountUrl/create';
-      final calRes = await _requestManager.sendPostRequest(url, dto.toMap());
+      final calRes = await _requestManager.sendPostRequest(
+        url,
+        dto.toMap(),
+        returnBodyOnError: true,
+      );
       logInfo(calRes);
       final BaseResponse res =
           BaseResponse.fromMap(calRes as Map<String, dynamic>);
       if (res.isSuccess) {
         HlkDialog.showSuccessSnackBar(
             res.message ?? 'Account created successfully');
-        _createDto = dto;
+        _phoneNumber = dto.phoneNumber;
+        _password = dto.password;
+        _profile = dto.profile;
+
         getCode(dto.phoneNumber);
+        // when successful, auto login and go to main page
+        Get.to(() => VerificationPage(
+            phoneNumber: _phoneNumber, nextPage: MainPage.routeName));
       } else {
         HlkDialog.showErrorSnackBar(res.message ?? 'Please retry shortly');
       }
@@ -65,17 +77,18 @@ class AuthController extends GetxController {
       loading.value = true;
       final url = '$_accountUrl/code';
       final calRes = await _requestManager.sendPostRequest(
-          url, jsonEncode({'phoneNumber': phoneNumber}));
+        url,
+        jsonEncode({'phoneNumber': phoneNumber}),
+        returnBodyOnError: true,
+      );
 
       logInfo(calRes);
       final BaseResponse res =
           BaseResponse.fromMap(calRes as Map<String, dynamic>);
 
-      if (!res.isSuccess) {
-        HlkDialog.showErrorSnackBar(res.message ?? 'Otp Request failed');
-      } else {
-        Get.toNamed(VerificationPage.routeName);
-      }
+      var mes = res.message ??
+          (res.isSuccess ? 'Code sent successfully' : 'Code Request failed');
+      HlkDialog.showErrorSnackBar(mes);
     } catch (e) {
       handleException(e, null, true);
     } finally {
@@ -83,34 +96,45 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> verify(String phoneNumber, String code) async {
+  Future<void> autoLogin() async =>
+      await login(_phoneNumber, _password, _profile);
+
+  Future<bool> verify(String phoneNumber, String code) async {
     try {
       loading.value = true;
       final url = '$_accountUrl/verify';
       final calRes = await _requestManager.sendPostRequest(
         url,
         jsonEncode({'phoneNumber': phoneNumber, 'code': code}),
+        returnBodyOnError: true,
       );
       logInfo(calRes);
       final BaseResponse res =
           BaseResponse.fromMap(calRes as Map<String, dynamic>);
-
-      if (res.isSuccess) {
-        HlkDialog.showSuccessSnackBar(
-            res.message ?? 'Account verified successfully');
-        if (getBoolean(_createDto?.canLogin)) {
-          await login(phoneNumber, _createDto!.password, _createDto!.profile);
-        } else {
-          Get.offAllNamed(LoginPage.routeName);
-        }
-      } else {
-        HlkDialog.showErrorSnackBar(res.message ?? 'Please retry shortly');
-      }
+      var mes = res.message ??
+          (res.isSuccess
+              ? 'Code verified successfully'
+              : 'Verification failed');
+      HlkDialog.showErrorSnackBar(mes);
+      return res.isSuccess;
+      // if (res.isSuccess) {
+      //   HlkDialog.showSuccessSnackBar(
+      //       res.message ?? 'Account verified successfully');
+      //   if (canTempUserLogin) {
+      //     await login(phoneNumber, _password, _profile);
+      //   } else {
+      //     Get.offAllNamed(LoginPage.routeName);
+      //   }
+      //   return true;
+      // } else {
+      //   HlkDialog.showErrorSnackBar(res.message ?? 'Please retry shortly');
+      // }
     } catch (e) {
       handleException(e, null, true);
     } finally {
       loading.value = false;
     }
+    return false;
   }
 
   Future<void> login(
@@ -125,33 +149,40 @@ class AuthController extends GetxController {
           "password": password,
           "profile": profile
         }),
+        returnBodyOnError: true,
       );
-      logInfo(calRes);
+      logInfo('res => $calRes');
       final BaseResponse res =
           BaseResponse.fromMap(calRes as Map<String, dynamic>);
-
-      if (res.isSuccess) {
-        // UserData userData = UserData.fromMap(res.data);
-        await storage.write(AppConstants.USER_DATA, res.data);
-        HlkDialog.showSuccessSnackBar(res.message ?? 'Login successfully');
-        // ensure user doesn't see onboarding screen on next startup
-        storage.write(AppConstants.USER_ONBOARDED, true);
-        Get.offAllNamed(MainPage.routeName);
-      } else {
+      _phoneNumber = phoneNumber;
+      _password = password;
+      _profile = profile;
+      if (!res.isSuccess) {
         if (res.message?.containsIgnoreCase('verif') ?? false) {
           // account not verified
           getCode(phoneNumber);
-          Get.toNamed(VerificationPage.routeName);
+          Get.to(() => VerificationPage(
+              phoneNumber: phoneNumber, nextPage: MainPage.routeName));
+          // Get.toNamed(VerificationPage.routeName);
         }
         HlkDialog.showErrorSnackBar(res.message ?? 'Please retry shortly');
+        return;
       }
+      // UserData userData = UserData.fromMap(res.data);
+      await storage.write(Constants.USER_DATA, res.data);
+      HlkDialog.showSuccessSnackBar(res.message ?? 'Login successfully');
+      // ensure user doesn't see onboarding screen on next startup
+      await storage.write(AppConstants.USER_ONBOARDED, true);
+      await storage.save();
+      Get.offAllNamed(MainPage.routeName);
     } catch (e) {
       logInfo(e);
       handleException(e, null, true);
       if (e.toString().containsIgnoreCase('verif')) {
         // account not verified
         getCode(phoneNumber);
-        Get.toNamed(VerificationPage.routeName);
+        Get.to(() => VerificationPage(
+            phoneNumber: phoneNumber, nextPage: MainPage.routeName));
       }
     } finally {
       loading.value = false;
@@ -165,6 +196,7 @@ class AuthController extends GetxController {
       final url = '$_accountUrl/change-password/$userId';
       final calRes = await _requestManager.sendPostRequest(url,
           jsonEncode({'oldPassword': oldPassword, 'newPassword': newPassword}),
+          returnBodyOnError: true,
           headers: {
             'Authorization': 'Bearer ${userData?.token}'
                 .replaceAll("Bearer Bearer", "Bearer")
@@ -193,6 +225,7 @@ class AuthController extends GetxController {
       loading.value = true;
       final url = '$_accountUrl/reset-password';
       final calRes = await _requestManager.sendPostRequest(
+        returnBodyOnError: true,
         url,
         jsonEncode(
             {'phoneNumber': phoneNumber, 'code': code, 'password': password}),

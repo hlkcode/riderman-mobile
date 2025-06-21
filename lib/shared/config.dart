@@ -3,7 +3,6 @@ import 'package:flutter_tools/common.dart';
 import 'package:flutter_tools/utilities/extension_methods.dart';
 import 'package:get/get.dart';
 import 'package:intl_phone_field/countries.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 
 import '../models/core_models.dart';
 import '../views/companies_page.dart';
@@ -13,13 +12,13 @@ import '../views/new_asset_page.dart';
 import '../views/reset_password_page.dart';
 import '../views/signup_page.dart';
 import '../views/welcome_page.dart';
-import 'common.dart';
 import 'constants.dart';
 
-bool get isLoggedIn {
-  final String token = storage.hasData('user') ? user[Constants.TOKEN_KEY] : '';
-  return !GetUtils.isNullOrBlank(token)! && !JwtDecoder.isExpired(token);
-}
+// bool get isLoggedIn {
+//   final String token =
+//       storage.hasData(AppConstants.USER_DATA) ? user[Constants.TOKEN_KEY] : '';
+//   return !GetUtils.isNullOrBlank(token)! && !JwtDecoder.isExpired(token);
+// }
 
 UserData get currentUserData => UserData.fromMap(userData);
 
@@ -68,14 +67,14 @@ List<GetPage<dynamic>> routes = <GetPage<dynamic>>[
   ),
   GetPage(
     name: CompaniesPage.routeName,
-    page: () => isLoggedIn ? CompaniesPage() : LoginPage(),
+    page: () => isLoggedIn() ? CompaniesPage() : LoginPage(),
     transition: Transition.topLevel,
     transitionDuration: const Duration(milliseconds: 300),
     curve: Curves.easeInOut,
   ),
   GetPage(
     name: MainPage.routeName,
-    page: () => isLoggedIn ? MainPage() : LoginPage(),
+    page: () => isLoggedIn(logToken: true) ? MainPage() : LoginPage(),
     transition: Transition.topLevel,
     transitionDuration: const Duration(milliseconds: 300),
     curve: Curves.easeInOut,
@@ -89,7 +88,7 @@ List<GetPage<dynamic>> routes = <GetPage<dynamic>>[
   ),
   GetPage(
     name: NewAssetPage.routeName,
-    page: () => isLoggedIn ? NewAssetPage() : LoginPage(),
+    page: () => isLoggedIn() ? NewAssetPage() : LoginPage(),
     transition: Transition.topLevel,
     transitionDuration: const Duration(milliseconds: 300),
     curve: Curves.easeInOut,

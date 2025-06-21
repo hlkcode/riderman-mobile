@@ -116,7 +116,4 @@ class UserCreateDto {
         "profile": profile,
         "isCompany": isCompany,
       };
-
-  bool get canLogin =>
-      phoneNumber.isNotEmpty && password.isNotEmpty && profile.isNotEmpty;
 }

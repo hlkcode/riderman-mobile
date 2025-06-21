@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tools/utilities/utils.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:intl_phone_field/countries.dart';
 
 import '../models/core_models.dart';
 import 'constants.dart';
-
-GetStorage get storage => GetStorage();
 
 // String? phoneNumberValidator(String? text) =>
 //     GetUtils.isPhoneNumber(getString(text)) ? null : 'Invalid Phone Number';

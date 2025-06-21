@@ -30,8 +30,6 @@ class AppConstants {
   static const String ICON_TRUCK_ROUND = 'assets/images/Truck in circle.png';
   static const String ICON_TR_COUNT = 'assets/images/Amount made.png';
 
-  static const String TOKEN_KEY = 'token';
-  static const String USER_DATA = 'userData';
   static const String COMPANY_DATA = 'companyData';
 
   static const String USER_ONBOARDED = 'userOnboarded';

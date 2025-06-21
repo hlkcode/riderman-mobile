@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tools/common.dart';
 import 'package:flutter_tools/ui/widgets.dart';
 import 'package:flutter_tools/utilities/extension_methods.dart';
 import 'package:get/get.dart';
-import 'package:riderman/shared/common.dart';
 import 'package:riderman/shared/constants.dart';
 
 import '../controllers/main_controller.dart';
