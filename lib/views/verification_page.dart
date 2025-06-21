@@ -5,6 +5,7 @@ import 'package:flutter_tools/ui/widgets.dart';
 import 'package:flutter_tools/utilities/utils.dart';
 import 'package:get/get.dart';
 import 'package:pinput/pinput.dart';
+import 'package:riderman/views/reset_password_page.dart';
 
 import '../controllers/auth_controller.dart';
 import '../shared/constants.dart';
@@ -150,6 +151,11 @@ class VerificationPage extends StatelessWidget {
               onTapped: () async {
                 if (code.length != 5 || code.isNumericOnly == false) {
                   HlkDialog.showErrorSnackBar('Enter a valid code please');
+                  return;
+                }
+                if (nextPage == ResetPasswordPage.routeName) {
+                  Get.off(() =>
+                      ResetPasswordPage(phoneNumber: phoneNumber, code: code));
                   return;
                 }
                 var isGood = await authController.verify(phoneNumber, code);

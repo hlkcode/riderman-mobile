@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:riderman/shared/config.dart';
 
 import '../models/dto_models.dart';
+import '../shared/common.dart';
 import '../shared/constants.dart';
 import '../views/login_page.dart';
 import '../views/main_page.dart';
@@ -52,8 +53,7 @@ class AuthController extends GetxController {
       final BaseResponse res =
           BaseResponse.fromMap(calRes as Map<String, dynamic>);
       if (res.isSuccess) {
-        HlkDialog.showSuccessSnackBar(
-            res.message ?? 'Account created successfully');
+        showSuccessMessage(res.message ?? 'Account created successfully');
         _phoneNumber = dto.phoneNumber;
         _password = dto.password;
         _profile = dto.profile;
@@ -88,7 +88,12 @@ class AuthController extends GetxController {
 
       var mes = res.message ??
           (res.isSuccess ? 'Code sent successfully' : 'Code Request failed');
-      HlkDialog.showErrorSnackBar(mes);
+
+      if (!res.isSuccess) {
+        HlkDialog.showErrorSnackBar(mes);
+        return;
+      }
+      showSuccessMessage(mes);
     } catch (e) {
       handleException(e, null, true);
     } finally {
@@ -115,8 +120,12 @@ class AuthController extends GetxController {
           (res.isSuccess
               ? 'Code verified successfully'
               : 'Verification failed');
-      HlkDialog.showErrorSnackBar(mes);
-      return res.isSuccess;
+      if (!res.isSuccess) {
+        HlkDialog.showErrorSnackBar(mes);
+        return false;
+      }
+      showSuccessMessage(mes);
+      return true;
       // if (res.isSuccess) {
       //   HlkDialog.showSuccessSnackBar(
       //       res.message ?? 'Account verified successfully');
@@ -170,7 +179,8 @@ class AuthController extends GetxController {
       }
       // UserData userData = UserData.fromMap(res.data);
       await storage.write(Constants.USER_DATA, res.data);
-      HlkDialog.showSuccessSnackBar(res.message ?? 'Login successfully');
+
+      showSuccessMessage(res.message ?? 'Login successfully');
       // ensure user doesn't see onboarding screen on next startup
       await storage.write(AppConstants.USER_ONBOARDED, true);
       await storage.save();
@@ -206,8 +216,7 @@ class AuthController extends GetxController {
           BaseResponse.fromMap(calRes as Map<String, dynamic>);
 
       if (res.isSuccess) {
-        HlkDialog.showSuccessSnackBar(
-            res.message ?? 'Password change successfully');
+        showSuccessMessage(res.message ?? 'Password change successfully');
         Get.offAllNamed(LoginPage.routeName);
       } else {
         HlkDialog.showErrorSnackBar(res.message ?? 'Please retry shortly');
@@ -219,7 +228,7 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> resetPassword(
+  Future<bool> resetPassword(
       String phoneNumber, String code, String password) async {
     try {
       loading.value = true;
@@ -235,9 +244,9 @@ class AuthController extends GetxController {
           BaseResponse.fromMap(calRes as Map<String, dynamic>);
 
       if (res.isSuccess) {
-        HlkDialog.showSuccessSnackBar(
-            res.message ?? 'Password reset successfully');
+        showSuccessMessage(res.message ?? 'Password reset successfully');
         Get.offAllNamed(LoginPage.routeName);
+        return true;
       } else {
         HlkDialog.showErrorSnackBar(res.message ?? 'Please retry shortly');
       }
@@ -246,5 +255,6 @@ class AuthController extends GetxController {
     } finally {
       loading.value = false;
     }
+    return false;
   }
 }

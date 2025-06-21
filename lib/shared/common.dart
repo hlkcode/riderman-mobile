@@ -7,8 +7,8 @@ import 'package:intl_phone_field/countries.dart';
 import '../models/core_models.dart';
 import 'constants.dart';
 
-// String? phoneNumberValidator(String? text) =>
-//     GetUtils.isPhoneNumber(getString(text)) ? null : 'Invalid Phone Number';
+void showSuccessMessage(String message) => HlkDialog.showSnackBar(
+    message: message, title: 'Success', color: kPurpleLightColor);
 
 String? zPhoneNumberValidator(String? text) {
   if (!GetUtils.isPhoneNumber(getString(text))) return 'Invalid Phone Number';

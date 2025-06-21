@@ -9,7 +9,6 @@ import '../views/companies_page.dart';
 import '../views/login_page.dart';
 import '../views/main_page.dart';
 import '../views/new_asset_page.dart';
-import '../views/reset_password_page.dart';
 import '../views/signup_page.dart';
 import '../views/welcome_page.dart';
 import 'constants.dart';
@@ -79,13 +78,13 @@ List<GetPage<dynamic>> routes = <GetPage<dynamic>>[
     transitionDuration: const Duration(milliseconds: 300),
     curve: Curves.easeInOut,
   ),
-  GetPage(
-    name: ResetPasswordPage.routeName,
-    page: () => ResetPasswordPage(),
-    transition: Transition.topLevel,
-    transitionDuration: const Duration(milliseconds: 300),
-    curve: Curves.easeInOut,
-  ),
+  // GetPage(
+  //   name: ResetPasswordPage.routeName,
+  //   page: () => ResetPasswordPage(),
+  //   transition: Transition.topLevel,
+  //   transitionDuration: const Duration(milliseconds: 300),
+  //   curve: Curves.easeInOut,
+  // ),
   GetPage(
     name: NewAssetPage.routeName,
     page: () => isLoggedIn() ? NewAssetPage() : LoginPage(),

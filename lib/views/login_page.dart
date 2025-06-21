@@ -3,6 +3,8 @@ import 'package:flutter_tools/ui/widgets.dart';
 import 'package:flutter_tools/utilities/utils.dart';
 import 'package:get/get.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:riderman/views/reset_password_page.dart';
+import 'package:riderman/views/verification_page.dart';
 
 import '../controllers/auth_controller.dart';
 import '../shared/common.dart';
@@ -124,9 +126,9 @@ class LoginPage extends StatelessWidget {
                 }
                 // todo: send request for verification code to number but do not await it
                 authController.getCode(phoneNumber);
-                // Get.toNamed(VerificationPage.routeName);
-                // Get.to(() =>
-                //     VerificationPage(nextPage: ResetPasswordPage.routeName));
+                Get.to(() => VerificationPage(
+                    nextPage: ResetPasswordPage.routeName,
+                    phoneNumber: phoneNumber));
               },
               child: Text(
                 'Forget Password ?',

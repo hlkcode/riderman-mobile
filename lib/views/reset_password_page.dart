@@ -2,18 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tools/ui/widgets.dart';
 import 'package:flutter_tools/utilities/utils.dart';
 import 'package:get/get.dart';
+import 'package:riderman/views/login_page.dart';
 
+import '../controllers/auth_controller.dart';
 import '../shared/constants.dart';
 
 class ResetPasswordPage extends StatelessWidget {
   static const String routeName = '/ResetPasswordPage';
-  ResetPasswordPage({super.key});
+  ResetPasswordPage({super.key, required this.code, required this.phoneNumber});
+
+  final String code;
+  final String phoneNumber;
 
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _passwordCtrl = TextEditingController();
   final TextEditingController _password2Ctrl = TextEditingController();
-
+  final AuthController authController = Get.find();
   final RxBool obscurePassword = true.obs;
 
   InputDecoration passDecoration(String label) => InputDecoration(
@@ -67,14 +72,21 @@ class ResetPasswordPage extends StatelessWidget {
                   keyboardType: TextInputType.visiblePassword,
                 ).marginAll(16)),
             verticalSpace(0.04),
-            LoadingButton(
-              // buttonHeight: getHeight(0.06),
-              text: 'Proceed',
-              isLoading: false,
-              buttonColor: kPurpleColor,
-              style: kWhiteTextStyle,
-              buttonRadius: 12,
-              onTapped: () {},
+            Obx(
+              () => LoadingButton(
+                // buttonHeight: getHeight(0.06),
+                text: 'Proceed',
+                isLoading: authController.loading.value,
+                buttonColor: kPurpleColor,
+                style: kWhiteTextStyle,
+                buttonRadius: 12,
+                onTapped: () async {
+                  var isGood = await authController.resetPassword(
+                      phoneNumber, code, _passwordCtrl.text);
+                  if (isGood == false) return;
+                  Get.offAllNamed(LoginPage.routeName);
+                },
+              ),
             ),
             verticalSpace(0.02),
           ],
