@@ -1,4 +1,7 @@
+import 'package:flutter_tools/common.dart';
+import 'package:flutter_tools/tools_models.dart';
 import 'package:flutter_tools/utilities/request_manager.dart';
+import 'package:flutter_tools/utilities/utils.dart';
 import 'package:get/get.dart';
 
 import '../models/core_models.dart';
@@ -7,8 +10,8 @@ import '../shared/config.dart';
 class MainController extends GetxController {
   RxBool loading = false.obs;
   final RequestManager _requestManager = RequestManager();
-  String get _accountUrl => makeApiUrl('accounts');
-  String get _guardiansUrl => makeApiUrl('Guardians');
+
+  String get _companiesUrl => makeApiUrl('companies');
 
   Rx<OverviewData> overviewData = OverviewData(
     paid: 1200,
@@ -175,6 +178,9 @@ class MainController extends GetxController {
               fullName: 'Garantor 1 name',
               photoUrl:
                   'https://img.freepik.com/premium-vector/simple-vector-id-card-illustration_869472-801.jpg',
+              id: 1,
+              propertyId: 1,
+              riderId: 1,
             )
           ],
           id: 2,
@@ -248,14 +254,36 @@ class MainController extends GetxController {
         id: 6),
   ].obs;
 
-  // 1 => sign up // request code // verify // login
+  @override
+  void onInit() {
+    super.onInit();
+  }
 
-  // 2 => login if not verified => request code (resend = true), verify
+  Future<void> getCompanies([bool refresh = false]) async {
+    try {
+      loading.value = true;
+      final url = '$_companiesUrl/formobile';
+      final calRes = await _requestManager.sendGetRequest(url,
+          headers: headers, returnBodyOnError: true);
 
-  // @override
-  // void onInit() {
-  //   super.onInit();
-  // }
+      logInfo(calRes);
+      final BaseResponse res =
+          BaseResponse.fromMap(calRes as Map<String, dynamic>);
+
+      if (!res.isSuccess) {
+        HlkDialog.showErrorSnackBar(res.message ?? 'Failed to get companies');
+        return;
+      }
+      var list = Company.parseToGetList(res.data);
+
+      companies.value = list;
+    } catch (e) {
+      handleException(e, null, refresh);
+    } finally {
+      loading.value = false;
+    }
+  }
+
   //
   // @override
   // void onClose() {

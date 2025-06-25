@@ -12,13 +12,15 @@ import '../controllers/auth_controller.dart';
 import '../shared/config.dart';
 import '../shared/constants.dart';
 import 'controllers/main_controller.dart';
+import 'data/db_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
       overlays: <SystemUiOverlay>[SystemUiOverlay.bottom, SystemUiOverlay.top]);
   await initStorage();
-  // await storage.erase();
+
+  await DBManager.initiate();
 
   runApp(MyApp());
 }

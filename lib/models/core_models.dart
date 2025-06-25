@@ -11,23 +11,23 @@ enum ContractType { WorkAndPay, Continuous }
 enum PropertyStatus { CONNECTING, VERIFYING, READY, ONGOING, PAUSED, COMPLETED }
 
 class Property {
-  final int userId;
-  final String plateNumber;
-  final String propertyType;
-  final String contractType;
-  final int amountAgreed;
-  final int totalExpected;
-  final int deposit;
-  final String paymentFrequency;
-  final DateTime startDate;
-  final int companyId;
-  final int guarantorsNeeded;
-  final int expectedSalesCount;
-  final Rider? rider;
-  final String propertyStatus;
-  final DateTime createdAt;
-  final DateTime? updatedAt;
-  final int id;
+  int userId;
+  String plateNumber;
+  String propertyType;
+  String contractType;
+  int amountAgreed;
+  int totalExpected;
+  int deposit;
+  String paymentFrequency;
+  DateTime startDate;
+  int companyId;
+  int guarantorsNeeded;
+  int expectedSalesCount;
+  Rider? rider;
+  String propertyStatus;
+  DateTime createdAt;
+  DateTime? updatedAt;
+  int id;
 
   Property({
     required this.userId,
@@ -98,17 +98,17 @@ class Property {
 }
 
 class Rider {
-  final String phoneNumber;
-  final String fullName;
-  final String photoUrl;
-  final List<Guarantor> guarantors;
-  final int id;
+  String phoneNumber;
+  String fullName;
+  String photoUrl;
+  List<Guarantor> guarantors;
+  int id;
 
   Rider({
     required this.phoneNumber,
     required this.fullName,
     required this.photoUrl,
-    required this.guarantors,
+    this.guarantors = const [],
     required this.id,
   });
 
@@ -135,14 +135,20 @@ class Rider {
 }
 
 class Guarantor {
-  final String phoneNumber;
-  final String fullName;
-  final String photoUrl;
+  String phoneNumber;
+  String fullName;
+  String photoUrl;
+  int id;
+  int riderId;
+  int propertyId;
 
   Guarantor({
+    required this.id,
     required this.phoneNumber,
     required this.fullName,
     required this.photoUrl,
+    required this.riderId,
+    required this.propertyId,
   });
 
   factory Guarantor.fromJson(String str) => Guarantor.fromMap(json.decode(str));
@@ -153,30 +159,36 @@ class Guarantor {
         phoneNumber: json["phoneNumber"],
         fullName: json["fullName"],
         photoUrl: json["photoUrl"],
+        id: json["id"],
+        riderId: json["riderId"],
+        propertyId: json["propertyId"],
       );
 
   Map<String, dynamic> toMap() => {
         "phoneNumber": phoneNumber,
         "fullName": fullName,
         "photoUrl": photoUrl,
+        "id": id,
+        "riderId": riderId,
+        "propertyId": propertyId,
       };
 }
 
 class Sale {
-  final String description;
-  final int amount;
-  final DateTime dueDate;
-  final int riderId;
-  final int propertyId;
-  final String plateNumber;
-  final String saleStatus;
-  final String paymentRef;
-  final int invoiceId;
-  final String chargeStatus;
-  final String partnerChargeStatus;
-  final DateTime createdAt;
-  final DateTime? updatedAt;
-  final int id;
+  String description;
+  int amount;
+  DateTime dueDate;
+  int riderId;
+  int propertyId;
+  String plateNumber;
+  String saleStatus;
+  String paymentRef;
+  int invoiceId;
+  String chargeStatus;
+  String partnerChargeStatus;
+  DateTime createdAt;
+  DateTime? updatedAt;
+  int id;
 
   Sale({
     required this.description,
@@ -237,10 +249,10 @@ class Sale {
 }
 
 class Company {
-  final int id;
-  final String name;
-  final String email;
-  final bool isActive;
+  int id;
+  String name;
+  String email;
+  bool isActive;
 
   Company({
     required this.id,
@@ -250,7 +262,6 @@ class Company {
   });
 
   factory Company.fromJson(String str) => Company.fromJson(json.decode(str));
-
   String toJson() => json.encode(toJson());
 
   factory Company.fromMap(Map<String, dynamic> json) => Company(
@@ -266,6 +277,9 @@ class Company {
         "email": email,
         "isActive": isActive,
       };
+
+  static List<Company> parseToGetList(dynamic responseBody) =>
+      responseBody.map<Company>((json) => Company.fromMap(json)).toList();
 }
 
 class OverviewData {
@@ -309,13 +323,13 @@ class OverviewData {
 }
 
 class Expense {
-  final String description;
-  final int amount;
-  final DateTime date;
-  final int propertyId;
-  final DateTime createdAt;
-  final DateTime? updatedAt;
-  final int id;
+  String description;
+  double amount;
+  DateTime date;
+  int propertyId;
+  DateTime createdAt;
+  DateTime? updatedAt;
+  int id;
 
   Expense({
     required this.description,
