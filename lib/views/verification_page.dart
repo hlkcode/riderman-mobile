@@ -9,6 +9,7 @@ import 'package:riderman/views/main_page.dart';
 import 'package:riderman/views/reset_password_page.dart';
 
 import '../controllers/auth_controller.dart';
+import '../controllers/main_controller.dart';
 import '../shared/common.dart';
 import '../shared/constants.dart';
 
@@ -25,6 +26,7 @@ class VerificationPage extends StatelessWidget {
   final RxString timeText = '00:00'.obs;
   final RxBool canResend = false.obs;
   final AuthController authController = Get.find();
+  final MainController mainController = Get.find();
 
   Timer? _timer, _timer2;
   void _cancelTimer() {
@@ -164,7 +166,8 @@ class VerificationPage extends StatelessWidget {
                 if (isGood == false) return;
                 _cancelTimer();
                 if (authController.canTempUserLogin) {
-                  await authController.autoLogin();
+                  await authController
+                      .autoLogin(mainController.getAllOnlineData);
                 } else {
                   if (nextPage == MainPage.routeName) {
                     goToMainPage();

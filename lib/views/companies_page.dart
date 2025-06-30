@@ -17,51 +17,70 @@ class CompaniesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // mainController.getCompanies(loadData: true);
     return Scaffold(
       // backgroundColor: kPurpleLightColor,
       appBar: AppBar(
         title: Text('Companies'),
         centerTitle: true,
       ),
-      body: ListView.builder(
-        itemCount: mainController.companies.length,
-        itemBuilder: (ctx, index) {
-          var item = mainController.companies[index];
-          var isIndividual = item.name.contains(currentUser.phoneNumber) ||
-              item.email.contains(currentUser.phoneNumber);
-          return ListTile(
-            leading: RoundedText(
-              text: item.name.toInitials(),
-              borderColor: kPurpleColor,
-              radius: 42,
-              backgroundColor: Colors.white,
-              textStyle: kPurpleTextStyle.copyWith(
-                // fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 16,
+        children: [
+          Text(
+            'Select company/account to proceed',
+            style: kPurpleTextStyle,
+          ),
+          Expanded(
+            child: Obx(
+              () => mainController.loading.value
+                  ? Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                      itemCount: mainController.companies.length,
+                      itemBuilder: (ctx, index) {
+                        var item = mainController.companies[index];
+                        var isIndividual =
+                            item.name.contains(currentUser.phoneNumber) ||
+                                item.email.contains(currentUser.phoneNumber);
+                        return ListTile(
+                          leading: RoundedText(
+                            text: item.name.toInitials(),
+                            borderColor: kPurpleColor,
+                            radius: 42,
+                            backgroundColor: Colors.white,
+                            textStyle: kPurpleTextStyle.copyWith(
+                              // fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          title: Text(
+                            isIndividual ? 'Individual Account' : item.name,
+                            style: const TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                          // i expect the name to be the phone number for individual account
+                          subtitle: Text(isIndividual ? item.name : item.email),
+                          trailing: item.isActive
+                              ? Icon(Icons.check_circle, color: kPurpleColor)
+                              : Icon(Icons.block_rounded, color: Colors.grey),
+                          onTap: () async {
+                            if (item.isActive == false && currentUser.isOwner) {
+                              HlkDialog.showErrorSnackBar(
+                                'Action can only be performed on active company',
+                                title: 'Alert',
+                              );
+                              return;
+                            }
+                            // Action
+                            await storage.write(
+                                AppConstants.COMPANY_DATA, item.toMap());
+                          },
+                        );
+                      },
+                    ),
             ),
-            title: Text(
-              isIndividual ? 'Individual Account' : item.name,
-              style: const TextStyle(fontWeight: FontWeight.w500),
-            ),
-            // i expect the name to be the phone number for individual account
-            subtitle: Text(isIndividual ? item.name : item.email),
-            trailing: item.isActive
-                ? Icon(Icons.check_circle, color: kPurpleColor)
-                : Icon(Icons.block_rounded, color: Colors.grey),
-            onTap: () async {
-              if (item.isActive == false && currentUser.isOwner) {
-                HlkDialog.showErrorSnackBar(
-                  'Action can only be performed on active company',
-                  title: 'Alert',
-                );
-                return;
-              }
-              // Action
-              await storage.write(AppConstants.COMPANY_DATA, item.toMap());
-            },
-          );
-        },
+          )
+        ],
       ).marginAll(12),
     );
   }

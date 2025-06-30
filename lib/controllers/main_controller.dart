@@ -3,6 +3,7 @@ import 'package:flutter_tools/tools_models.dart';
 import 'package:flutter_tools/utilities/request_manager.dart';
 import 'package:flutter_tools/utilities/utils.dart';
 import 'package:get/get.dart';
+import 'package:riderman/data/db_manager.dart';
 
 import '../models/core_models.dart';
 import '../shared/config.dart';
@@ -23,23 +24,23 @@ class MainController extends GetxController {
     totalExpected: 2038,
   ).obs;
 
-  final RxList<Company> companies = [
-    Company(id: 1, email: 'email.com', isActive: true, name: 'CompanyName'),
-    Company(
-        id: 2,
-        email: '233265336549@riderman.com',
-        isActive: true,
-        name: '233265336549'),
-    Company(
-        id: 3,
-        email: 'hlkcode@gmail.com',
-        isActive: false,
-        name: 'Axon Limited'),
-    Company(
-        id: 4,
-        email: 'halik@gmail.com',
-        isActive: false,
-        name: 'Light Company'),
+  final RxList<Company> companies = <Company>[
+    // Company(id: 1, email: 'email.com', isActive: true, name: 'CompanyName'),
+    // Company(
+    //     id: 2,
+    //     email: '233265336549@riderman.com',
+    //     isActive: true,
+    //     name: '233265336549'),
+    // Company(
+    //     id: 3,
+    //     email: 'hlkcode@gmail.com',
+    //     isActive: false,
+    //     name: 'Axon Limited'),
+    // Company(
+    //     id: 4,
+    //     email: 'halik@gmail.com',
+    //     isActive: false,
+    //     name: 'Light Company'),
   ].obs;
 
   final RxList<Expense> expenses = [
@@ -255,28 +256,46 @@ class MainController extends GetxController {
   ].obs;
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
+    await getAllOnlineData();
   }
 
-  Future<void> getCompanies([bool refresh = false]) async {
+  Future<void> getAllOnlineData() async {
+    if (isLoggedIn() == false) return;
+
+    await getCompanies(loadData: true, refresh: true);
+  }
+
+  Future<void> getCompanies(
+      {bool loadData = true, bool refresh = false}) async {
     try {
+      if (loadData == false && refresh == false) return;
       loading.value = true;
       final url = '$_companiesUrl/formobile';
-      final calRes = await _requestManager.sendGetRequest(url,
-          headers: headers, returnBodyOnError: true);
+      if (isLoggedIn() && refresh) {
+        final calRes = await _requestManager.sendGetRequest(url,
+            headers: headers, returnBodyOnError: true);
 
-      logInfo(calRes);
-      final BaseResponse res =
-          BaseResponse.fromMap(calRes as Map<String, dynamic>);
+        logInfo(calRes);
+        final BaseResponse res =
+            BaseResponse.fromMap(calRes as Map<String, dynamic>);
 
-      if (!res.isSuccess) {
-        HlkDialog.showErrorSnackBar(res.message ?? 'Failed to get companies');
-        return;
+        if (!res.isSuccess) {
+          HlkDialog.showErrorSnackBar(res.message ?? 'Failed to get companies');
+          return;
+        }
+        var list = Company.parseToGetList(res.data);
+        for (var comp in list) {
+          var insRes = await DBManager.upsertCompany(comp);
+          // logInfo('insRes = $insRes');
+        }
       }
-      var list = Company.parseToGetList(res.data);
 
-      companies.value = list;
+      if (loadData) {
+        companies.value = await DBManager.getAllCompanies();
+        logInfo('companies = ${companies.length}');
+      }
     } catch (e) {
       handleException(e, null, refresh);
     } finally {

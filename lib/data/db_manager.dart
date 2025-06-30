@@ -105,11 +105,25 @@ class DBManager {
     }
   }
 
-  static Future<bool> insertCompany(Company company) async {
+  static Future<bool> _insertCompany(Company company) async {
     try {
-      return await dbHelper.insert(COMPANIES_TABLE_NAME, company.toMap()) > 0;
+      var map = company.toMap();
+      map[COLUMN_IS_ACTIVE] = company.isActive ? 1 : 0;
+      logInfo('_insertCompany => $map');
+      return await dbHelper.insert(COMPANIES_TABLE_NAME, map) > 0;
     } catch (ex) {
-      logInfo(ex);
+      logInfo('_insertCompany error => $ex');
+    }
+    return false;
+  }
+
+  static Future<bool> upsertCompany(Company company) async {
+    try {
+      var isGood = await _insertCompany(company);
+      if (isGood) return true;
+      return await _updateCompany(company.id, company);
+    } catch (ex) {
+      logInfo('upsertCompany error => $ex');
     }
     return false;
   }
@@ -128,9 +142,20 @@ class DBManager {
 
   static Future<List<Company>> getAllCompanies() async {
     try {
-      var map = await dbHelper.getAllDataFromTable(COMPANIES_TABLE_NAME);
-      return Company.parseToGetList(map);
+      var tempList = await dbHelper.getAllDataFromTable(COMPANIES_TABLE_NAME);
+      // logInfo('getAllCompanies => $tempList');
+      List<Company> res = [];
+      for (var m in tempList) {
+        var isActive = m[COLUMN_IS_ACTIVE] as int == 1;
+        var map = Map<String, dynamic>.from(m);
+        map[COLUMN_IS_ACTIVE] = isActive;
+        // logInfo('getAllCompanies2 => $map');
+        res.add(Company.fromMap(map));
+      }
+      // logInfo('getAllCompanies3 => $res');
+      return res;
     } catch (ex) {
+      logInfo('getAllCompanies error => $ex');
       logInfo(ex);
     }
     return List.empty();
@@ -149,10 +174,12 @@ class DBManager {
   //   return false;
   // }
 
-  static Future<bool> updateCompany(int idToUpdate, Company company) async {
+  static Future<bool> _updateCompany(int idToUpdate, Company company) async {
     try {
       var map = company.toMap();
       map.remove(COLUMN_ID);
+      map[COLUMN_IS_ACTIVE] = company.isActive ? 1 : 0;
+      logInfo('_updateCompany => $map');
       return await dbHelper.update(
               tableName: COMPANIES_TABLE_NAME,
               whereColumnName: COLUMN_ID,
@@ -160,7 +187,7 @@ class DBManager {
               map: map) >
           0;
     } catch (ex) {
-      logInfo(ex);
+      logInfo('_updateCompany error => $ex');
     }
     return false;
   }

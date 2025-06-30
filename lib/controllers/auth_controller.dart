@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_tools/common.dart';
@@ -101,8 +102,8 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> autoLogin() async =>
-      await login(_phoneNumber, _password, _profile);
+  Future<void> autoLogin(Function()? onSuccess) async =>
+      await login(_phoneNumber, _password, _profile, onSuccess);
 
   Future<bool> verify(String phoneNumber, String code) async {
     try {
@@ -146,8 +147,8 @@ class AuthController extends GetxController {
     return false;
   }
 
-  Future<void> login(
-      String phoneNumber, String password, String profile) async {
+  Future<void> login(String phoneNumber, String password, String profile,
+      Function()? onSuccess) async {
     try {
       loading.value = true;
       final url = '$_accountUrl/login';
@@ -184,6 +185,7 @@ class AuthController extends GetxController {
       // ensure user doesn't see onboarding screen on next startup
       await storage.write(AppConstants.USER_ONBOARDED, true);
       await storage.save();
+      if (onSuccess != null) onSuccess();
       // Get.offAllNamed(MainPage.routeName);
       goToMainPage();
     } catch (e) {

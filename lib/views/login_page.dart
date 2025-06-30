@@ -7,6 +7,7 @@ import 'package:riderman/views/reset_password_page.dart';
 import 'package:riderman/views/verification_page.dart';
 
 import '../controllers/auth_controller.dart';
+import '../controllers/main_controller.dart';
 import '../shared/common.dart';
 import '../shared/config.dart';
 import '../shared/constants.dart';
@@ -19,6 +20,7 @@ class LoginPage extends StatelessWidget {
   LoginPage({super.key});
 
   final AuthController authController = Get.find();
+  final MainController mainController = Get.find();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -105,7 +107,8 @@ class LoginPage extends StatelessWidget {
                     return;
                   }
 
-                  await authController.login(phoneNumber, password, role);
+                  await authController.login(phoneNumber, password, role,
+                      mainController.getAllOnlineData);
                 },
               ),
             ),
