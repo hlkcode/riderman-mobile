@@ -4,16 +4,14 @@ import 'package:flutter_tools/ui/widgets.dart';
 import 'package:get/get.dart';
 import 'package:riderman/shared/constants.dart';
 
-import '../controllers/main_controller.dart';
 import '../widgets/assets_list.dart';
 import '../widgets/dashboard.dart';
 import 'new_asset_page.dart';
 
 class MainPage extends StatelessWidget {
   static const String routeName = '/MainPage';
-  final MainController mainController = Get.find();
 
-  MainPage({super.key});
+  const MainPage({super.key});
 
   @override
   Widget build(BuildContext context) {

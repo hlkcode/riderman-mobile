@@ -81,3 +81,36 @@ IconData getPropertyIcon(String typeString) {
                   ? FontAwesomeIcons.truck
                   : FontAwesomeIcons.tractor;
 }
+
+AccountOverview get defaultAccountOverview => AccountOverview(
+      companyId: 0,
+      totalEarnings: 0,
+      totalPropertyCount: 0,
+      totalPaidSalesCount: 0,
+      availableBalance: 0,
+      bikeCount: 0,
+      bikeEarnings: 0,
+      bikeExpenditures: 0,
+      bikeExpendituresCount: 0,
+      bikeSalesCount: 0,
+      carCount: 0,
+      carEarnings: 0,
+      carExpenditures: 0,
+      carExpendituresCount: 0,
+      carSalesCount: 0,
+      createdAt: DateTime.now(),
+      id: 0,
+      totalExpenditures: 0,
+      totalExpendituresCount: 0,
+      tricycleCount: 0,
+      tricycleEarnings: 0,
+      tricycleExpenditures: 0,
+      tricycleExpendituresCount: 0,
+      tricycleSalesCount: 0,
+      trucCount: 0,
+      trucEarnings: 0,
+      trucExpenditures: 0,
+      trucExpendituresCount: 0,
+      trucSalesCount: 0,
+      updatedAt: DateTime.now(),
+    );

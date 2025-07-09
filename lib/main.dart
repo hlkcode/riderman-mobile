@@ -21,7 +21,8 @@ void main() async {
   await initStorage();
 
   await DBManager.initiate();
-
+  // await storage.erase();
+  // await DBManager.dbHelper.deleteCurrentDatabase();
   runApp(MyApp());
 }
 

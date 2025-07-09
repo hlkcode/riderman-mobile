@@ -8,6 +8,7 @@ import 'package:riderman/shared/config.dart';
 import 'package:riderman/shared/constants.dart';
 
 import '../controllers/main_controller.dart';
+import 'main_page.dart';
 
 class CompaniesPage extends StatelessWidget {
   static const String routeName = '/CompanyChooserPage';
@@ -17,7 +18,7 @@ class CompaniesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // mainController.getCompanies(loadData: true);
+    mainController.getCompanies(loadData: true);
     return Scaffold(
       // backgroundColor: kPurpleLightColor,
       appBar: AppBar(
@@ -45,7 +46,7 @@ class CompaniesPage extends StatelessWidget {
                                 item.email.contains(currentUser.phoneNumber);
                         return ListTile(
                           leading: RoundedText(
-                            text: item.name.toInitials(),
+                            text: isIndividual ? 'PA' : item.name.toInitials(),
                             borderColor: kPurpleColor,
                             radius: 42,
                             backgroundColor: Colors.white,
@@ -55,7 +56,7 @@ class CompaniesPage extends StatelessWidget {
                             ),
                           ),
                           title: Text(
-                            isIndividual ? 'Individual Account' : item.name,
+                            isIndividual ? 'Personal Account' : item.name,
                             style: const TextStyle(fontWeight: FontWeight.w500),
                           ),
                           // i expect the name to be the phone number for individual account
@@ -74,6 +75,10 @@ class CompaniesPage extends StatelessWidget {
                             // Action
                             await storage.write(
                                 AppConstants.COMPANY_DATA, item.toMap());
+                            await mainController.getAccountOverviewData(
+                              refresh: true,
+                            );
+                            Get.offAllNamed(MainPage.routeName);
                           },
                         );
                       },

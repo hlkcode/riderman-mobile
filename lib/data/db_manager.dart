@@ -1,6 +1,7 @@
 import 'package:flutter_tools/utilities/utils.dart';
 
 import '../models/core_models.dart';
+import '../shared/common.dart';
 
 class DBManager {
   static const String DB_NAME = 'RiderMan.db';
@@ -10,6 +11,7 @@ class DBManager {
   static const String GUARANTORS_TABLE_NAME = 'Guarantors';
   static const String RIDERS_TABLE_NAME = 'Riders';
   static const String PROPERTIES_TABLE_NAME = 'Properties';
+  static const String ACCOUNT_OVERVIEW_TABLE_NAME = 'AccountOverviews';
   //
   static const String COLUMN_ID = 'id';
   static const String COLUMN_NAME = 'name';
@@ -44,6 +46,7 @@ class DBManager {
   static const String COLUMN_GUARANTORS_NEEDED = 'guarantorsNeeded';
   static const String COLUMN_EXPECTED_SALES_COUNT = 'expectedSalesCount';
   static const String COLUMN_PROPERTY_STATUS = 'propertyStatus';
+  static const String COLUMN_RAW_DATA = 'rawData';
   //
   static final String _sql_create_companies_table =
       'CREATE TABLE IF NOT EXISTS $COMPANIES_TABLE_NAME ($COLUMN_ID INTEGER PRIMARY KEY, '
@@ -82,6 +85,10 @@ class DBManager {
       '$COLUMN_GUARANTORS_NEEDED INTEGER, $COLUMN_EXPECTED_SALES_COUNT INTEGER, '
       '$COLUMN_PROPERTY_STATUS TEXT, $COLUMN_CREATED_AT DATETIME, '
       '$COLUMN_UPDATED_AT DATETIME)';
+  //
+  static final String _sql_create_account_overview_table =
+      'CREATE TABLE IF NOT EXISTS $ACCOUNT_OVERVIEW_TABLE_NAME ($COLUMN_ID INTEGER PRIMARY KEY, '
+      '$COLUMN_COMPANY_ID INTEGER UNIQUE, $COLUMN_RAW_DATA TEXT)';
   // todo run this in app first widget build // in MyApp build
 
   static late DBHelper dbHelper;
@@ -95,6 +102,7 @@ class DBManager {
         _sql_create_expenses_table,
         _sql_create_riders_table,
         _sql_create_guarantors_table,
+        _sql_create_account_overview_table,
       ];
 
       dbHelper = DBHelper.getInstance(DB_NAME);
@@ -102,6 +110,22 @@ class DBManager {
       dbHelper.getDatabase(sqlQueriesToCreateTables: createList);
     } catch (ex) {
       logInfo(ex);
+    }
+  }
+
+  static Future<void> clearAllTables() async {
+    try {
+      //
+      await dbHelper.deleteAllFromTable(COMPANIES_TABLE_NAME);
+      await dbHelper.deleteAllFromTable(EXPENSES_TABLE_NAME);
+      await dbHelper.deleteAllFromTable(SALES_TABLE_NAME);
+      await dbHelper.deleteAllFromTable(GUARANTORS_TABLE_NAME);
+      await dbHelper.deleteAllFromTable(RIDERS_TABLE_NAME);
+      await dbHelper.deleteAllFromTable(PROPERTIES_TABLE_NAME);
+      await dbHelper.deleteAllFromTable(ACCOUNT_OVERVIEW_TABLE_NAME);
+      //
+    } catch (ex) {
+      logInfo('clearAllTables => $ex');
     }
   }
 
@@ -117,6 +141,24 @@ class DBManager {
     return false;
   }
 
+  static Future<bool> _updateCompany(int idToUpdate, Company company) async {
+    try {
+      var map = company.toMap();
+      map.remove(COLUMN_ID);
+      map[COLUMN_IS_ACTIVE] = company.isActive ? 1 : 0;
+      logInfo('_updateCompany => $map');
+      return await dbHelper.update(
+              tableName: COMPANIES_TABLE_NAME,
+              whereColumnName: COLUMN_ID,
+              whereValue: idToUpdate,
+              map: map) >
+          0;
+    } catch (ex) {
+      logInfo('_updateCompany error => $ex');
+    }
+    return false;
+  }
+
   static Future<bool> upsertCompany(Company company) async {
     try {
       var isGood = await _insertCompany(company);
@@ -127,18 +169,6 @@ class DBManager {
     }
     return false;
   }
-
-  // static Future<Company?> findPlaceById(int placeTestId) async {
-  //   try {
-  //     var map = await DBHelper.getInstance(DB_NAME).getSingleDataFromTable(
-  //         tableName: PLACES_TABLE_NAME,
-  //         whereColumnName: COLUMN_ID,
-  //         whereValue: placeTestId);
-  //     return map == null ? null : PlaceTest.fromMap(map);
-  //   } catch (ex) {
-  //     print(ex);
-  //   }
-  // }
 
   static Future<List<Company>> getAllCompanies() async {
     try {
@@ -161,6 +191,18 @@ class DBManager {
     return List.empty();
   }
 
+  // static Future<Company?> findPlaceById(int placeTestId) async {
+  //   try {
+  //     var map = await DBHelper.getInstance(DB_NAME).getSingleDataFromTable(
+  //         tableName: PLACES_TABLE_NAME,
+  //         whereColumnName: COLUMN_ID,
+  //         whereValue: placeTestId);
+  //     return map == null ? null : PlaceTest.fromMap(map);
+  //   } catch (ex) {
+  //     print(ex);
+  //   }
+  // }
+
   // static Future<bool> deletePlace(int placeTestId) async {
   //   try {
   //     return await DBHelper.getInstance(DB_NAME).delete(
@@ -174,21 +216,117 @@ class DBManager {
   //   return false;
   // }
 
-  static Future<bool> _updateCompany(int idToUpdate, Company company) async {
+  static Future<bool> _insertSale(Sale input) async {
     try {
-      var map = company.toMap();
-      map.remove(COLUMN_ID);
-      map[COLUMN_IS_ACTIVE] = company.isActive ? 1 : 0;
-      logInfo('_updateCompany => $map');
+      var map = input.toMap();
+      logInfo('_insertSale => $map');
+      return await dbHelper.insert(SALES_TABLE_NAME, map) > 0;
+    } catch (ex) {
+      logInfo('_insertSale error => $ex');
+    }
+    return false;
+  }
+
+  static Future<bool> _updateSale(int idToUpdate, Sale input) async {
+    try {
+      var map = input.toMap();
+      logInfo('_updateSale => $map');
       return await dbHelper.update(
-              tableName: COMPANIES_TABLE_NAME,
+              tableName: SALES_TABLE_NAME,
               whereColumnName: COLUMN_ID,
               whereValue: idToUpdate,
               map: map) >
           0;
     } catch (ex) {
-      logInfo('_updateCompany error => $ex');
+      logInfo('_updateSale error => $ex');
     }
     return false;
+  }
+
+  static Future<bool> upsertSale(Sale input) async {
+    try {
+      var isGood = await _insertSale(input);
+      if (isGood) return true;
+      return await _updateSale(input.id, input);
+    } catch (ex) {
+      logInfo('upsertSale error => $ex');
+    }
+    return false;
+  }
+
+  static Future<List<Sale>> getAllSales() async {
+    try {
+      var tempList = await dbHelper.getAllDataFromTable(SALES_TABLE_NAME);
+      List<Sale> res = tempList.map((m) => Sale.fromMap(m)).toList();
+      return res;
+    } catch (ex) {
+      logInfo('getAllSales error => $ex');
+      logInfo(ex);
+    }
+    return List.empty();
+  }
+
+  //
+  static Future<bool> _insertAccountOverview(AccountOverview input) async {
+    try {
+      var map = {
+        COLUMN_ID: input.id,
+        COLUMN_COMPANY_ID: input.companyId,
+        COLUMN_RAW_DATA: input.toJson(),
+      };
+      // logInfo('_insertAccountOverview => $map');
+      return await dbHelper.insert(ACCOUNT_OVERVIEW_TABLE_NAME, map) > 0;
+    } catch (ex) {
+      logInfo('_insertAccountOverview error => $ex');
+    }
+    return false;
+  }
+
+  static Future<bool> _updateAccountOverview(
+      int idToUpdate, AccountOverview input) async {
+    try {
+      var map = {
+        COLUMN_ID: idToUpdate,
+        COLUMN_COMPANY_ID: input.companyId,
+        COLUMN_RAW_DATA: input.toJson(),
+      };
+      // logInfo('_updateAccountOverview => $map');
+      return await dbHelper.update(
+              tableName: ACCOUNT_OVERVIEW_TABLE_NAME,
+              whereColumnName: COLUMN_ID,
+              whereValue: idToUpdate,
+              map: map) >
+          0;
+    } catch (ex) {
+      logInfo('_updateAccountOverview error => $ex');
+    }
+    return false;
+  }
+
+  static Future<bool> upsertAccountOverview(AccountOverview input) async {
+    try {
+      var isGood = await _insertAccountOverview(input);
+      if (isGood) return true;
+      return await _updateAccountOverview(input.id, input);
+    } catch (ex) {
+      logInfo('upsertAccountOverview error => $ex');
+    }
+    return false;
+  }
+
+  static Future<AccountOverview> getAccountOverview(int companyId) async {
+    try {
+      var tempData = await dbHelper.getSingleDataFromTable(
+        tableName: ACCOUNT_OVERVIEW_TABLE_NAME,
+        whereColumnName: COLUMN_COMPANY_ID,
+        whereValue: companyId,
+      );
+
+      return AccountOverview.fromJson(getString(tempData?[COLUMN_RAW_DATA]));
+    } catch (ex) {
+      logInfo('getAccountOverview error => $ex');
+      logInfo(ex);
+    }
+    return defaultAccountOverview;
   }
 }

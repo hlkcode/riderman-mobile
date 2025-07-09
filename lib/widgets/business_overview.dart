@@ -7,7 +7,7 @@ import '../models/core_models.dart';
 import '../shared/constants.dart';
 
 class BusinessOverview extends StatelessWidget {
-  final OverviewData data;
+  final AssetOverview data;
   const BusinessOverview({super.key, required this.data});
 
   @override

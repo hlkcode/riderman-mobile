@@ -282,7 +282,7 @@ class Company {
       responseBody.map<Company>((json) => Company.fromMap(json)).toList();
 }
 
-class OverviewData {
+class AssetOverview {
   double amountAgreed;
   double totalExpected;
   double deposit;
@@ -291,7 +291,7 @@ class OverviewData {
   int propertyId;
   double remaining;
 
-  OverviewData({
+  AssetOverview({
     this.amountAgreed = 0,
     this.totalExpected = 0,
     this.deposit = 0,
@@ -301,7 +301,7 @@ class OverviewData {
     this.remaining = 0,
   });
 
-  factory OverviewData.fromMap(Map<String, dynamic> json) => OverviewData(
+  factory AssetOverview.fromMap(Map<String, dynamic> json) => AssetOverview(
         amountAgreed: json["amountAgreed"],
         totalExpected: json["totalExpected"],
         deposit: json["deposit"],
@@ -401,7 +401,7 @@ class User {
   String surname;
   String otherNames;
   String phoneNumber;
-  String email;
+  String? email;
   DateTime since;
   String profile;
   int plannedSales;
@@ -416,7 +416,7 @@ class User {
     required this.surname,
     required this.otherNames,
     required this.phoneNumber,
-    required this.email,
+    this.email,
     required this.since,
     required this.profile,
     required this.plannedSales,
@@ -462,4 +462,143 @@ class User {
   bool get isOwner => profile.containsIgnoreCase('owner');
 
   bool get isRider => profile.containsIgnoreCase('rider');
+}
+
+class AccountOverview {
+  int companyId;
+  num totalEarnings;
+  int totalPropertyCount;
+  int totalPaidSalesCount;
+  int totalExpendituresCount;
+  num totalExpenditures;
+  num bikeEarnings;
+  int bikeCount;
+  int bikeSalesCount;
+  int bikeExpendituresCount;
+  num bikeExpenditures;
+  num carEarnings;
+  int carCount;
+  int carSalesCount;
+  int carExpendituresCount;
+  num carExpenditures;
+  num trucEarnings;
+  int trucCount;
+  int trucSalesCount;
+  int trucExpendituresCount;
+  num trucExpenditures;
+  num tricycleEarnings;
+  int tricycleCount;
+  int tricycleSalesCount;
+  int tricycleExpendituresCount;
+  num tricycleExpenditures;
+  num availableBalance;
+  DateTime createdAt;
+  DateTime? updatedAt;
+  int id;
+
+  AccountOverview({
+    required this.companyId,
+    required this.totalEarnings,
+    required this.totalPropertyCount,
+    required this.totalPaidSalesCount,
+    required this.totalExpendituresCount,
+    required this.totalExpenditures,
+    required this.bikeEarnings,
+    required this.bikeCount,
+    required this.bikeSalesCount,
+    required this.bikeExpendituresCount,
+    required this.bikeExpenditures,
+    required this.carEarnings,
+    required this.carCount,
+    required this.carSalesCount,
+    required this.carExpendituresCount,
+    required this.carExpenditures,
+    required this.trucEarnings,
+    required this.trucCount,
+    required this.trucSalesCount,
+    required this.trucExpendituresCount,
+    required this.trucExpenditures,
+    required this.tricycleEarnings,
+    required this.tricycleCount,
+    required this.tricycleSalesCount,
+    required this.tricycleExpendituresCount,
+    required this.tricycleExpenditures,
+    required this.availableBalance,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.id,
+  });
+
+  factory AccountOverview.fromJson(String str) =>
+      AccountOverview.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory AccountOverview.fromMap(Map<String, dynamic> json) => AccountOverview(
+        companyId: json["companyId"],
+        totalEarnings: json["totalEarnings"],
+        totalPropertyCount: json["totalPropertyCount"],
+        totalPaidSalesCount: json["totalPaidSalesCount"],
+        totalExpendituresCount: json["totalExpendituresCount"],
+        totalExpenditures: json["totalExpenditures"],
+        bikeEarnings: json["bikeEarnings"],
+        bikeCount: json["bikeCount"],
+        bikeSalesCount: json["bikeSalesCount"],
+        bikeExpendituresCount: json["bikeExpendituresCount"],
+        bikeExpenditures: json["bikeExpenditures"],
+        carEarnings: json["carEarnings"],
+        carCount: json["carCount"],
+        carSalesCount: json["carSalesCount"],
+        carExpendituresCount: json["carExpendituresCount"],
+        carExpenditures: json["carExpenditures"],
+        trucEarnings: json["trucEarnings"],
+        trucCount: json["trucCount"],
+        trucSalesCount: json["trucSalesCount"],
+        trucExpendituresCount: json["trucExpendituresCount"],
+        trucExpenditures: json["trucExpenditures"],
+        tricycleEarnings: json["tricycleEarnings"],
+        tricycleCount: json["tricycleCount"],
+        tricycleSalesCount: json["tricycleSalesCount"],
+        tricycleExpendituresCount: json["tricycleExpendituresCount"],
+        tricycleExpenditures: json["tricycleExpenditures"],
+        availableBalance: json["availableBalance"],
+        createdAt: DateTime.parse(json["createdAt"]),
+        updatedAt: json["updatedAt"] != null
+            ? DateTime.parse(json["updatedAt"])
+            : null,
+        id: json["id"],
+      );
+
+  Map<String, dynamic> toMap() => {
+        "companyId": companyId,
+        "totalEarnings": totalEarnings,
+        "totalPropertyCount": totalPropertyCount,
+        "totalPaidSalesCount": totalPaidSalesCount,
+        "totalExpendituresCount": totalExpendituresCount,
+        "totalExpenditures": totalExpenditures,
+        "bikeEarnings": bikeEarnings,
+        "bikeCount": bikeCount,
+        "bikeSalesCount": bikeSalesCount,
+        "bikeExpendituresCount": bikeExpendituresCount,
+        "bikeExpenditures": bikeExpenditures,
+        "carEarnings": carEarnings,
+        "carCount": carCount,
+        "carSalesCount": carSalesCount,
+        "carExpendituresCount": carExpendituresCount,
+        "carExpenditures": carExpenditures,
+        "trucEarnings": trucEarnings,
+        "trucCount": trucCount,
+        "trucSalesCount": trucSalesCount,
+        "trucExpendituresCount": trucExpendituresCount,
+        "trucExpenditures": trucExpenditures,
+        "tricycleEarnings": tricycleEarnings,
+        "tricycleCount": tricycleCount,
+        "tricycleSalesCount": tricycleSalesCount,
+        "tricycleExpendituresCount": tricycleExpendituresCount,
+        "tricycleExpenditures": tricycleExpenditures,
+        "availableBalance": availableBalance,
+        "createdAt": createdAt.toIso8601String(),
+        "updatedAt": updatedAt?.toIso8601String(),
+        "id": id,
+      };
 }

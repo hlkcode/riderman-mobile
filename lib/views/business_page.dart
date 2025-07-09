@@ -61,7 +61,7 @@ class BusinessPage extends StatelessWidget {
         body: TabBarView(
           children: [
             Obx(() =>
-                BusinessOverview(data: mainController.overviewData.value)),
+                BusinessOverview(data: mainController.assetOverview.value)),
             SalesList(),
             ExpensesList(),
             RiderInfo(rider: property.rider),

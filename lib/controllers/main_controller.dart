@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_tools/common.dart';
 import 'package:flutter_tools/tools_models.dart';
 import 'package:flutter_tools/utilities/request_manager.dart';
@@ -6,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:riderman/data/db_manager.dart';
 
 import '../models/core_models.dart';
+import '../shared/common.dart';
 import '../shared/config.dart';
 
 class MainController extends GetxController {
@@ -13,8 +16,9 @@ class MainController extends GetxController {
   final RequestManager _requestManager = RequestManager();
 
   String get _companiesUrl => makeApiUrl('companies');
+  String get _reportsUrl => makeApiUrl('reports');
 
-  Rx<OverviewData> overviewData = OverviewData(
+  Rx<AssetOverview> assetOverview = AssetOverview(
     paid: 1200,
     amountAgreed: 2350,
     deposit: 12340,
@@ -22,6 +26,39 @@ class MainController extends GetxController {
     propertyId: 1,
     remaining: 2390,
     totalExpected: 2038,
+  ).obs;
+
+  Rx<AccountOverview> accountOverview = AccountOverview(
+    companyId: 1,
+    totalEarnings: 0,
+    totalPropertyCount: 0,
+    totalPaidSalesCount: 0,
+    availableBalance: 0,
+    bikeCount: 1,
+    bikeEarnings: 2,
+    bikeExpenditures: 2,
+    bikeExpendituresCount: 2,
+    bikeSalesCount: 2,
+    carCount: 1,
+    carEarnings: 9,
+    carExpenditures: 2,
+    carExpendituresCount: 9,
+    carSalesCount: 6,
+    createdAt: DateTime.now(),
+    id: 8,
+    totalExpenditures: 78,
+    totalExpendituresCount: 8,
+    tricycleCount: 8,
+    tricycleEarnings: 2,
+    tricycleExpenditures: 9,
+    tricycleExpendituresCount: 6,
+    tricycleSalesCount: 4,
+    trucCount: 6,
+    trucEarnings: 4,
+    trucExpenditures: 4,
+    trucExpendituresCount: 4,
+    trucSalesCount: 0,
+    updatedAt: DateTime.now(),
   ).obs;
 
   final RxList<Company> companies = <Company>[
@@ -255,16 +292,35 @@ class MainController extends GetxController {
         id: 6),
   ].obs;
 
+  void getAssetOverviewData() {
+    final rand = Random();
+    assetOverview.value = AssetOverview(
+      paid: rand.nextDouble() * 9999,
+      amountAgreed: rand.nextDouble() * 5000,
+      deposit: rand.nextDouble() * 1000,
+      paidPercentage: rand.nextDouble() * 100,
+      propertyId: 1,
+      remaining: rand.nextDouble() * 999,
+      totalExpected: rand.nextDouble() * 99999,
+    );
+  }
+
   @override
   Future<void> onInit() async {
     super.onInit();
     await getAllOnlineData();
+    // storage.listenKey(AppConstants.COMPANY_DATA, (nv) async {
+    //   if (nv != null) {
+    //     await getAccountOverviewData(loadData: true, refresh: true);
+    //   }
+    // });
   }
 
   Future<void> getAllOnlineData() async {
     if (isLoggedIn() == false) return;
 
     await getCompanies(loadData: true, refresh: true);
+    await getAccountOverviewData(loadData: true, refresh: true);
   }
 
   Future<void> getCompanies(
@@ -298,6 +354,81 @@ class MainController extends GetxController {
       }
     } catch (e) {
       handleException(e, null, refresh);
+      logInfo('main.getCompanies => $e');
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  Future<void> getSales({bool loadData = true, bool refresh = false}) async {
+    try {
+      if (loadData == false && refresh == false) return;
+      loading.value = true;
+      final url = '$_reportsUrl/dashboard/formobile';
+      if (isLoggedIn() && refresh) {
+        final calRes = await _requestManager.sendGetRequest(url,
+            headers: headers, returnBodyOnError: true);
+
+        logInfo(calRes);
+        final BaseResponse res =
+            BaseResponse.fromMap(calRes as Map<String, dynamic>);
+
+        if (!res.isSuccess) {
+          HlkDialog.showErrorSnackBar(res.message ?? 'Failed to get companies');
+          return;
+        }
+        var list = Company.parseToGetList(res.data);
+        for (var comp in list) {
+          var insRes = await DBManager.upsertCompany(comp);
+          // logInfo('insRes = $insRes');
+        }
+      }
+
+      if (loadData) {
+        companies.value = await DBManager.getAllCompanies();
+        logInfo('companies = ${companies.length}');
+      }
+    } catch (e) {
+      handleException(e, null, refresh);
+      logInfo('main.getSales => $e');
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  Future<void> getAccountOverviewData(
+      {bool loadData = true, bool refresh = false}) async {
+    accountOverview.value = defaultAccountOverview;
+    try {
+      if (loadData == false && refresh == false) return;
+
+      if (isLoggedIn() && isCompanySet && refresh) {
+        loading.value = true;
+        final url = '$_reportsUrl/dashboard/${currentCompany.id}';
+        final calRes = await _requestManager.sendGetRequest(url,
+            headers: headers, returnBodyOnError: true);
+
+        logInfo(calRes);
+        final BaseResponse res =
+            BaseResponse.fromMap(calRes as Map<String, dynamic>);
+
+        if (!res.isSuccess) {
+          HlkDialog.showErrorSnackBar(
+              res.message ?? 'Failed to get dashboard data');
+          return;
+        }
+        var overview = AccountOverview.fromMap(res.data);
+        await DBManager.upsertAccountOverview(overview);
+      }
+
+      if (loadData && isCompanySet) {
+        accountOverview.value =
+            await DBManager.getAccountOverview(currentCompany.id);
+        // logInfo('accountOverview = ${accountOverview.value.toMap()}');
+      }
+    } catch (e) {
+      handleException(e, null, refresh);
+      logInfo('main.getAccountOverviewData => $e');
     } finally {
       loading.value = false;
     }

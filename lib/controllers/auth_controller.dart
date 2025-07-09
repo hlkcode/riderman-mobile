@@ -9,6 +9,7 @@ import 'package:flutter_tools/utilities/utils.dart';
 import 'package:get/get.dart';
 import 'package:riderman/shared/config.dart';
 
+import '../data/db_manager.dart';
 import '../models/dto_models.dart';
 import '../shared/common.dart';
 import '../shared/constants.dart';
@@ -178,9 +179,12 @@ class AuthController extends GetxController {
         HlkDialog.showErrorSnackBar(res.message ?? 'Please retry shortly');
         return;
       }
+      // make sure to have fresh db for newly login in user to avoid inconsistencies
+      // in the data as profile or user might have changed
+      await DBManager.clearAllTables();
       // UserData userData = UserData.fromMap(res.data);
       await storage.write(Constants.USER_DATA, res.data);
-
+      //
       showSuccessMessage(res.message ?? 'Login successfully');
       // ensure user doesn't see onboarding screen on next startup
       await storage.write(AppConstants.USER_ONBOARDED, true);

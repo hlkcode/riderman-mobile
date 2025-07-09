@@ -2,15 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tools/utilities/extension_methods.dart';
 import 'package:flutter_tools/utilities/utils.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get/get_utils/get_utils.dart';
+import 'package:get/get.dart';
 
+import '../controllers/main_controller.dart';
 import '../shared/constants.dart';
 
 class Dashboard extends StatelessWidget {
-  const Dashboard({super.key});
+  Dashboard({super.key});
+
+  final MainController mainController = Get.find();
 
   @override
   Widget build(BuildContext context) {
+    if (mainController.loading.isFalse) {
+      mainController.getAccountOverviewData();
+    }
     final blackStyle =
         kBlackTextStyle.copyWith(fontWeight: FontWeight.w500, fontSize: 18);
     final smallWhiteStyle =
@@ -37,15 +43,22 @@ class Dashboard extends StatelessWidget {
           ),
           Expanded(
             flex: 2,
-            child: DashboardCard(
-              title: 'Total Earnings',
-              titleStyle: bigWhiteStyle,
-              smallStyle: bigWhiteStyle,
-              amountStyle: bigWhiteStyle, //.copyWith(fontSize: 24),
-              amount: 5500.toMoney('GHS'),
-              vehicleCount: 2000.toString(),
-              transactionCount: 1090.toString(),
-            ).marginSymmetric(vertical: 16),
+            child: Obx(
+              () => DashboardCard(
+                title: 'Total Earnings',
+                titleStyle: bigWhiteStyle,
+                smallStyle: bigWhiteStyle,
+                amountStyle: bigWhiteStyle, //.copyWith(fontSize: 24),
+                amount: mainController.accountOverview.value.totalEarnings
+                    .toMoney('GHS'),
+                assetCount: mainController
+                    .accountOverview.value.totalPropertyCount
+                    .toString(),
+                transactionCount: mainController
+                    .accountOverview.value.totalPaidSalesCount
+                    .toString(),
+              ).marginSymmetric(vertical: 16),
+            ),
           ),
           verticalSpace(0.015),
           Text(
@@ -58,14 +71,20 @@ class Dashboard extends StatelessWidget {
             child: Row(
               children: [
                 Expanded(
-                  child: DashboardCard(
-                    smallStyle: smallWhiteStyle,
-                    amountStyle: bigWhiteStyle,
-                    amount: 1789.toMoney('GHC'),
-                    vehicleCount: 200.toString(),
-                    transactionCount: 109.toString(),
-                    titleIconSize: 36,
-                    titleIcon: FontAwesomeIcons.car,
+                  child: Obx(
+                    () => DashboardCard(
+                      smallStyle: smallWhiteStyle,
+                      amountStyle: bigWhiteStyle,
+                      amount: mainController.accountOverview.value.carEarnings
+                          .toMoney('GHS'),
+                      assetCount: mainController.accountOverview.value.carCount
+                          .toString(),
+                      transactionCount: mainController
+                          .accountOverview.value.carSalesCount
+                          .toString(),
+                      titleIconSize: 36,
+                      titleIcon: FontAwesomeIcons.car,
+                    ),
                   ),
                 ),
                 horizontalSpace(0.025),
@@ -73,32 +92,48 @@ class Dashboard extends StatelessWidget {
                     child: Column(
                   children: [
                     Expanded(
-                      child: DashboardCard(
-                        smallStyle: smallWhiteStyle,
-                        amountStyle: bigWhiteStyle,
-                        amount: 7000.toMoney('GHS'),
-                        vehicleCount: 200.toString(),
-                        transactionCount: 109.toString(),
-                        // titleIconSize: 42,
-                        titleIcon: FontAwesomeIcons.motorcycle,
-                        cardColor: kPurpleColor.withOpacity(0.8),
+                      child: Obx(
+                        () => DashboardCard(
+                          smallStyle: smallWhiteStyle,
+                          amountStyle: bigWhiteStyle,
+                          amount: mainController
+                              .accountOverview.value.bikeEarnings
+                              .toMoney('GHS'),
+                          assetCount: mainController
+                              .accountOverview.value.bikeCount
+                              .toString(),
+                          transactionCount: mainController
+                              .accountOverview.value.bikeSalesCount
+                              .toString(),
+                          // titleIconSize: 42,
+                          titleIcon: FontAwesomeIcons.motorcycle,
+                          cardColor: kPurpleColor.withOpacity(0.8),
+                        ),
                       ),
                     ),
                     verticalSpace(0.015),
                     Expanded(
-                      child: DashboardCard(
-                          smallStyle: smallWhiteStyle,
-                          amountStyle: bigWhiteStyle,
-                          amount: 9000.toMoney('GHS'),
-                          vehicleCount: 200.toString(),
-                          transactionCount: 109.toString(),
-                          // titleIconSize: 42,
-                          titleIcon: FontAwesomeIcons.truck,
-                          cardColor: kPurpleLightColor,
-                          smallIconColor: kPurpleColor,
-                          mainIconBackgroundColor: Colors.white
-                          // mainIconColor: Colors.white,
-                          ),
+                      child: Obx(
+                        () => DashboardCard(
+                            smallStyle: smallWhiteStyle,
+                            amountStyle: bigWhiteStyle,
+                            amount: mainController
+                                .accountOverview.value.trucEarnings
+                                .toMoney('GHS'),
+                            assetCount: mainController
+                                .accountOverview.value.trucCount
+                                .toString(),
+                            transactionCount: mainController
+                                .accountOverview.value.trucSalesCount
+                                .toString(),
+                            // titleIconSize: 42,
+                            titleIcon: FontAwesomeIcons.truck,
+                            cardColor: kPurpleLightColor,
+                            smallIconColor: kPurpleColor,
+                            mainIconBackgroundColor: Colors.white
+                            // mainIconColor: Colors.white,
+                            ),
+                      ),
                     ),
                   ],
                 ))
@@ -123,7 +158,7 @@ class DashboardCard extends StatelessWidget {
   final IconData titleIcon;
   final double? titleIconSize;
   final String amount;
-  final String vehicleCount;
+  final String assetCount;
   final String transactionCount;
 
   const DashboardCard(
@@ -138,7 +173,7 @@ class DashboardCard extends StatelessWidget {
       this.titleIconSize,
       this.titleIcon = Icons.diamond_outlined,
       required this.amount,
-      required this.vehicleCount,
+      required this.assetCount,
       required this.transactionCount});
 
   @override
@@ -214,7 +249,7 @@ class DashboardCard extends StatelessWidget {
                   // Icon(Icons.diamond_outlined,color: smallIconColor, ),
                   ImageIcon(AssetImage(AppConstants.ICON_RIDE_COUNT),
                       color: smallIconColor, size: miniIconSize),
-                  Text(vehicleCount, style: smallStyle),
+                  Text(assetCount, style: smallStyle),
                 ],
               ),
               Row(
