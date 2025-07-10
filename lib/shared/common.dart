@@ -10,6 +10,12 @@ import 'package:riderman/views/main_page.dart';
 import '../models/core_models.dart';
 import 'constants.dart';
 
+bool isPending(Property prop) =>
+    prop.propertyStatus.toLowerCase() ==
+        PropertyStatus.CONNECTING.name.toLowerCase() ||
+    prop.propertyStatus.toLowerCase() ==
+        PropertyStatus.VERIFYING.name.toLowerCase();
+
 void goToMainPage() {
   if (isCompanySet) {
     Get.offAllNamed(MainPage.routeName);

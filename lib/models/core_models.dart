@@ -15,9 +15,9 @@ class Property {
   String plateNumber;
   String propertyType;
   String contractType;
-  int amountAgreed;
-  int totalExpected;
-  int deposit;
+  num amountAgreed;
+  num totalExpected;
+  num deposit;
   String paymentFrequency;
   DateTime startDate;
   int companyId;
@@ -67,7 +67,7 @@ class Property {
         companyId: json["companyId"],
         guarantorsNeeded: json["guarantorsNeeded"],
         expectedSalesCount: json["expectedSalesCount"],
-        rider: Rider.fromMap(json["rider"]),
+        rider: json["rider"] != null ? Rider.fromMap(json["rider"]) : null,
         propertyStatus: json["propertyStatus"],
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: json["updatedAt"] != null
@@ -95,6 +95,9 @@ class Property {
         "updatedAt": updatedAt?.toIso8601String(),
         "id": id,
       };
+
+  static List<Property> parseToGetList(dynamic responseBody) =>
+      responseBody.map<Property>((json) => Property.fromMap(json)).toList();
 }
 
 class Rider {

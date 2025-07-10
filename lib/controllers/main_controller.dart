@@ -17,6 +17,7 @@ class MainController extends GetxController {
 
   String get _companiesUrl => makeApiUrl('companies');
   String get _reportsUrl => makeApiUrl('reports');
+  String get _propertiesUrl => makeApiUrl('properties');
 
   Rx<AssetOverview> assetOverview = AssetOverview(
     paid: 1200,
@@ -204,92 +205,92 @@ class MainController extends GetxController {
   ].obs;
 
   final RxList<Property> properties = <Property>[
-    Property(
-        rider: Rider(
-          phoneNumber: '23390447850',
-          fullName: 'RiderName',
-          photoUrl:
-              'https://img.freepik.com/premium-vector/simple-vector-id-card-illustration_869472-801.jpg',
-          guarantors: [
-            Guarantor(
-              phoneNumber: '23390447850',
-              fullName: 'Garantor 1 name',
-              photoUrl:
-                  'https://img.freepik.com/premium-vector/simple-vector-id-card-illustration_869472-801.jpg',
-              id: 1,
-              propertyId: 1,
-              riderId: 1,
-            )
-          ],
-          id: 2,
-        ),
-        plateNumber: 'QA-1830-GH',
-        propertyType: PropertyType.Truck.name,
-        contractType: ContractType.WorkAndPay.name,
-        amountAgreed: 2984,
-        totalExpected: 294,
-        deposit: 294749,
-        paymentFrequency: PaymentFrequency.Weekly.name,
-        startDate: DateTime.now(),
-        companyId: 20,
-        userId: 98,
-        propertyStatus: PropertyStatus.READY.name,
-        expectedSalesCount: 100,
-        guarantorsNeeded: 1,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-        id: 6),
-    Property(
-        plateNumber: 'QA-1830-GH',
-        propertyType: PropertyType.Car.name,
-        contractType: ContractType.Continuous.name,
-        amountAgreed: 2984,
-        totalExpected: 294,
-        deposit: 294749,
-        paymentFrequency: PaymentFrequency.Daily.name,
-        startDate: DateTime.now(),
-        companyId: 20,
-        userId: 98,
-        propertyStatus: PropertyStatus.ONGOING.name,
-        expectedSalesCount: 100,
-        guarantorsNeeded: 1,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-        id: 6),
-    Property(
-        plateNumber: 'QA-1830-GH',
-        propertyType: PropertyType.Motorcycle.name,
-        contractType: ContractType.Continuous.name,
-        amountAgreed: 2984,
-        totalExpected: 294,
-        deposit: 294749,
-        paymentFrequency: PaymentFrequency.Monthly.name,
-        startDate: DateTime.now(),
-        companyId: 20,
-        userId: 98,
-        propertyStatus: PropertyStatus.CONNECTING.name,
-        expectedSalesCount: 100,
-        guarantorsNeeded: 1,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-        id: 6),
-    Property(
-        plateNumber: 'QA-1830-GH',
-        propertyType: PropertyType.Tricycle.name,
-        contractType: ContractType.WorkAndPay.name,
-        amountAgreed: 2984,
-        totalExpected: 294,
-        deposit: 294749,
-        paymentFrequency: PaymentFrequency.Yearly.name,
-        startDate: DateTime.now(),
-        companyId: 20,
-        userId: 98,
-        propertyStatus: PropertyStatus.ONGOING.name,
-        expectedSalesCount: 100,
-        guarantorsNeeded: 1,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-        id: 6),
+    // Property(
+    //     rider: Rider(
+    //       phoneNumber: '23390447850',
+    //       fullName: 'RiderName',
+    //       photoUrl:
+    //           'https://img.freepik.com/premium-vector/simple-vector-id-card-illustration_869472-801.jpg',
+    //       guarantors: [
+    //         Guarantor(
+    //           phoneNumber: '23390447850',
+    //           fullName: 'Garantor 1 name',
+    //           photoUrl:
+    //               'https://img.freepik.com/premium-vector/simple-vector-id-card-illustration_869472-801.jpg',
+    //           id: 1,
+    //           propertyId: 1,
+    //           riderId: 1,
+    //         )
+    //       ],
+    //       id: 2,
+    //     ),
+    //     plateNumber: 'QA-1830-GH',
+    //     propertyType: PropertyType.Truck.name,
+    //     contractType: ContractType.WorkAndPay.name,
+    //     amountAgreed: 2984,
+    //     totalExpected: 294,
+    //     deposit: 294749,
+    //     paymentFrequency: PaymentFrequency.Weekly.name,
+    //     startDate: DateTime.now(),
+    //     companyId: 20,
+    //     userId: 98,
+    //     propertyStatus: PropertyStatus.READY.name,
+    //     expectedSalesCount: 100,
+    //     guarantorsNeeded: 1,
+    //     createdAt: DateTime.now(),
+    //     updatedAt: DateTime.now(),
+    //     id: 6),
+    // Property(
+    //     plateNumber: 'QA-1830-GH',
+    //     propertyType: PropertyType.Car.name,
+    //     contractType: ContractType.Continuous.name,
+    //     amountAgreed: 2984,
+    //     totalExpected: 294,
+    //     deposit: 294749,
+    //     paymentFrequency: PaymentFrequency.Daily.name,
+    //     startDate: DateTime.now(),
+    //     companyId: 20,
+    //     userId: 98,
+    //     propertyStatus: PropertyStatus.ONGOING.name,
+    //     expectedSalesCount: 100,
+    //     guarantorsNeeded: 1,
+    //     createdAt: DateTime.now(),
+    //     updatedAt: DateTime.now(),
+    //     id: 6),
+    // Property(
+    //     plateNumber: 'QA-1830-GH',
+    //     propertyType: PropertyType.Motorcycle.name,
+    //     contractType: ContractType.Continuous.name,
+    //     amountAgreed: 2984,
+    //     totalExpected: 294,
+    //     deposit: 294749,
+    //     paymentFrequency: PaymentFrequency.Monthly.name,
+    //     startDate: DateTime.now(),
+    //     companyId: 20,
+    //     userId: 98,
+    //     propertyStatus: PropertyStatus.CONNECTING.name,
+    //     expectedSalesCount: 100,
+    //     guarantorsNeeded: 1,
+    //     createdAt: DateTime.now(),
+    //     updatedAt: DateTime.now(),
+    //     id: 6),
+    // Property(
+    //     plateNumber: 'QA-1830-GH',
+    //     propertyType: PropertyType.Tricycle.name,
+    //     contractType: ContractType.WorkAndPay.name,
+    //     amountAgreed: 2984,
+    //     totalExpected: 294,
+    //     deposit: 294749,
+    //     paymentFrequency: PaymentFrequency.Yearly.name,
+    //     startDate: DateTime.now(),
+    //     companyId: 20,
+    //     userId: 98,
+    //     propertyStatus: PropertyStatus.ONGOING.name,
+    //     expectedSalesCount: 100,
+    //     guarantorsNeeded: 1,
+    //     createdAt: DateTime.now(),
+    //     updatedAt: DateTime.now(),
+    //     id: 6),
   ].obs;
 
   void getAssetOverviewData() {
@@ -321,8 +322,10 @@ class MainController extends GetxController {
 
     await getCompanies(loadData: true, refresh: true);
     await getAccountOverviewData(loadData: true, refresh: true);
+    await getProperties(loadData: true, refresh: true);
   }
 
+  ///
   Future<void> getCompanies(
       {bool loadData = true, bool refresh = false}) async {
     try {
@@ -429,6 +432,75 @@ class MainController extends GetxController {
     } catch (e) {
       handleException(e, null, refresh);
       logInfo('main.getAccountOverviewData => $e');
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  Future<void> getProperties(
+      {bool loadData = true, bool refresh = false}) async {
+    try {
+      if (loadData == false && refresh == false) return;
+      loading.value = true;
+      final url = '$_propertiesUrl/foruser';
+      if (isLoggedIn() && refresh) {
+        final calRes = await _requestManager.sendGetRequest(url,
+            headers: headers, returnBodyOnError: true);
+
+        logInfo(calRes);
+        final BaseResponse res =
+            BaseResponse.fromMap(calRes as Map<String, dynamic>);
+
+        if (!res.isSuccess) {
+          HlkDialog.showErrorSnackBar(res.message ?? 'Failed to get companies');
+          return;
+        }
+        var list = Property.parseToGetList(res.data);
+        for (var prop in list) {
+          var insRes = await DBManager.upsertProperty(prop);
+          logInfo('upsertProperty Res = $insRes');
+        }
+      }
+
+      if (loadData) {
+        properties.value = await DBManager.getAllProperties();
+        logInfo('properties = ${properties.length}');
+      }
+    } catch (e) {
+      handleException(e, null, refresh);
+      logInfo('main.getProperties => $e');
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  Future<void> connect(
+      int propId, List<Map<String, dynamic>> guarantors) async {
+    try {
+      final url = '$_propertiesUrl/connect';
+      if (!isLoggedIn()) return;
+      loading.value = true;
+      final calRes = await _requestManager.sendPostRequest(
+          url,
+          {
+            'guarantors': guarantors,
+            'propertyId': propId,
+          },
+          headers: headers,
+          returnBodyOnError: true);
+
+      logInfo(calRes);
+      final BaseResponse res =
+          BaseResponse.fromMap(calRes as Map<String, dynamic>);
+
+      if (!res.isSuccess) {
+        HlkDialog.showErrorSnackBar(res.message ?? 'Failed to connect');
+        return;
+      }
+      await getProperties(refresh: true);
+    } catch (e) {
+      handleException(e, null, true);
+      logInfo('main.connect => $e');
     } finally {
       loading.value = false;
     }

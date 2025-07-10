@@ -25,6 +25,7 @@ class DBManager {
   static const String COLUMN_UPDATED_AT = 'updatedAt';
   static const String COLUMN_DUE_DATE = 'dueDate';
   static const String COLUMN_RIDER_ID = 'riderId';
+  static const String COLUMN_RIDER = 'rider';
   static const String COLUMN_USER_ID = 'userId';
   static const String COLUMN_PLATE_NUMBER = 'plateNumber';
   static const String COLUMN_SALE_STATUS = 'saleStatus';
@@ -84,7 +85,7 @@ class DBManager {
       '$COLUMN_START_DATE DATETIME, $COLUMN_COMPANY_ID INTEGER, '
       '$COLUMN_GUARANTORS_NEEDED INTEGER, $COLUMN_EXPECTED_SALES_COUNT INTEGER, '
       '$COLUMN_PROPERTY_STATUS TEXT, $COLUMN_CREATED_AT DATETIME, '
-      '$COLUMN_UPDATED_AT DATETIME)';
+      '$COLUMN_RIDER TEXT, $COLUMN_UPDATED_AT DATETIME)';
   //
   static final String _sql_create_account_overview_table =
       'CREATE TABLE IF NOT EXISTS $ACCOUNT_OVERVIEW_TABLE_NAME ($COLUMN_ID INTEGER PRIMARY KEY, '
@@ -328,5 +329,67 @@ class DBManager {
       logInfo(ex);
     }
     return defaultAccountOverview;
+  }
+
+  //
+  static Future<bool> _insertProperty(Property input) async {
+    try {
+      var map = input.toMap();
+      map[COLUMN_RIDER] = input.rider?.toJson();
+      // logInfo('_insertProperty => $map');
+      return await dbHelper.insert(PROPERTIES_TABLE_NAME, map) > 0;
+    } catch (ex) {
+      logInfo('_insertProperty error => $ex');
+    }
+    return false;
+  }
+
+  static Future<bool> _updateProperty(int idToUpdate, Property input) async {
+    try {
+      var map = input.toMap();
+      map[COLUMN_RIDER] = input.rider?.toJson();
+      // logInfo('_updateProperty => $map');
+      return await dbHelper.update(
+              tableName: PROPERTIES_TABLE_NAME,
+              whereColumnName: COLUMN_ID,
+              whereValue: idToUpdate,
+              map: map) >
+          0;
+    } catch (ex) {
+      logInfo('_updateProperty error => $ex');
+    }
+    return false;
+  }
+
+  static Future<bool> upsertProperty(Property input) async {
+    try {
+      var isGood = await _insertProperty(input);
+      if (isGood) return true;
+      return await _updateProperty(input.id, input);
+    } catch (ex) {
+      logInfo('upsertProperty error => $ex');
+    }
+    return false;
+  }
+
+  static Future<List<Property>> getAllProperties() async {
+    try {
+      var tempList = await dbHelper.getAllDataFromTable(PROPERTIES_TABLE_NAME);
+      List<Property> res = [];
+      for (var m in tempList) {
+        var map = Map<String, dynamic>.from(m);
+        var rider = map[COLUMN_RIDER];
+        if (rider != null) {
+          map[COLUMN_RIDER] = Rider.fromJson(rider);
+        }
+        // logInfo('getAllProperties => $map');
+        res.add(Property.fromMap(map));
+      }
+      return res;
+    } catch (ex) {
+      logInfo('getAllProperties error => $ex');
+      logInfo(ex);
+    }
+    return List.empty();
   }
 }

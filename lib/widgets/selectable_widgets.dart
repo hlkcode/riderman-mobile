@@ -43,12 +43,13 @@ class SelectableCard extends StatelessWidget {
     required this.isSelected,
     required this.cardTitle,
     required this.rows,
-    required this.actionText,
+    this.actionText = '',
     this.onSelected,
   });
 
   @override
   Widget build(BuildContext context) {
+    var showAction = actionText.isNotEmpty;
     var mainContent = Card(
       elevation: 0.0,
       color: Colors.white54,
@@ -63,18 +64,19 @@ class SelectableCard extends StatelessWidget {
           ...rows.entries
               .map((entry) => RowPair(title: entry.key, value: entry.value)),
           verticalSpace(0.01),
-          LoadingButton(
-            btnMargin: EdgeInsets.zero,
-            // buttonHeight: getHeight(0.04),
-            buttonHeight: 36,
-            text: actionText,
-            isOutlined: true,
-            isLoading: false,
-            buttonColor: kPurpleColor,
-            style: kPurpleTextStyle,
-            buttonRadius: 12,
-            onTapped: onSelected,
-          ),
+          if (showAction)
+            LoadingButton(
+              btnMargin: EdgeInsets.zero,
+              // buttonHeight: getHeight(0.04),
+              buttonHeight: 36,
+              text: actionText,
+              isOutlined: true,
+              isLoading: false,
+              buttonColor: kPurpleColor,
+              style: kPurpleTextStyle,
+              buttonRadius: 12,
+              onTapped: onSelected,
+            ),
         ],
       ).paddingAll(12),
     );

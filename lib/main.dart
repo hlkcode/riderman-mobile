@@ -19,10 +19,10 @@ void main() async {
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
       overlays: <SystemUiOverlay>[SystemUiOverlay.bottom, SystemUiOverlay.top]);
   await initStorage();
-
-  await DBManager.initiate();
-  // await storage.erase();
+// await storage.erase();
+//   await DBManager.initiate();
   // await DBManager.dbHelper.deleteCurrentDatabase();
+  await DBManager.initiate();
   runApp(MyApp());
 }
 

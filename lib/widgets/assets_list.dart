@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tools/utilities/extension_methods.dart';
 import 'package:flutter_tools/utilities/utils.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:riderman/shared/common.dart';
-import 'package:riderman/views/business_page.dart';
+import 'package:riderman/widgets/selectable_widgets.dart';
 
 import '../controllers/main_controller.dart';
+import '../shared/config.dart';
 import '../shared/constants.dart';
+import '../views/business_page.dart';
 
 class AssetsList extends StatelessWidget {
   AssetsList({super.key});
@@ -16,6 +19,9 @@ class AssetsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (mainController.loading.isFalse) {
+      mainController.getProperties();
+    }
     return Container(
       color: kPurpleLightColor.withOpacity(.1),
       child: Column(
@@ -47,6 +53,36 @@ class AssetsList extends StatelessWidget {
                 var item = mainController.properties[index];
                 return InkWell(
                   onTap: () {
+                    if (currentUser.isRider == false && isPending(item)) {
+                      if (item.guarantorsNeeded > 0) {
+                      } else {
+                        HlkDialog.showDialogBox(
+                          title: 'Confirmation',
+                          content: SelectableCard(
+                            showSelection: false,
+                            isSelected: false,
+                            cardTitle: '',
+                            rows: {
+                              'Plate number': item.plateNumber,
+                              'Asset type': item.propertyType,
+                              'Type of Contract': item.contractType,
+                              'Frequency': item.paymentFrequency,
+                              'N. of Sales Expected':
+                                  item.expectedSalesCount.toString(),
+                              'Sale Amount': item.amountAgreed.toMoney('GHS'),
+                              'Deposit': item.deposit.toMoney('GHS'),
+                              'Total Expected':
+                                  item.totalExpected.toMoney('GHS'),
+                              'Start Date': item.startDate.toLongDate(),
+                            },
+                          ),
+                          yesLabel: 'Accept',
+                          noLabel: 'Back',
+                          yesVoidCallBack: () {},
+                        );
+                      }
+                      return;
+                    }
                     Get.to(() => BusinessPage(index: index));
                   },
                   child: Card(
