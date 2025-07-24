@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:riderman/shared/constants.dart';
 
 import '../controllers/main_controller.dart';
+import '../models/core_models.dart';
 import '../widgets/business_overview.dart';
 import '../widgets/expenses_list.dart';
 import '../widgets/rider_info.dart';
@@ -64,7 +65,16 @@ class BusinessPage extends StatelessWidget {
                 BusinessOverview(data: mainController.assetOverview.value)),
             SalesList(),
             ExpensesList(),
-            RiderInfo(rider: property.rider),
+            RiderInfo(
+              rider: Rider(
+                  phoneNumber: '2332653365489',
+                  fullName: 'Halik Osei',
+                  id: 1,
+                  expiryDate: DateTime.now(),
+                  verificationStatus: '',
+                  photoUrl: 'https://pixy.org/src/31/315160.png'),
+            ),
+            // RiderInfo(rider: property.rider),
             // RiderInfo(),
           ],
         ),

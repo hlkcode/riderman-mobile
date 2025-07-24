@@ -14,12 +14,15 @@ import '../shared/constants.dart';
 import 'controllers/main_controller.dart';
 import 'data/db_manager.dart';
 
+// todo: make sure if logged in user is a rider and id card expires,
+/// action are only in view mode, and set new Id card is the only action that can be performed
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
       overlays: <SystemUiOverlay>[SystemUiOverlay.bottom, SystemUiOverlay.top]);
   await initStorage();
-// await storage.erase();
+  // await storage.erase();
 //   await DBManager.initiate();
   // await DBManager.dbHelper.deleteCurrentDatabase();
   await DBManager.initiate();
@@ -39,6 +42,11 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // if (currentUser.isRider &&
+    //     currentUser.isIdCardInvalid) {
+    //   Get.to(() => IdentificationPage(property: item));
+    //   return;
+    // }
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       // theme: isInDakTheme ? Themes.darkTheme : Themes.lightTheme,

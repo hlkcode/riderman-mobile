@@ -8,19 +8,34 @@ import 'package:riderman/views/companies_page.dart';
 import 'package:riderman/views/main_page.dart';
 
 import '../models/core_models.dart';
+import '../views/identification_page.dart';
 import 'constants.dart';
 
-bool isPending(Property prop) =>
-    prop.propertyStatus.toLowerCase() ==
-        PropertyStatus.CONNECTING.name.toLowerCase() ||
+Map<String, String> guarantorEntry(
+        String fullName, String phoneNumber, String photoPath) =>
+    {"fullName": fullName, "phoneNumber": phoneNumber, "photo": photoPath};
+
+bool isPropPending(Property? prop) =>
+    prop != null &&
+    (prop.propertyStatus.toLowerCase() ==
+            PropertyStatus.CONNECTING.name.toLowerCase() ||
+        prop.propertyStatus.toLowerCase() ==
+            PropertyStatus.VERIFYING.name.toLowerCase());
+
+bool isVerifying(Property? prop) =>
+    prop != null &&
     prop.propertyStatus.toLowerCase() ==
         PropertyStatus.VERIFYING.name.toLowerCase();
 
 void goToMainPage() {
-  if (isCompanySet) {
-    Get.offAllNamed(MainPage.routeName);
+  if (currentUser.isRider && currentUser.isIdCardInvalid) {
+    Get.offAll(() => IdentificationPage());
   } else {
-    Get.offAllNamed(CompaniesPage.routeName);
+    if (isCompanySet) {
+      Get.offAllNamed(MainPage.routeName);
+    } else {
+      Get.offAllNamed(CompaniesPage.routeName);
+    }
   }
 }
 

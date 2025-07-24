@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter_tools/common.dart';
@@ -12,7 +14,10 @@ import '../shared/common.dart';
 import '../shared/config.dart';
 
 class MainController extends GetxController {
-  RxBool loading = false.obs;
+  RxBool loading = false.obs,
+      propertiesLoading = false.obs,
+      getMeLoading = false.obs,
+      setIdCardLoading = false.obs;
   final RequestManager _requestManager = RequestManager();
 
   String get _companiesUrl => makeApiUrl('companies');
@@ -441,7 +446,7 @@ class MainController extends GetxController {
       {bool loadData = true, bool refresh = false}) async {
     try {
       if (loadData == false && refresh == false) return;
-      loading.value = true;
+      propertiesLoading.value = true;
       final url = '$_propertiesUrl/foruser';
       if (isLoggedIn() && refresh) {
         final calRes = await _requestManager.sendGetRequest(url,
@@ -463,15 +468,22 @@ class MainController extends GetxController {
       }
 
       if (loadData) {
-        properties.value = await DBManager.getAllProperties();
-        logInfo('properties = ${properties.length}');
+        await _loadProperties();
       }
     } catch (e) {
       handleException(e, null, refresh);
       logInfo('main.getProperties => $e');
+      if (loadData) {
+        await _loadProperties();
+      }
     } finally {
-      loading.value = false;
+      propertiesLoading.value = false;
     }
+  }
+
+  Future<void> _loadProperties() async {
+    properties.value = await DBManager.getAllProperties();
+    logInfo('properties = ${properties.length}');
   }
 
   Future<void> connect(
@@ -480,14 +492,17 @@ class MainController extends GetxController {
       final url = '$_propertiesUrl/connect';
       if (!isLoggedIn()) return;
       loading.value = true;
-      final calRes = await _requestManager.sendPostRequest(
-          url,
-          {
-            'guarantors': guarantors,
-            'propertyId': propId,
-          },
-          headers: headers,
-          returnBodyOnError: true);
+      var gList = guarantors
+          .map((g) => {
+                "fullName": g['fullName'],
+                "phoneNumber": g['phoneNumber'],
+                "photo": File(g['photoPath']),
+              })
+          .toList();
+      //
+      final calRes = await _requestManager.uploadFileWithData(
+          url, FormData({"guarantors": gList, "propertyId": propId}),
+          headers: headers, returnBodyOnError: true);
 
       logInfo(calRes);
       final BaseResponse res =
@@ -503,6 +518,80 @@ class MainController extends GetxController {
       logInfo('main.connect => $e');
     } finally {
       loading.value = false;
+    }
+  }
+
+  Future<void> setIdCard(String photoPath) async {
+    try {
+      final url = '$_companiesUrl/riders/set-idcard';
+      if (!isLoggedIn()) return;
+      setIdCardLoading.value = true;
+      //
+      final calRes = await _requestManager.uploadFileWithData(
+          url,
+          FormData({
+            "photo": MultipartFile(File(photoPath), filename: 'idcard.jpg')
+          }),
+          headers: headers,
+          returnBodyOnError: true);
+
+      logInfo(calRes);
+      final BaseResponse res =
+          BaseResponse.fromMap(calRes as Map<String, dynamic>);
+
+      if (!res.isSuccess) {
+        HlkDialog.showErrorSnackBar(res.message ?? 'Failed to connect');
+      }
+      showSuccessMessage(res.message ?? 'Request was successful');
+      await getMe();
+    } catch (e) {
+      handleException(e, null, true);
+      logInfo('main.setIdCard => $e');
+    } finally {
+      setIdCardLoading.value = false;
+    }
+  }
+
+  Future<void> getMe([bool refreshUi = true]) async {
+    try {
+      final url = '$_companiesUrl/users/me';
+      if (!isLoggedIn()) return;
+      getMeLoading.value = true;
+      //
+      final calRes = await _requestManager.sendGetRequest(url,
+          headers: headers, returnBodyOnError: true);
+
+      logInfo(calRes);
+      final BaseResponse res =
+          BaseResponse.fromMap(calRes as Map<String, dynamic>);
+
+      if (!res.isSuccess) {
+        HlkDialog.showErrorSnackBar(res.message ?? 'Failed to connect');
+        return;
+      }
+
+      UserData userData = UserData.fromMap(res.data);
+      var statusChanged = currentUser.isRider &&
+          currentUser.idCardStatus != userData.user.idCardStatus;
+
+      await storage.write(Constants.USER_DATA, res.data);
+      await storage.save();
+
+      if (refreshUi) {
+        var mes =
+            'Your Id card verification status is: ${userData.user.idCardStatus.toUpperCase()}';
+        showSuccessMessage(mes);
+        if (statusChanged) {
+          Timer(Duration(seconds: 2), () => goToMainPage());
+          // () => Get.offAll(() => IdentificationPage()));
+          // goToMainPage();
+        }
+      }
+    } catch (e) {
+      handleException(e, null, true);
+      logInfo('main.getMe => $e');
+    } finally {
+      getMeLoading.value = false;
     }
   }
 

@@ -9,7 +9,7 @@ class DBManager {
   static const String EXPENSES_TABLE_NAME = 'Expenses';
   static const String SALES_TABLE_NAME = 'Sales';
   static const String GUARANTORS_TABLE_NAME = 'Guarantors';
-  static const String RIDERS_TABLE_NAME = 'Riders';
+  // static const String RIDERS_TABLE_NAME = 'Riders';
   static const String PROPERTIES_TABLE_NAME = 'Properties';
   static const String ACCOUNT_OVERVIEW_TABLE_NAME = 'AccountOverviews';
   //
@@ -71,11 +71,12 @@ class DBManager {
       'CREATE TABLE IF NOT EXISTS $GUARANTORS_TABLE_NAME ($COLUMN_ID INTEGER PRIMARY KEY, '
       '$COLUMN_FULL_NAME TEXT, $COLUMN_PHONE_NUMBER TEXT, '
       '$COLUMN_PHOTO_URL TEXT, $COLUMN_RIDER_ID INTEGER, $COLUMN_PROPERTY_ID INTEGER)';
-  //
-  static final String _sql_create_riders_table =
-      'CREATE TABLE IF NOT EXISTS $RIDERS_TABLE_NAME ($COLUMN_ID INTEGER PRIMARY KEY, '
-      '$COLUMN_FULL_NAME TEXT, $COLUMN_PHONE_NUMBER TEXT, $COLUMN_PHOTO_URL TEXT)';
-  //
+
+  ///
+  // static final String _sql_create_riders_table =
+  //     'CREATE TABLE IF NOT EXISTS $RIDERS_TABLE_NAME ($COLUMN_ID INTEGER PRIMARY KEY, '
+  //     '$COLUMN_FULL_NAME TEXT, $COLUMN_PHONE_NUMBER TEXT, $COLUMN_PHOTO_URL TEXT)';
+  ///
   static final String _sql_create_properties_table =
       'CREATE TABLE IF NOT EXISTS $PROPERTIES_TABLE_NAME ($COLUMN_ID INTEGER PRIMARY KEY, '
       '$COLUMN_USER_ID INTEGER, $COLUMN_PLATE_NUMBER TEXT, '
@@ -101,7 +102,7 @@ class DBManager {
         _sql_create_properties_table,
         _sql_create_sales_table,
         _sql_create_expenses_table,
-        _sql_create_riders_table,
+        // _sql_create_riders_table,
         _sql_create_guarantors_table,
         _sql_create_account_overview_table,
       ];
@@ -121,7 +122,7 @@ class DBManager {
       await dbHelper.deleteAllFromTable(EXPENSES_TABLE_NAME);
       await dbHelper.deleteAllFromTable(SALES_TABLE_NAME);
       await dbHelper.deleteAllFromTable(GUARANTORS_TABLE_NAME);
-      await dbHelper.deleteAllFromTable(RIDERS_TABLE_NAME);
+      // await dbHelper.deleteAllFromTable(RIDERS_TABLE_NAME);
       await dbHelper.deleteAllFromTable(PROPERTIES_TABLE_NAME);
       await dbHelper.deleteAllFromTable(ACCOUNT_OVERVIEW_TABLE_NAME);
       //

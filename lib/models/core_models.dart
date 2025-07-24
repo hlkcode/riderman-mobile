@@ -10,6 +10,8 @@ enum ContractType { WorkAndPay, Continuous }
 
 enum PropertyStatus { CONNECTING, VERIFYING, READY, ONGOING, PAUSED, COMPLETED }
 
+enum VerificationStatus { Unset, Pending, Verified, Rejected, Expired }
+
 class Property {
   int userId;
   String plateNumber;
@@ -104,6 +106,8 @@ class Rider {
   String phoneNumber;
   String fullName;
   String photoUrl;
+  String verificationStatus;
+  DateTime expiryDate;
   List<Guarantor> guarantors;
   int id;
 
@@ -111,6 +115,8 @@ class Rider {
     required this.phoneNumber,
     required this.fullName,
     required this.photoUrl,
+    required this.verificationStatus,
+    required this.expiryDate,
     this.guarantors = const [],
     required this.id,
   });
@@ -126,6 +132,8 @@ class Rider {
         guarantors: List<Guarantor>.from(
             json["guarantors"].map((x) => Guarantor.fromMap(x))),
         id: json["id"],
+        verificationStatus: json["verificationStatus"],
+        expiryDate: DateTime.parse(json["expiryDate"]),
       );
 
   Map<String, dynamic> toMap() => {
@@ -134,6 +142,8 @@ class Rider {
         "photoUrl": photoUrl,
         "guarantors": List<dynamic>.from(guarantors.map((x) => x.toMap())),
         "id": id,
+        "verificationStatus": verificationStatus,
+        "expiryDate": expiryDate.toIso8601String(),
       };
 }
 
@@ -406,7 +416,10 @@ class User {
   String phoneNumber;
   String? email;
   DateTime since;
+  DateTime expiry;
   String profile;
+  String photoUrl;
+  String idCardStatus;
   int plannedSales;
   int hoursToUnpaid;
 
@@ -422,8 +435,11 @@ class User {
     this.email,
     required this.since,
     required this.profile,
+    this.photoUrl = '',
+    this.idCardStatus = '',
     required this.plannedSales,
     required this.hoursToUnpaid,
+    required this.expiry,
   });
 
   factory User.fromJson(String str) => User.fromMap(json.decode(str));
@@ -444,6 +460,9 @@ class User {
         profile: json["profile"],
         plannedSales: json["plannedSales"],
         hoursToUnpaid: json["hoursToUnpaid"],
+        photoUrl: json["photoUrl"],
+        idCardStatus: json["idCardStatus"],
+        expiry: DateTime.parse(json["expiry"]),
       );
 
   Map<String, dynamic> toMap() => {
@@ -457,14 +476,26 @@ class User {
         "phoneNumber": phoneNumber,
         "email": email,
         "since": since.toIso8601String(),
+        "expiry": expiry.toIso8601String(),
         "profile": profile,
         "plannedSales": plannedSales,
         "hoursToUnpaid": hoursToUnpaid,
+        "photoUrl": photoUrl,
+        "idCardStatus": idCardStatus,
       };
 
   bool get isOwner => profile.containsIgnoreCase('owner');
 
   bool get isRider => profile.containsIgnoreCase('rider');
+
+  bool get isIdCardInvalid =>
+      idCardStatus.toLowerCase() !=
+          VerificationStatus.Verified.name.toLowerCase() ||
+      expiry.isBefore(DateTime.now());
+
+  bool get isIdCardPending =>
+      idCardStatus.toLowerCase() ==
+      VerificationStatus.Pending.name.toLowerCase();
 }
 
 class AccountOverview {

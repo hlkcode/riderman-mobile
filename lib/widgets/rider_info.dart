@@ -96,7 +96,7 @@ class ProfileDetail extends StatelessWidget {
         LabeledTextField(
           readOnly: true,
           title: 'Phone number',
-          inputType: TextInputType.numberWithOptions(decimal: true),
+          inputType: TextInputType.phone,
         ),
         // verticalSpace(0.02),
       ],

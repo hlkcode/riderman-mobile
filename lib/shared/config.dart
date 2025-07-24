@@ -73,8 +73,8 @@ List<GetPage<dynamic>> routes = <GetPage<dynamic>>[
     curve: Curves.easeInOut,
   ),
   // GetPage(
-  //   name: ResetPasswordPage.routeName,
-  //   page: () => ResetPasswordPage(),
+  //   name: IdentificationPage.routeName,
+  //   page: () => IdentificationPage(),
   //   transition: Transition.topLevel,
   //   transitionDuration: const Duration(milliseconds: 300),
   //   curve: Curves.easeInOut,
