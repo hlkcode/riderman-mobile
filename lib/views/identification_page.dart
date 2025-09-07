@@ -21,9 +21,32 @@ class IdentificationPage extends StatelessWidget {
 
   final MainController mainController = Get.find();
   final RxString photoUrl = ''.obs;
-
+  final List<TextEditingController> nameControllers = [];
+  final List<TextEditingController> phoneControllers = [];
+  final List<RxString> urls = [];
+  final RxList<Widget> cards = <Widget>[].obs;
+  final List<Map<String, String>> guarantors = [];
   @override
   Widget build(BuildContext context) {
+    if (property != null) {
+      for (int i = 0; i < 2; i++) {
+        // for (int i = 0; i < property!.guarantorsNeeded; i++) {
+        nameControllers.add(TextEditingController());
+        phoneControllers.add(TextEditingController());
+        urls.add(''.obs);
+        var card = GuarantorInputCard(
+          title: 'Guarantor ${i + 1}',
+          nameCtrl: nameControllers[i],
+          phoneNumberCtrl: phoneControllers[i],
+          photoUrl: urls[i],
+          onDelete: () {
+            // clear picture
+          },
+        );
+        cards.add(card);
+        cards.add(verticalSpace(0.05));
+      }
+    }
     return Scaffold(
       appBar: AppBar(
         // leading: IconButton(
@@ -177,32 +200,87 @@ class IdentificationPage extends StatelessWidget {
                   ],
                 ).paddingSymmetric(horizontal: 16)
               : SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      SelectableCard(
-                        showSelection: false,
-                        isSelected: false,
-                        cardTitle: 'Verify Information',
-                        rows: {
-                          'Plate number': property?.plateNumber ?? '-',
-                          'Asset type': property?.propertyType ?? '-',
-                          'Type of Contract': property?.contractType ?? '-',
-                          'Frequency': property?.paymentFrequency ?? '-',
-                          'N. of Sales Expected':
-                              property?.expectedSalesCount.toString() ?? '-',
-                          'Sale Amount':
-                              property?.amountAgreed.toMoney('GHS') ?? '-',
-                          'Deposit': property?.deposit.toMoney('GHS') ?? '-',
-                          'Total Expected':
-                              property?.totalExpected.toMoney('GHS') ?? '-',
-                          'Start Date': property?.startDate.toLongDate() ?? '-',
-                        },
-                      ),
-                      verticalSpace(0.02),
-                      ...List.generate(property?.guarantorsNeeded ?? 0,
-                          (int index) => Placeholder()),
-                    ],
-                  ).paddingSymmetric(horizontal: 16),
+                  child: Obx(
+                    () => Column(
+                      children: [
+                        SelectableCard(
+                          showSelection: false,
+                          isSelected: false,
+                          cardTitle: 'Verify Information',
+                          rows: {
+                            'Plate number': property?.plateNumber ?? '-',
+                            'Asset type': property?.propertyType ?? '-',
+                            'Type of Contract': property?.contractType ?? '-',
+                            'Frequency': property?.paymentFrequency ?? '-',
+                            'N. of Sales Expected':
+                                property?.expectedSalesCount.toString() ?? '-',
+                            'Sale Amount':
+                                property?.amountAgreed.toMoney('GHS') ?? '-',
+                            'Initial Deposit':
+                                property?.deposit.toMoney('GHS') ?? '-',
+                            'Total Expected':
+                                property?.totalExpected.toMoney('GHS') ?? '-',
+                            'Start Date':
+                                property?.startDate.toLongDate() ?? '-',
+                          },
+                        ),
+                        verticalSpace(0.02),
+                        ...cards,
+                        verticalSpace(0.02),
+                        Obx(
+                          () => LoadingButton(
+                            text: 'SUBMIT',
+                            isLoading: mainController.setIdCardLoading.value,
+                            buttonColor: kPurpleColor,
+                            style: kWhiteTextStyle,
+                            buttonRadius: 12,
+                            // btnMargin: EdgeInsets.zero,
+                            onTapped: () async {
+                              //prepare data
+                              for (int i = 0; i < 2; i++) {
+                                // for (int i = 0; i < property!.guarantorsNeeded; i++) {
+                                var name = nameControllers[i].text;
+                                var phone = phoneControllers[i].text;
+                                var url = urls[i].value;
+
+                                if (name.isEmpty) {
+                                  HlkDialog.showErrorSnackBar(
+                                      'Invalid name for Guarantor ${i + 1}');
+                                  break;
+                                }
+                                var er = phoneNumberValidator(phone);
+                                if (er != null) {
+                                  HlkDialog.showErrorSnackBar(
+                                      'Invalid phone number for Guarantor ${i + 1}');
+                                  break;
+                                }
+                                if (url.isEmpty) {
+                                  HlkDialog.showErrorSnackBar(
+                                      'Invalid photo for Guarantor ${i + 1}');
+                                  break;
+                                }
+
+                                var guarantor = {
+                                  'fullName': name,
+                                  'phoneNumber': phone,
+                                  'photo': url,
+                                };
+                                guarantors.add(guarantor);
+                              }
+                              if (guarantors.length != 2) return;
+                              // if(guarantors.length != property!.guarantorsNeeded) return;
+                              //
+                              logInfo(guarantors);
+                              var propId = getNumber(property?.id) as int;
+
+                              await mainController.connect(propId, guarantors);
+                            },
+                          ),
+                        ),
+                        verticalSpace(0.02)
+                      ],
+                    ).paddingSymmetric(horizontal: 16),
+                  ),
                 ),
     );
   }
@@ -210,6 +288,7 @@ class IdentificationPage extends StatelessWidget {
 
 class GuarantorInputCard extends StatelessWidget {
   final String title;
+  final bool isReadOnly;
   final TextEditingController nameCtrl;
   final TextEditingController phoneNumberCtrl;
   final RxString photoUrl;
@@ -222,6 +301,7 @@ class GuarantorInputCard extends StatelessWidget {
     required this.phoneNumberCtrl,
     required this.photoUrl,
     this.onDelete,
+    this.isReadOnly = false,
   });
 
   final _formKey = GlobalKey<FormState>();
@@ -234,13 +314,14 @@ class GuarantorInputCard extends StatelessWidget {
         // spacing: getHeight(0.02),
         mainAxisSize: MainAxisSize.min,
         children: [
-          ListTile(
-              title: Text(title, style: kPurpleTextStyle),
-              trailing: IconButton(
-                color: kPurpleColor,
-                onPressed: onDelete,
-                icon: Icon(Icons.cancel_outlined),
-              )),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Text(title, style: kPurpleTextStyle),
+            IconButton(
+              color: kPurpleColor,
+              onPressed: onDelete,
+              icon: Icon(Icons.cancel_outlined),
+            )
+          ]),
 
           Obx(
             () => photoUrl.isEmpty
@@ -252,49 +333,78 @@ class GuarantorInputCard extends StatelessWidget {
                       color: Colors.green,
                       padding: EdgeInsets.all(16),
                     ),
-                    child: Container(
-                      width: double.infinity,
-                      height: 150,
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade50.withOpacity(.3),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.add_a_photo_outlined,
-                            color: Colors.grey,
-                            size: 40,
-                          ),
-                          verticalSpace(0.01),
-                          Text(
-                            'Click here to add a photo',
-                            style: TextStyle(
-                                fontSize: 15, color: Colors.grey.shade400),
-                          ),
-                        ],
+                    child: InkWell(
+                      onTap: () {
+                        HlkDialog.showHorizontalDialog(
+                          title: 'Select source',
+                          qMessage: '\nSelect an option to add photo\n',
+                          yesLabel: 'Open camera',
+                          positiveAction: () async {
+                            var img =
+                                await MediaManager.openCameraToTakePicture(
+                              maxHeight: 250,
+                              maxWidth: getDisplayWidth(),
+                              imageQuality: 100,
+                            );
+                            if (img != null) photoUrl.value = img.path;
+                            Get.back();
+                          },
+                          noLabel: 'Open gallery',
+                          negativeAction: () async {
+                            var img = await MediaManager.selectImageFromGallery(
+                              maxHeight: 250,
+                              maxWidth: getDisplayWidth(),
+                              imageQuality: 100,
+                            );
+                            if (img != null) photoUrl.value = img.path;
+                            Get.back();
+                          },
+                        );
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        height: 150,
+                        decoration: BoxDecoration(
+                          color: Colors.blue.shade50.withOpacity(.3),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.add_a_photo_outlined,
+                              color: Colors.grey,
+                              size: 40,
+                            ),
+                            verticalSpace(0.01),
+                            Text(
+                              'Click here to add a photo',
+                              style: TextStyle(
+                                  fontSize: 15, color: Colors.grey.shade400),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   )
-                : Image.asset(
-                    photoUrl.value,
+                : Image.file(
+                    File(photoUrl.value),
                     width: getDisplayWidth(),
                     height: 150,
                     fit: BoxFit.contain,
                   ),
           ),
-
+          verticalSpace(0.02),
           LabeledTextField(
             title: 'Name',
             inputType: TextInputType.text,
-            readOnly: true,
+            readOnly: isReadOnly,
             controller: nameCtrl,
             validator: requiredValidator,
           ),
-          // verticalSpace(0.02),
+          verticalSpace(0.02),
           LabeledTextField(
-            readOnly: true,
+            readOnly: isReadOnly,
             title: 'Phone number',
             inputType: TextInputType.phone,
             controller: phoneNumberCtrl,

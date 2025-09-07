@@ -138,7 +138,7 @@ class DBManager {
       logInfo('_insertCompany => $map');
       return await dbHelper.insert(COMPANIES_TABLE_NAME, map) > 0;
     } catch (ex) {
-      logInfo('_insertCompany error => $ex');
+      logInfo('_insertCompany db.error => $ex');
     }
     return false;
   }
@@ -156,7 +156,7 @@ class DBManager {
               map: map) >
           0;
     } catch (ex) {
-      logInfo('_updateCompany error => $ex');
+      logInfo('_updateCompany db.error => $ex');
     }
     return false;
   }
@@ -167,7 +167,7 @@ class DBManager {
       if (isGood) return true;
       return await _updateCompany(company.id, company);
     } catch (ex) {
-      logInfo('upsertCompany error => $ex');
+      logInfo('upsertCompany db.error => $ex');
     }
     return false;
   }
@@ -187,7 +187,7 @@ class DBManager {
       // logInfo('getAllCompanies3 => $res');
       return res;
     } catch (ex) {
-      logInfo('getAllCompanies error => $ex');
+      logInfo('getAllCompanies db.error => $ex');
       logInfo(ex);
     }
     return List.empty();
@@ -224,7 +224,7 @@ class DBManager {
       logInfo('_insertSale => $map');
       return await dbHelper.insert(SALES_TABLE_NAME, map) > 0;
     } catch (ex) {
-      logInfo('_insertSale error => $ex');
+      logInfo('_insertSale db.error => $ex');
     }
     return false;
   }
@@ -240,7 +240,7 @@ class DBManager {
               map: map) >
           0;
     } catch (ex) {
-      logInfo('_updateSale error => $ex');
+      logInfo('_updateSale db.error => $ex');
     }
     return false;
   }
@@ -251,7 +251,7 @@ class DBManager {
       if (isGood) return true;
       return await _updateSale(input.id, input);
     } catch (ex) {
-      logInfo('upsertSale error => $ex');
+      logInfo('upsertSale db.error => $ex');
     }
     return false;
   }
@@ -262,7 +262,7 @@ class DBManager {
       List<Sale> res = tempList.map((m) => Sale.fromMap(m)).toList();
       return res;
     } catch (ex) {
-      logInfo('getAllSales error => $ex');
+      logInfo('getAllSales db.error => $ex');
       logInfo(ex);
     }
     return List.empty();
@@ -279,7 +279,7 @@ class DBManager {
       // logInfo('_insertAccountOverview => $map');
       return await dbHelper.insert(ACCOUNT_OVERVIEW_TABLE_NAME, map) > 0;
     } catch (ex) {
-      logInfo('_insertAccountOverview error => $ex');
+      logInfo('_insertAccountOverview db.error => $ex');
     }
     return false;
   }
@@ -300,7 +300,7 @@ class DBManager {
               map: map) >
           0;
     } catch (ex) {
-      logInfo('_updateAccountOverview error => $ex');
+      logInfo('_updateAccountOverview db.error => $ex');
     }
     return false;
   }
@@ -311,7 +311,7 @@ class DBManager {
       if (isGood) return true;
       return await _updateAccountOverview(input.id, input);
     } catch (ex) {
-      logInfo('upsertAccountOverview error => $ex');
+      logInfo('upsertAccountOverview db.error => $ex');
     }
     return false;
   }
@@ -326,7 +326,7 @@ class DBManager {
 
       return AccountOverview.fromJson(getString(tempData?[COLUMN_RAW_DATA]));
     } catch (ex) {
-      logInfo('getAccountOverview error => $ex');
+      logInfo('getAccountOverview db.error => $ex');
       logInfo(ex);
     }
     return defaultAccountOverview;
@@ -340,7 +340,7 @@ class DBManager {
       // logInfo('_insertProperty => $map');
       return await dbHelper.insert(PROPERTIES_TABLE_NAME, map) > 0;
     } catch (ex) {
-      logInfo('_insertProperty error => $ex');
+      logInfo('_insertProperty db.error => $ex');
     }
     return false;
   }
@@ -357,7 +357,7 @@ class DBManager {
               map: map) >
           0;
     } catch (ex) {
-      logInfo('_updateProperty error => $ex');
+      logInfo('_updateProperty db.error => $ex');
     }
     return false;
   }
@@ -368,7 +368,7 @@ class DBManager {
       if (isGood) return true;
       return await _updateProperty(input.id, input);
     } catch (ex) {
-      logInfo('upsertProperty error => $ex');
+      logInfo('upsertProperty db.error => $ex');
     }
     return false;
   }
@@ -381,14 +381,14 @@ class DBManager {
         var map = Map<String, dynamic>.from(m);
         var rider = map[COLUMN_RIDER];
         if (rider != null) {
-          map[COLUMN_RIDER] = Rider.fromJson(rider);
+          map[COLUMN_RIDER] = Rider.fromJson(rider).toMap();
         }
         // logInfo('getAllProperties => $map');
         res.add(Property.fromMap(map));
       }
       return res;
     } catch (ex) {
-      logInfo('getAllProperties error => $ex');
+      logInfo('getAllProperties db.error => $ex');
       logInfo(ex);
     }
     return List.empty();

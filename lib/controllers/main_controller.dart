@@ -328,6 +328,7 @@ class MainController extends GetxController {
     await getCompanies(loadData: true, refresh: true);
     await getAccountOverviewData(loadData: true, refresh: true);
     await getProperties(loadData: true, refresh: true);
+    await getSales(loadData: true, refresh: true);
   }
 
   ///
@@ -372,7 +373,7 @@ class MainController extends GetxController {
     try {
       if (loadData == false && refresh == false) return;
       loading.value = true;
-      final url = '$_reportsUrl/dashboard/formobile';
+      final url = '$_companiesUrl/sales/formobile';
       if (isLoggedIn() && refresh) {
         final calRes = await _requestManager.sendGetRequest(url,
             headers: headers, returnBodyOnError: true);
@@ -491,12 +492,12 @@ class MainController extends GetxController {
     try {
       final url = '$_propertiesUrl/connect';
       if (!isLoggedIn()) return;
-      loading.value = true;
+      setIdCardLoading.value = true;
       var gList = guarantors
           .map((g) => {
                 "fullName": g['fullName'],
                 "phoneNumber": g['phoneNumber'],
-                "photo": File(g['photoPath']),
+                "photo": File(g['photo']),
               })
           .toList();
       //
@@ -512,12 +513,14 @@ class MainController extends GetxController {
         HlkDialog.showErrorSnackBar(res.message ?? 'Failed to connect');
         return;
       }
+      Get.back();
+      showSuccessMessage(res.message ?? 'Request was successful');
       await getProperties(refresh: true);
     } catch (e) {
       handleException(e, null, true);
       logInfo('main.connect => $e');
     } finally {
-      loading.value = false;
+      setIdCardLoading.value = false;
     }
   }
 

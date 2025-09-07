@@ -36,7 +36,7 @@ class VerificationPage extends StatelessWidget {
     _timer2 = null;
   }
 
-  void initRapidConnectCounter() async {
+  void initVerificationCounter() async {
     var start = DateTime.now();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       var dur = DateTime.now().difference(start);
@@ -51,7 +51,7 @@ class VerificationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    initRapidConnectCounter();
+    initVerificationCounter();
     var code = '';
     final defaultPinTheme = PinTheme(
       width: 56,
@@ -129,7 +129,7 @@ class VerificationPage extends StatelessWidget {
               onPressed: canResend.value
                   ? () async {
                       await authController.getCode(phoneNumber);
-                      initRapidConnectCounter();
+                      initVerificationCounter();
                     }
                   : null,
               child: Text(

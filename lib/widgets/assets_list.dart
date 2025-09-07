@@ -9,7 +9,6 @@ import 'package:riderman/widgets/selectable_widgets.dart';
 import '../controllers/main_controller.dart';
 import '../shared/config.dart';
 import '../shared/constants.dart';
-import '../views/business_page.dart';
 import '../views/identification_page.dart';
 
 class AssetsList extends StatelessWidget {
@@ -58,8 +57,7 @@ class AssetsList extends StatelessWidget {
                         onTap: () {
                           if (currentUser.isRider == true &&
                               isPropPending(item)) {
-                            if (item.guarantorsNeeded == 0) {
-                              // if (item.guarantorsNeeded > 0) {
+                            if (item.guarantorsNeeded > 0) {
                               Get.to(() => IdentificationPage(property: item));
                             } else {
                               HlkDialog.showDialogBox(
@@ -92,7 +90,8 @@ class AssetsList extends StatelessWidget {
                             }
                             return;
                           }
-                          Get.to(() => BusinessPage(index: index));
+                          Get.to(() => IdentificationPage(property: item));
+                          // Get.to(() => BusinessPage(index: index));
                         },
                         child: Card(
                           elevation: 0.0,
@@ -136,16 +135,23 @@ class AssetsList extends StatelessWidget {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(
-                                          getBoolean(GetUtils.isNullOrBlank(
-                                                  item.rider?.fullName))
-                                              ? 'No rider linked yet'
-                                              : '${item.rider?.fullName} | ${item.rider?.phoneNumber}',
-                                          maxLines: 1,
+                                        Expanded(
+                                          flex: 5,
+                                          child: Text(
+                                            getBoolean(GetUtils.isNullOrBlank(
+                                                    item.rider?.fullName))
+                                                ? 'No rider linked yet'
+                                                : getString(
+                                                    item.rider?.fullName),
+                                            maxLines: 1,
+                                          ),
                                         ),
-                                        Text(
-                                          item.propertyStatus.capitalizeFirst!,
-                                          maxLines: 1,
+                                        Expanded(
+                                          child: Text(
+                                            item.propertyStatus
+                                                .capitalizeFirst!,
+                                            maxLines: 1,
+                                          ),
                                         ),
                                       ],
                                     ),
