@@ -100,7 +100,9 @@ class SelectableListPage extends StatelessWidget {
   final String submitText;
   final List<Map<String, String>> rowsList;
   final RxList dataList;
-  final Function()? onSubmit;
+  final RxBool loading;
+  // final Function()? onSubmit;
+  final Function(RxList<int> selectedIndexes)? onSelectedSubmit;
 
   SelectableListPage({
     super.key,
@@ -109,7 +111,9 @@ class SelectableListPage extends StatelessWidget {
     required this.rowsList,
     required this.dataList,
     required this.submitText,
-    this.onSubmit,
+    required this.loading,
+    // this.onSubmit,
+    this.onSelectedSubmit,
   });
 
   final RxList<int> _selectedIndexes = <int>[].obs;
@@ -162,18 +166,23 @@ class SelectableListPage extends StatelessWidget {
                       ),
                       SizedBox(
                         width: 110,
-                        child: LoadingButton(
-                          // btnMargin: EdgeInsets.zero,
-                          // buttonHeight: getHeight(0.04),
-                          buttonHeight: 36,
-                          text: submitText,
-                          // isOutlined: true,
-                          style: kWhiteTextStyle,
-                          isLoading: false,
-                          buttonColor: kPurpleColor,
-                          buttonRadius: 12,
-                          onTapped: onSubmit,
-                        ),
+                        child: Obx(() => LoadingButton(
+                              // btnMargin: EdgeInsets.zero,
+                              // buttonHeight: getHeight(0.04),
+                              buttonHeight: 36,
+                              text: submitText,
+                              // isOutlined: true,
+                              style: kWhiteTextStyle,
+                              isLoading: loading.value,
+                              buttonColor: kPurpleColor,
+                              buttonRadius: 12,
+                              onTapped: () {
+                                // if (onSubmit != null) onSubmit!();
+                                if (onSelectedSubmit != null) {
+                                  onSelectedSubmit!(_selectedIndexes);
+                                }
+                              },
+                            )),
                       ),
                     ],
                   ),

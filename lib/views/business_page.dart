@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:riderman/shared/constants.dart';
 
 import '../controllers/main_controller.dart';
-import '../models/core_models.dart';
 import '../widgets/business_overview.dart';
 import '../widgets/expenses_list.dart';
 import '../widgets/rider_info.dart';
@@ -17,66 +16,81 @@ class BusinessPage extends StatelessWidget {
 
   final tabsTitles = ['Overview', 'Sales', 'Expenses', 'Profiles'];
 
+  RxBool showRefresh = false.obs;
+
   @override
   Widget build(BuildContext context) {
     var property = mainController.properties[index];
+
     return DefaultTabController(
       length: tabsTitles.length,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            property.plateNumber,
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          centerTitle: true,
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(48),
-            child: Container(
-              height: 48,
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24),
-                color: kPurpleLightColor,
+      child: Obx(
+        () => Scaffold(
+          appBar: AppBar(
+            title: Text(
+              property.plateNumber,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            centerTitle: true,
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(48),
+              child: Container(
+                height: 48,
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  color: kPurpleLightColor,
+                ),
+                child: TabBar(
+                    onTap: (index) {
+                      showRefresh.value = index == 1;
+                    },
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    dividerColor: Colors.transparent,
+                    indicator: BoxDecoration(
+                      color: kPurpleColor,
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    labelColor: kPurpleLightColor,
+                    unselectedLabelColor: kPurpleColor,
+                    tabs: tabsTitles.map((it) => Tab(text: it)).toList()
+                    // const [
+                    //   Tab(text: 'Overview'),
+                    //   Tab(text: 'Rider\'s Info'),
+                    //   Tab(text: 'Transactions'),
+                    //   Tab(text: 'Expenses'),
+                    // ],
+                    ),
               ),
-              child: TabBar(
-                  // isScrollable: tabsTitles.length > 3,
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  dividerColor: Colors.transparent,
-                  indicator: BoxDecoration(
-                    color: kPurpleColor,
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  labelColor: kPurpleLightColor,
-                  unselectedLabelColor: kPurpleColor,
-                  tabs: tabsTitles.map((it) => Tab(text: it)).toList()
-                  // const [
-                  //   Tab(text: 'Overview'),
-                  //   Tab(text: 'Rider\'s Info'),
-                  //   Tab(text: 'Transactions'),
-                  //   Tab(text: 'Expenses'),
-                  // ],
-                  ),
             ),
+            actions: [
+              if (showRefresh.value)
+                Obx(
+                  () => IconButton(
+                    onPressed: () async {
+                      await mainController.getSales(refresh: true);
+                    },
+                    icon: mainController.loading.value
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(),
+                          )
+                        : const Icon(Icons.refresh),
+                  ),
+                )
+            ],
           ),
-        ),
-        body: TabBarView(
-          children: [
-            Obx(() =>
-                BusinessOverview(data: mainController.assetOverview.value)),
-            SalesList(),
-            ExpensesList(),
-            RiderInfo(
-              rider: Rider(
-                  phoneNumber: '2332653365489',
-                  fullName: 'Halik Osei',
-                  id: 1,
-                  expiryDate: DateTime.now(),
-                  verificationStatus: '',
-                  photoUrl: 'https://pixy.org/src/31/315160.png'),
-            ),
-            // RiderInfo(rider: property.rider),
-            // RiderInfo(),
-          ],
+          body: TabBarView(
+            children: [
+              Obx(() =>
+                  BusinessOverview(data: mainController.assetOverview.value)),
+              SalesList(rider: property.rider),
+              ExpensesList(),
+              RiderInfo(rider: property.rider),
+              // RiderInfo(),
+            ],
+          ),
         ),
       ),
     );

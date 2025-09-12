@@ -28,7 +28,9 @@ class ExpensesList extends StatelessWidget {
       dataList: mainController.expenses,
       rowsList: rowsMap,
       submitText: 'Delete',
-      onSubmit: () {},
+      loading: mainController.deletingExpenses,
+      onSelectedSubmit: (selectedIndexes) async {},
+      // onSubmit: () {},
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
@@ -17,12 +18,15 @@ class MainController extends GetxController {
   RxBool loading = false.obs,
       propertiesLoading = false.obs,
       getMeLoading = false.obs,
+      paymentLoading = false.obs,
+      deletingExpenses = false.obs,
       setIdCardLoading = false.obs;
   final RequestManager _requestManager = RequestManager();
 
   String get _companiesUrl => makeApiUrl('companies');
   String get _reportsUrl => makeApiUrl('reports');
   String get _propertiesUrl => makeApiUrl('properties');
+  String get _paymentsUrl => makeApiUrl('payments');
 
   Rx<AssetOverview> assetOverview = AssetOverview(
     paid: 1200,
@@ -383,19 +387,19 @@ class MainController extends GetxController {
             BaseResponse.fromMap(calRes as Map<String, dynamic>);
 
         if (!res.isSuccess) {
-          HlkDialog.showErrorSnackBar(res.message ?? 'Failed to get companies');
+          HlkDialog.showErrorSnackBar(res.message ?? 'Failed to get sales');
           return;
         }
-        var list = Company.parseToGetList(res.data);
+        var list = Sale.parseToGetList(res.data);
         for (var comp in list) {
-          var insRes = await DBManager.upsertCompany(comp);
+          var insRes = await DBManager.upsertSale(comp);
           // logInfo('insRes = $insRes');
         }
       }
 
       if (loadData) {
-        companies.value = await DBManager.getAllCompanies();
-        logInfo('companies = ${companies.length}');
+        sales.value = await DBManager.getAllSales();
+        logInfo('sales = ${sales.length}');
       }
     } catch (e) {
       handleException(e, null, refresh);
@@ -595,6 +599,39 @@ class MainController extends GetxController {
       logInfo('main.getMe => $e');
     } finally {
       getMeLoading.value = false;
+    }
+  }
+
+  Future<void> initiatePayment(
+      String accountToCharge, List<int> salesIds) async {
+    try {
+      final url = '$_paymentsUrl/initiate';
+      if (!isLoggedIn()) return;
+      paymentLoading.value = true;
+
+      //
+      final calRes = await _requestManager.sendPostRequest(url,
+          jsonEncode({"accountToCharge": accountToCharge, "saleIds": salesIds}),
+          headers: headers, returnBodyOnError: true);
+
+      logInfo(calRes);
+      final BaseResponse res =
+          BaseResponse.fromMap(calRes as Map<String, dynamic>);
+
+      if (!res.isSuccess) {
+        HlkDialog.showErrorSnackBar(
+            res.message ?? 'Failed to initiate payment');
+        return;
+      }
+      // Get.back();
+      showSuccessMessage(
+          'Request was successful, you can refresh the page after payment is made');
+      // await getProperties(refresh: true);
+    } catch (e) {
+      handleException(e, null, true);
+      logInfo('main.initiatePayment => $e');
+    } finally {
+      paymentLoading.value = false;
     }
   }
 

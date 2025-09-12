@@ -9,6 +9,7 @@ import 'package:riderman/widgets/selectable_widgets.dart';
 import '../controllers/main_controller.dart';
 import '../shared/config.dart';
 import '../shared/constants.dart';
+import '../views/business_page.dart';
 import '../views/identification_page.dart';
 
 class AssetsList extends StatelessWidget {
@@ -90,8 +91,8 @@ class AssetsList extends StatelessWidget {
                             }
                             return;
                           }
-                          Get.to(() => IdentificationPage(property: item));
-                          // Get.to(() => BusinessPage(index: index));
+                          // Get.to(() => IdentificationPage(property: item));
+                          Get.to(() => BusinessPage(index: index));
                         },
                         child: Card(
                           elevation: 0.0,

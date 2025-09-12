@@ -189,7 +189,7 @@ class Guarantor {
 
 class Sale {
   String description;
-  int amount;
+  num amount;
   DateTime dueDate;
   int riderId;
   int propertyId;
@@ -259,6 +259,9 @@ class Sale {
   Sale fromJson(String str) => Sale.fromMap(json.decode(str));
 
   String toJson(Sale data) => json.encode(data.toMap());
+
+  static List<Sale> parseToGetList(dynamic responseBody) =>
+      responseBody.map<Sale>((json) => Sale.fromMap(json)).toList();
 }
 
 class Company {
@@ -337,7 +340,7 @@ class AssetOverview {
 
 class Expense {
   String description;
-  double amount;
+  num amount;
   DateTime date;
   int propertyId;
   DateTime createdAt;

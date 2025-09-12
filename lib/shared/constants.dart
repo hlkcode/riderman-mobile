@@ -15,7 +15,7 @@ final purpleBorder = OutlineInputBorder(
 class AppConstants {
   static const String APP_NAME = 'RiderMan'; // TODO SET VALUE
   static const String APP_PACKAGE = 'com.zerolafrica.riderman';
-  static const String BASE_API = 'https://916867c91f01.ngrok-free.app/api/v1/';
+  static const String BASE_API = 'https://bffd0c4fddc4.ngrok-free.app/api/v1/';
   //static const String BASE_API = 'https://test.riderman.zerolafrica.com/api/v1/';
   //static const String BASE_API = 'https://riderman.zerolafrica.com/api/v1';
 

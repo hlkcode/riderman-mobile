@@ -15,6 +15,7 @@ class RiderInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    logInfo('RiderInfo => ${rider?.toMap()}');
     return rider != null
         ? Container(
             color: kPurpleLightColor.withOpacity(.2),
@@ -91,12 +92,14 @@ class ProfileDetail extends StatelessWidget {
           title: 'Name',
           inputType: TextInputType.text,
           readOnly: true,
+          controller: TextEditingController(text: name),
         ),
         // verticalSpace(0.02),
         LabeledTextField(
           readOnly: true,
           title: 'Phone number',
           inputType: TextInputType.phone,
+          controller: TextEditingController(text: phoneNumber),
         ),
         // verticalSpace(0.02),
       ],

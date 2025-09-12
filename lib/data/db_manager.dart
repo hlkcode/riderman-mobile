@@ -259,7 +259,8 @@ class DBManager {
   static Future<List<Sale>> getAllSales() async {
     try {
       var tempList = await dbHelper.getAllDataFromTable(SALES_TABLE_NAME);
-      List<Sale> res = tempList.map((m) => Sale.fromMap(m)).toList();
+      // List<Sale> res = tempList.map((m) => Sale.fromMap(m)).toList();
+      List<Sale> res = Sale.parseToGetList(tempList);
       return res;
     } catch (ex) {
       logInfo('getAllSales db.error => $ex');

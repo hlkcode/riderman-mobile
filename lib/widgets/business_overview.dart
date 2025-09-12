@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tools/utilities/utils.dart';
-import 'package:get/get_utils/get_utils.dart';
+import 'package:get/get.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 import '../models/core_models.dart';
