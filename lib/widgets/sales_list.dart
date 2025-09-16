@@ -1,7 +1,5 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tools/utilities/extension_methods.dart';
-import 'package:flutter_tools/utilities/utils.dart';
 import 'package:get/get.dart';
 import 'package:riderman/widgets/selectable_widgets.dart';
 
@@ -10,13 +8,20 @@ import '../models/core_models.dart';
 
 class SalesList extends StatelessWidget {
   final Rider? rider;
-  SalesList({super.key, this.rider});
+  final List<Sale> sales;
+  final Function(RxList<int> selectedIndexes) onSubmit;
+  SalesList({
+    super.key,
+    this.rider,
+    required this.sales,
+    required this.onSubmit,
+  });
 
   final MainController mainController = Get.find();
 
   @override
   Widget build(BuildContext context) {
-    var rowsMap = mainController.sales
+    var rowsMap = sales
         .map((item) => {
               'Amount': item.amount.toMoney('GHS'),
               'Expected Date': item.dueDate.toLongDate(),
@@ -27,23 +32,24 @@ class SalesList extends StatelessWidget {
         .toList();
     //
     return SelectableListPage(
+      dataList: sales,
+      loading: mainController.paymentLoading,
       cardFor: 'Payment',
       cardActionText: 'Select to Pay',
-      dataList: mainController.sales,
       rowsList: rowsMap,
-      submitText: 'Pay Now',
-      loading: mainController.paymentLoading,
-      onSelectedSubmit: (selectedIndexes) async {
-        var selectedIds = mainController.sales
-            .whereIndexed((i, s) => selectedIndexes.contains(i))
-            .map((s) => s.id)
-            .toList();
-
-        logInfo('selectedIndexes SALES => $selectedIds');
-        var toCharge = getString(rider?.phoneNumber);
-        await mainController.initiatePayment(toCharge, selectedIds);
-        selectedIndexes.clear(); // to deselect the list when request is done
-      },
+      submitText: 'Pay',
+      onSelectedSubmit: onSubmit,
+      // onSelectedSubmit: (selectedIndexes) async {
+      //   var selectedIds = mainController.sales
+      //       .whereIndexed((i, s) => selectedIndexes.contains(i))
+      //       .map((s) => s.id)
+      //       .toList();
+      //
+      //   logInfo('selectedIndexes SALES => $selectedIds');
+      //   var toCharge = getString(rider?.phoneNumber);
+      //   await mainController.initiatePayment(toCharge, selectedIds);
+      //   selectedIndexes.clear(); // to deselect the list when request is done
+      // },
     );
   }
 }

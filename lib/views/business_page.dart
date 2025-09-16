@@ -1,4 +1,6 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tools/utilities/utils.dart';
 import 'package:get/get.dart';
 import 'package:riderman/shared/constants.dart';
 
@@ -10,8 +12,8 @@ import '../widgets/sales_list.dart';
 
 class BusinessPage extends StatelessWidget {
   static const routeName = '/BusinessPage';
-  final int index;
-  BusinessPage({super.key, required this.index});
+  final int assetIndex;
+  BusinessPage({super.key, required this.assetIndex});
   final MainController mainController = Get.find();
 
   final tabsTitles = ['Overview', 'Sales', 'Expenses', 'Profiles'];
@@ -20,7 +22,7 @@ class BusinessPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var property = mainController.properties[index];
+    var property = mainController.properties[assetIndex];
 
     return DefaultTabController(
       length: tabsTitles.length,
@@ -68,6 +70,7 @@ class BusinessPage extends StatelessWidget {
                 Obx(
                   () => IconButton(
                     onPressed: () async {
+                      mainController.sales.clear();
                       await mainController.getSales(refresh: true);
                     },
                     icon: mainController.loading.value
@@ -85,7 +88,23 @@ class BusinessPage extends StatelessWidget {
             children: [
               Obx(() =>
                   BusinessOverview(data: mainController.assetOverview.value)),
-              SalesList(rider: property.rider),
+              Obx(() => SalesList(
+                    rider: property.rider,
+                    sales: mainController.sales.value,
+                    onSubmit: (RxList<int> selectedIndexes) async {
+                      var selectedIds = mainController.sales
+                          .whereIndexed((i, s) => selectedIndexes.contains(i))
+                          .map((s) => s.id)
+                          .toList();
+
+                      logInfo('selectedIndexes SALES => $selectedIds');
+                      var toCharge = getString(property.rider?.phoneNumber);
+                      await mainController.initiatePayment(
+                          toCharge, selectedIds);
+                      selectedIndexes
+                          .clear(); // to deselect the list when request is done
+                    },
+                  )),
               ExpensesList(),
               RiderInfo(rider: property.rider),
               // RiderInfo(),

@@ -39,8 +39,20 @@ void goToMainPage() {
   }
 }
 
-void showSuccessMessage(String message) => HlkDialog.showSnackBar(
-    message: message, title: 'Success', color: kPurpleLightColor);
+void showSuccessMessage(String message) {
+  if (Get.isSnackbarOpen) return;
+  HlkDialog.showSnackBar(
+      message: message, title: 'Success', color: kPurpleLightColor);
+}
+
+void showInfoToast(String message) {
+  if (Get.isSnackbarOpen) return;
+  HlkDialog.showSnackBar(
+    title: 'Info',
+    message: message,
+    color: kPurpleLightColor.withOpacity(.5),
+  );
+}
 
 String? zPhoneNumberValidator(String? text) {
   if (!GetUtils.isPhoneNumber(getString(text))) return 'Invalid Phone Number';

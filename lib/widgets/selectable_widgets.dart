@@ -5,6 +5,7 @@ import 'package:flutter_tools/utilities/utils.dart';
 import 'package:get/get.dart';
 import 'package:riderman/shared/constants.dart';
 
+import '../shared/common.dart';
 import 'labeled_widgets.dart';
 
 class RowPair extends StatelessWidget {
@@ -99,7 +100,7 @@ class SelectableListPage extends StatelessWidget {
   final String cardActionText;
   final String submitText;
   final List<Map<String, String>> rowsList;
-  final RxList dataList;
+  final List dataList;
   final RxBool loading;
   // final Function()? onSubmit;
   final Function(RxList<int> selectedIndexes)? onSelectedSubmit;
@@ -123,18 +124,29 @@ class SelectableListPage extends StatelessWidget {
     var list = ListView.separated(
       itemCount: dataList.length,
       itemBuilder: (ctx, index) {
+        var rowData = rowsList[index];
+        var title = '$cardFor #${index + 1}';
+        var status = (rowData['Status'] ?? '').toLowerCase();
         return Obx(() => SelectableCard(
               actionText: cardActionText,
               showSelection: _selectedIndexes.isNotEmpty,
               isSelected: _selectedIndexes.contains(index),
-              cardTitle: '$cardFor #${index + 1}',
-              rows: rowsList[index],
+              cardTitle: title,
+              rows: rowData,
               onSelected: () {
+                if (status == 'paid') {
+                  showInfoToast('$title is already PAID');
+                  return;
+                }
                 if (!_selectedIndexes.contains(index)) {
                   _selectedIndexes.add(index);
                 }
               },
               onSelectionChanged: (selected) {
+                if (status == 'paid') {
+                  showInfoToast('$title is already PAID');
+                  return;
+                }
                 _selectedIndexes.addOrRemove(index);
               },
             ));
