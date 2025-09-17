@@ -22,6 +22,7 @@ class AssetsList extends StatelessWidget {
   Widget build(BuildContext context) {
     if (mainController.propertiesLoading.isFalse) {
       mainController.getProperties();
+      mainController.getSales();
     }
     return Container(
       color: kPurpleLightColor.withOpacity(.1),
@@ -54,6 +55,12 @@ class AssetsList extends StatelessWidget {
                     itemCount: mainController.properties.length,
                     itemBuilder: (ctx, index) {
                       var item = mainController.properties[index];
+                      var sales = mainController.sales
+                          .where((x) =>
+                              x.propertyId == item.id &&
+                              x.saleStatus.toLowerCase() == 'paid')
+                          .toList();
+                      var count = sales.length;
                       return InkWell(
                         onTap: () {
                           if (currentUser.isRider == true &&
@@ -126,7 +133,7 @@ class AssetsList extends StatelessWidget {
                                           style: kBlackTextStyle.copyWith(
                                               fontWeight: FontWeight.bold),
                                         ),
-                                        Text('+ 17',
+                                        Text(count == 0 ? '' : '+ $count',
                                             maxLines: 1,
                                             style: kPurpleTextStyle.copyWith(
                                                 fontWeight: FontWeight.bold)),

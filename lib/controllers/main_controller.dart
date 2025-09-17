@@ -467,7 +467,7 @@ class MainController extends GetxController {
 
   Future<void> getAccountOverviewData(
       {bool loadData = true, bool refresh = false}) async {
-    accountOverview.value = defaultAccountOverview;
+    // accountOverview.value = defaultAccountOverview;
     try {
       if (loadData == false && refresh == false) return;
 
@@ -493,7 +493,7 @@ class MainController extends GetxController {
       if (loadData && isCompanySet) {
         accountOverview.value =
             await DBManager.getAccountOverview(currentCompany.id);
-        // logInfo('accountOverview = ${accountOverview.value.toMap()}');
+        logInfo('accountOverview = ${accountOverview.value.toMap()}');
       }
     } catch (e) {
       handleException(e, null, refresh);
