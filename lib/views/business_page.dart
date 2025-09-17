@@ -71,7 +71,9 @@ class BusinessPage extends StatelessWidget {
                   () => IconButton(
                     onPressed: () async {
                       mainController.sales.clear();
-                      await mainController.getSales(refresh: true);
+                      await mainController.getPropertySales(property,
+                          refresh: true);
+                      // await mainController.getSales(refresh: true);
                     },
                     icon: mainController.loading.value
                         ? const SizedBox(

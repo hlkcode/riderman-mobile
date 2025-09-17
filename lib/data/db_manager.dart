@@ -269,6 +269,20 @@ class DBManager {
     return List.empty();
   }
 
+  static Future<List<Sale>> getPropertySales(int propertyId) async {
+    try {
+      var tempList = await dbHelper.database.query(SALES_TABLE_NAME,
+          where: '$COLUMN_PROPERTY_ID = ?', whereArgs: [propertyId]);
+      // List<Sale> res = tempList.map((m) => Sale.fromMap(m)).toList();
+      List<Sale> res = Sale.parseToGetList(tempList);
+      return res;
+    } catch (ex) {
+      logInfo('getPropertySales db.error => $ex');
+      logInfo(ex);
+    }
+    return List.empty();
+  }
+
   //
   static Future<bool> _insertAccountOverview(AccountOverview input) async {
     try {

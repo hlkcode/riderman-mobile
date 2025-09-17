@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:flutter_tools/common.dart';
 import 'package:flutter_tools/tools_models.dart';
@@ -302,16 +301,31 @@ class MainController extends GetxController {
     //     id: 6),
   ].obs;
 
-  void getAssetOverviewData() {
-    final rand = Random();
+  Future<void> getAssetOverviewData(Property prop) async {
+    if (sales.isEmpty) {
+      sales.value = await DBManager.getPropertySales(prop.id);
+    }
+    var amountPaid = sales
+        .where((s) => s.saleStatus.toLowerCase() == 'paid')
+        .map((s) => s.amount)
+        .fold(0.0, (p, c) => p + c)
+        .toPrecision(2);
+
+    // var total = prop.expectedSalesCount * prop.amountAgreed;
+    var total = prop.totalExpected.toDouble().toPrecision(2);
+
+    var left = (total - (prop.deposit + amountPaid)).toDouble().toPrecision(2);
+
+    var percent = ((amountPaid / total) * 100).toPrecision(2);
+
     assetOverview.value = AssetOverview(
-      paid: rand.nextDouble() * 9999,
-      amountAgreed: rand.nextDouble() * 5000,
-      deposit: rand.nextDouble() * 1000,
-      paidPercentage: rand.nextDouble() * 100,
-      propertyId: 1,
-      remaining: rand.nextDouble() * 999,
-      totalExpected: rand.nextDouble() * 99999,
+      paid: amountPaid,
+      amountAgreed: prop.amountAgreed.toDouble().toPrecision(2),
+      deposit: prop.deposit.toDouble().toPrecision(2),
+      paidPercentage: percent,
+      propertyId: prop.id,
+      remaining: left,
+      totalExpected: total,
     );
   }
 
@@ -401,9 +415,51 @@ class MainController extends GetxController {
         sales.value = await DBManager.getAllSales();
         logInfo('sales = ${sales.length}');
       }
+
+      // update asset dashboard
+      var amountPaid = sales
+          .where((s) => s.saleStatus.toLowerCase() == 'paid')
+          .map((s) => s.amount)
+          .fold(0.0, (p, c) => p + c);
     } catch (e) {
       handleException(e, null, refresh);
       logInfo('main.getSales => $e');
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  Future<void> getPropertySales(Property prop, {bool refresh = false}) async {
+    try {
+      loading.value = true;
+      final url = '$_propertiesUrl/${prop.id}/sales-updates';
+      if (isLoggedIn() && refresh) {
+        final calRes = await _requestManager.sendGetRequest(url,
+            headers: headers, returnBodyOnError: true);
+
+        logInfo(calRes);
+        final BaseResponse res =
+            BaseResponse.fromMap(calRes as Map<String, dynamic>);
+
+        if (!res.isSuccess) {
+          HlkDialog.showErrorSnackBar(res.message ?? 'Failed to get sales');
+          return;
+        }
+        var list = Sale.parseToGetList(res.data);
+        for (var comp in list) {
+          var insRes = await DBManager.upsertSale(comp);
+          // logInfo('insRes = $insRes');
+        }
+      }
+
+      sales.value = await DBManager.getPropertySales(prop.id);
+      logInfo('sales = ${sales.length}');
+
+      // update asset dashboard
+      getAssetOverviewData(prop);
+    } catch (e) {
+      handleException(e, null, refresh);
+      logInfo('main.getPropertySales => $e');
     } finally {
       loading.value = false;
     }

@@ -92,6 +92,7 @@ class AssetsList extends StatelessWidget {
                             return;
                           }
                           // Get.to(() => IdentificationPage(property: item));
+                          mainController.getPropertySales(item);
                           Get.to(() => BusinessPage(assetIndex: index));
                         },
                         child: Card(
