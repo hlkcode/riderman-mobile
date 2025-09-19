@@ -11,13 +11,16 @@ import 'new_asset_page.dart';
 class MainPage extends StatelessWidget {
   static const String routeName = '/MainPage';
 
-  const MainPage({super.key});
+  MainPage({super.key});
+
+  RxInt position = 0.obs;
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: SimpleBottomTabsPage.noDrawer(
         // appBar: AppBar(),
+        onPageChanged: (index) => position.value = index,
         floatingActionButton: FloatingActionButton(
           shape: CircleBorder(),
           backgroundColor: kPurpleColor,

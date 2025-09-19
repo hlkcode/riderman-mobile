@@ -8,6 +8,7 @@ import 'package:riderman/shared/config.dart';
 import 'package:riderman/shared/constants.dart';
 
 import '../controllers/main_controller.dart';
+import '../shared/common.dart';
 import 'main_page.dart';
 
 class CompaniesPage extends StatelessWidget {
@@ -41,9 +42,7 @@ class CompaniesPage extends StatelessWidget {
                       itemCount: mainController.companies.length,
                       itemBuilder: (ctx, index) {
                         var item = mainController.companies[index];
-                        var isIndividual =
-                            item.name.contains(currentUser.phoneNumber) ||
-                                item.email.contains(currentUser.phoneNumber);
+                        var isIndividual = isIndividualCompany(item);
                         return ListTile(
                           leading: RoundedText(
                             text: isIndividual ? 'PA' : item.name.toInitials(),
@@ -75,9 +74,10 @@ class CompaniesPage extends StatelessWidget {
                             // Action
                             await storage.write(
                                 AppConstants.COMPANY_DATA, item.toMap());
-                            await mainController.getAccountOverviewData(
-                              refresh: true,
-                            );
+                            await mainController.getAllOnlineData();
+                            // await mainController.getAccountOverviewData(
+                            //   refresh: true,
+                            // );
                             Get.offAllNamed(MainPage.routeName);
                           },
                         );

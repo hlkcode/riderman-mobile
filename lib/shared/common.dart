@@ -27,6 +27,10 @@ bool isVerifying(Property? prop) =>
     prop.propertyStatus.toLowerCase() ==
         PropertyStatus.VERIFYING.name.toLowerCase();
 
+bool isIndividualCompany(Company comp) =>
+    comp.name.contains(currentUser.phoneNumber) ||
+    comp.email.contains(currentUser.phoneNumber);
+
 void goToMainPage() {
   if (currentUser.isRider && currentUser.isIdCardInvalid) {
     Get.offAll(() => IdentificationPage());

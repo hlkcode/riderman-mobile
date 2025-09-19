@@ -3,9 +3,12 @@ import 'package:flutter_tools/utilities/extension_methods.dart';
 import 'package:flutter_tools/utilities/utils.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:riderman/shared/config.dart';
 
 import '../controllers/main_controller.dart';
+import '../shared/common.dart';
 import '../shared/constants.dart';
+import '../views/companies_page.dart';
 
 class Dashboard extends StatelessWidget {
   Dashboard({super.key});
@@ -17,6 +20,7 @@ class Dashboard extends StatelessWidget {
     if (mainController.loading.isFalse) {
       mainController.getAccountOverviewData();
     }
+
     final blackStyle =
         kBlackTextStyle.copyWith(fontWeight: FontWeight.w500, fontSize: 18);
     final smallWhiteStyle =
@@ -34,12 +38,31 @@ class Dashboard extends StatelessWidget {
               children: [
                 TextSpan(text: 'Hello, ', style: blackStyle),
                 TextSpan(
-                  text: 'Halik',
+                  text: currentUser.surname,
                   style: kPurpleTextStyle.copyWith(
                       fontWeight: FontWeight.w800, fontSize: 18),
                 ),
               ],
             ),
+          ),
+          // verticalSpace(0.015),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                isIndividualCompany(currentCompany)
+                    ? 'Personal Company'
+                    : currentCompany.name,
+                style: blackStyle,
+              ),
+              IconButton(
+                onPressed: () => Get.offAllNamed(CompaniesPage.routeName),
+                icon: Icon(
+                  Icons.swap_horizontal_circle_outlined,
+                  color: kPurpleColor,
+                ),
+              ),
+            ],
           ),
           Expanded(
             flex: 2,
@@ -249,7 +272,7 @@ class DashboardCard extends StatelessWidget {
                   // Icon(Icons.diamond_outlined,color: smallIconColor, ),
                   ImageIcon(AssetImage(AppConstants.ICON_RIDE_COUNT),
                       color: smallIconColor, size: miniIconSize),
-                  Text(assetCount, style: smallStyle),
+                  Text(assetCount.padLeft(2, '0'), style: smallStyle),
                 ],
               ),
               Row(
@@ -260,7 +283,7 @@ class DashboardCard extends StatelessWidget {
                   // Icon(Icons.payments_outlined, color: smallIconColor, size: miniIconSize),
                   ImageIcon(AssetImage(AppConstants.ICON_TR_COUNT),
                       color: smallIconColor, size: miniIconSize),
-                  Text(transactionCount, style: smallStyle),
+                  Text(transactionCount.padLeft(2, '0'), style: smallStyle),
                 ],
               ),
             ],

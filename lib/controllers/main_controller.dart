@@ -302,9 +302,7 @@ class MainController extends GetxController {
   ].obs;
 
   Future<void> getAssetOverviewData(Property prop) async {
-    if (sales.isEmpty) {
-      sales.value = await DBManager.getPropertySales(prop.id);
-    }
+    sales.value = await DBManager.getPropertySales(prop.id);
     var amountPaid = sales
         .where((s) => s.saleStatus.toLowerCase() == 'paid')
         .map((s) => s.amount)
