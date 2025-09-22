@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tools/utilities/extension_methods.dart';
 import 'package:flutter_tools/utilities/utils.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -26,6 +27,9 @@ bool isVerifying(Property? prop) =>
     prop != null &&
     prop.propertyStatus.toLowerCase() ==
         PropertyStatus.VERIFYING.name.toLowerCase();
+
+bool isCompanyAdmin(Company comp) =>
+    comp.role.containsIgnoreCase('administrator');
 
 bool isIndividualCompany(Company comp) =>
     comp.name.contains(currentUser.phoneNumber) ||

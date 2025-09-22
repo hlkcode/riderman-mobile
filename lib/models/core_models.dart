@@ -268,6 +268,7 @@ class Company {
   int id;
   String name;
   String email;
+  String role;
   bool isActive;
 
   Company({
@@ -275,6 +276,7 @@ class Company {
     required this.name,
     required this.email,
     required this.isActive,
+    required this.role,
   });
 
   factory Company.fromJson(String str) => Company.fromJson(json.decode(str));
@@ -285,6 +287,7 @@ class Company {
         name: json["name"],
         email: json["email"],
         isActive: json["isActive"],
+        role: json["role"],
       );
 
   Map<String, dynamic> toMap() => {
@@ -292,6 +295,7 @@ class Company {
         "name": name,
         "email": email,
         "isActive": isActive,
+        "role": role,
       };
 
   static List<Company> parseToGetList(dynamic responseBody) =>

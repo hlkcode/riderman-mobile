@@ -49,10 +49,11 @@ class DBManager {
   static const String COLUMN_EXPECTED_SALES_COUNT = 'expectedSalesCount';
   static const String COLUMN_PROPERTY_STATUS = 'propertyStatus';
   static const String COLUMN_RAW_DATA = 'rawData';
+  static const String COLUMN_ROLE = 'role';
   //
   static final String _sql_create_companies_table =
       'CREATE TABLE IF NOT EXISTS $COMPANIES_TABLE_NAME ($COLUMN_ID INTEGER PRIMARY KEY, '
-      '$COLUMN_NAME TEXT, $COLUMN_EMAIL TEXT, $COLUMN_IS_ACTIVE INTEGER)';
+      '$COLUMN_NAME TEXT, $COLUMN_EMAIL TEXT, $COLUMN_ROLE TEXT, $COLUMN_IS_ACTIVE INTEGER)';
 //
   static final String _sql_create_expenses_table =
       'CREATE TABLE IF NOT EXISTS $EXPENSES_TABLE_NAME ($COLUMN_ID INTEGER PRIMARY KEY, '
@@ -142,7 +143,7 @@ class DBManager {
     try {
       var map = company.toMap();
       map[COLUMN_IS_ACTIVE] = company.isActive ? 1 : 0;
-      logInfo('_insertCompany => $map');
+      // logInfo('_insertCompany => $map');
       return await dbHelper.insert(COMPANIES_TABLE_NAME, map) > 0;
     } catch (ex) {
       logInfo('_insertCompany db.error => $ex');
@@ -155,7 +156,7 @@ class DBManager {
       var map = company.toMap();
       map.remove(COLUMN_ID);
       map[COLUMN_IS_ACTIVE] = company.isActive ? 1 : 0;
-      logInfo('_updateCompany => $map');
+      // logInfo('_updateCompany => $map');
       return await dbHelper.update(
               tableName: COMPANIES_TABLE_NAME,
               whereColumnName: COLUMN_ID,
@@ -228,7 +229,7 @@ class DBManager {
   static Future<bool> _insertSale(Sale input) async {
     try {
       var map = input.toMap();
-      logInfo('_insertSale => $map');
+      // logInfo('_insertSale => $map');
       return await dbHelper.insert(SALES_TABLE_NAME, map) > 0;
     } catch (ex) {
       logInfo('_insertSale db.error => $ex');
@@ -239,7 +240,7 @@ class DBManager {
   static Future<bool> _updateSale(int idToUpdate, Sale input) async {
     try {
       var map = input.toMap();
-      logInfo('_updateSale => $map');
+      // logInfo('_updateSale => $map');
       return await dbHelper.update(
               tableName: SALES_TABLE_NAME,
               whereColumnName: COLUMN_ID,

@@ -480,7 +480,7 @@ class MainController extends GetxController {
       {bool loadData = true, bool refresh = false}) async {
     // accountOverview.value = defaultAccountOverview;
     try {
-      if (currentUser.isOwner) {
+      if (currentUser.isOwner || isCompanyAdmin(currentCompany)) {
         await _getAccountOverviewForOwner(loadData: loadData, refresh: refresh);
       } else if (currentUser.isRider) {
         await _getAccountOverviewForRider(loadData: loadData, refresh: refresh);

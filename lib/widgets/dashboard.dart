@@ -3,12 +3,14 @@ import 'package:flutter_tools/utilities/extension_methods.dart';
 import 'package:flutter_tools/utilities/utils.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:riderman/shared/config.dart';
 
 import '../controllers/main_controller.dart';
 import '../shared/common.dart';
 import '../shared/constants.dart';
 import '../views/companies_page.dart';
+import 'business_overview.dart';
 
 class Dashboard extends StatelessWidget {
   Dashboard({super.key});
@@ -27,145 +29,307 @@ class Dashboard extends StatelessWidget {
         kWhiteTextStyle.copyWith(fontWeight: FontWeight.w500);
     final bigWhiteStyle =
         kWhiteTextStyle.copyWith(fontWeight: FontWeight.w600, fontSize: 20);
+
+    // var amount = 'GHS ${data.paid}';
+    var purple20 = kPurpleTextStyle.copyWith(fontSize: 20);
+    var boldPurple =
+        purple20.copyWith(fontSize: 20, fontWeight: FontWeight.bold);
+    var paidTextAmount = Text(
+        '${mainController.accountOverviewMini.value.paidSalesCount} / ${mainController.accountOverviewMini.value.expectedSalesCount}',
+        style: boldPurple);
+
+    var unPaidTextAmount = Text(
+        mainController.accountOverviewMini.value.leftSales.toMoney('GHS'),
+        style: boldPurple);
+
+    var paidPercentage = mainController.accountOverviewMini.value.paidSales /
+        mainController.accountOverviewMini.value.expectedSales;
+
+    var unPaidPercentage = mainController.accountOverviewMini.value.leftSales /
+        mainController.accountOverviewMini.value.expectedSales;
+
     return Container(
       color: kPurpleLightColor.withOpacity(.1),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text.rich(
-            // style: blackStyle,
-            TextSpan(
+      child: (currentUser.isOwner || isCompanyAdmin(currentCompany))
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextSpan(text: 'Hello, ', style: blackStyle),
-                TextSpan(
-                  text: currentUser.surname,
-                  style: kPurpleTextStyle.copyWith(
-                      fontWeight: FontWeight.w800, fontSize: 18),
-                ),
-              ],
-            ),
-          ),
-          // verticalSpace(0.015),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                isIndividualCompany(currentCompany)
-                    ? 'Personal Company'
-                    : currentCompany.name,
-                style: blackStyle,
-              ),
-              IconButton(
-                onPressed: () => Get.offAllNamed(CompaniesPage.routeName),
-                icon: Icon(
-                  Icons.swap_horizontal_circle_outlined,
-                  color: kPurpleColor,
-                ),
-              ),
-            ],
-          ),
-          Expanded(
-            flex: 2,
-            child: Obx(
-              () => DashboardCard(
-                title: 'Total Earnings',
-                titleStyle: bigWhiteStyle,
-                smallStyle: bigWhiteStyle,
-                amountStyle: bigWhiteStyle, //.copyWith(fontSize: 24),
-                amount: mainController.accountOverview.value.totalEarnings
-                    .toMoney('GHS'),
-                assetCount: mainController
-                    .accountOverview.value.totalPropertyCount
-                    .toString(),
-                transactionCount: mainController
-                    .accountOverview.value.totalPaidSalesCount
-                    .toString(),
-              ).marginSymmetric(vertical: 16),
-            ),
-          ),
-          verticalSpace(0.015),
-          Text(
-            'Transportation Types',
-            style: blackStyle,
-          ),
-          verticalSpace(0.015),
-          Expanded(
-            flex: 3,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Obx(
-                    () => DashboardCard(
-                      smallStyle: smallWhiteStyle,
-                      amountStyle: bigWhiteStyle,
-                      amount: mainController.accountOverview.value.carEarnings
-                          .toMoney('GHS'),
-                      assetCount: mainController.accountOverview.value.carCount
-                          .toString(),
-                      transactionCount: mainController
-                          .accountOverview.value.carSalesCount
-                          .toString(),
-                      titleIconSize: 36,
-                      titleIcon: FontAwesomeIcons.car,
-                    ),
+                Text.rich(
+                  // style: blackStyle,
+                  TextSpan(
+                    children: [
+                      TextSpan(text: 'Hello, ', style: blackStyle),
+                      TextSpan(
+                        text: currentUser.surname,
+                        style: kPurpleTextStyle.copyWith(
+                            fontWeight: FontWeight.w800, fontSize: 18),
+                      ),
+                    ],
                   ),
                 ),
-                horizontalSpace(0.025),
-                Expanded(
-                    child: Column(
+                // verticalSpace(0.015),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
-                      child: Obx(
-                        () => DashboardCard(
-                          smallStyle: smallWhiteStyle,
-                          amountStyle: bigWhiteStyle,
-                          amount: mainController
-                              .accountOverview.value.bikeEarnings
-                              .toMoney('GHS'),
-                          assetCount: mainController
-                              .accountOverview.value.bikeCount
-                              .toString(),
-                          transactionCount: mainController
-                              .accountOverview.value.bikeSalesCount
-                              .toString(),
-                          // titleIconSize: 42,
-                          titleIcon: FontAwesomeIcons.motorcycle,
-                          cardColor: kPurpleColor.withOpacity(0.8),
-                        ),
-                      ),
+                    Text(
+                      isIndividualCompany(currentCompany)
+                          ? 'Personal Company'
+                          : currentCompany.name,
+                      style: blackStyle,
                     ),
-                    verticalSpace(0.015),
-                    Expanded(
-                      child: Obx(
-                        () => DashboardCard(
-                            smallStyle: smallWhiteStyle,
-                            amountStyle: bigWhiteStyle,
-                            amount: mainController
-                                .accountOverview.value.trucEarnings
-                                .toMoney('GHS'),
-                            assetCount: mainController
-                                .accountOverview.value.trucCount
-                                .toString(),
-                            transactionCount: mainController
-                                .accountOverview.value.trucSalesCount
-                                .toString(),
-                            // titleIconSize: 42,
-                            titleIcon: FontAwesomeIcons.truck,
-                            cardColor: kPurpleLightColor,
-                            smallIconColor: kPurpleColor,
-                            mainIconBackgroundColor: Colors.white
-                            // mainIconColor: Colors.white,
-                            ),
+                    IconButton(
+                      onPressed: () => Get.offAllNamed(CompaniesPage.routeName),
+                      icon: Icon(
+                        Icons.swap_horizontal_circle_outlined,
+                        color: kPurpleColor,
                       ),
                     ),
                   ],
-                ))
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Obx(
+                    () => DashboardCard(
+                      title: 'Total Earnings',
+                      titleStyle: bigWhiteStyle,
+                      smallStyle: bigWhiteStyle,
+                      amountStyle: bigWhiteStyle, //.copyWith(fontSize: 24),
+                      amount: mainController.accountOverview.value.totalEarnings
+                          .toMoney('GHS'),
+                      assetCount: mainController
+                          .accountOverview.value.totalPropertyCount
+                          .toString(),
+                      transactionCount: mainController
+                          .accountOverview.value.totalPaidSalesCount
+                          .toString(),
+                    ).marginSymmetric(vertical: 16),
+                  ),
+                ),
+                verticalSpace(0.015),
+                Text(
+                  'Transportation Types',
+                  style: blackStyle,
+                ),
+                verticalSpace(0.015),
+                Expanded(
+                  flex: 3,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Obx(
+                          () => DashboardCard(
+                            smallStyle: smallWhiteStyle,
+                            amountStyle: bigWhiteStyle,
+                            amount: mainController
+                                .accountOverview.value.carEarnings
+                                .toMoney('GHS'),
+                            assetCount: mainController
+                                .accountOverview.value.carCount
+                                .toString(),
+                            transactionCount: mainController
+                                .accountOverview.value.carSalesCount
+                                .toString(),
+                            titleIconSize: 36,
+                            titleIcon: FontAwesomeIcons.car,
+                          ),
+                        ),
+                      ),
+                      horizontalSpace(0.025),
+                      Expanded(
+                          child: Column(
+                        children: [
+                          Expanded(
+                            child: Obx(
+                              () => DashboardCard(
+                                smallStyle: smallWhiteStyle,
+                                amountStyle: bigWhiteStyle,
+                                amount: mainController
+                                    .accountOverview.value.bikeEarnings
+                                    .toMoney('GHS'),
+                                assetCount: mainController
+                                    .accountOverview.value.bikeCount
+                                    .toString(),
+                                transactionCount: mainController
+                                    .accountOverview.value.bikeSalesCount
+                                    .toString(),
+                                // titleIconSize: 42,
+                                titleIcon: FontAwesomeIcons.motorcycle,
+                                cardColor: kPurpleColor.withOpacity(0.8),
+                              ),
+                            ),
+                          ),
+                          verticalSpace(0.015),
+                          Expanded(
+                            child: Obx(
+                              () => DashboardCard(
+                                  smallStyle: smallWhiteStyle,
+                                  amountStyle: bigWhiteStyle,
+                                  amount: mainController
+                                      .accountOverview.value.trucEarnings
+                                      .toMoney('GHS'),
+                                  assetCount: mainController
+                                      .accountOverview.value.trucCount
+                                      .toString(),
+                                  transactionCount: mainController
+                                      .accountOverview.value.trucSalesCount
+                                      .toString(),
+                                  // titleIconSize: 42,
+                                  titleIcon: FontAwesomeIcons.truck,
+                                  cardColor: kPurpleLightColor,
+                                  smallIconColor: kPurpleColor,
+                                  mainIconBackgroundColor: Colors.white
+                                  // mainIconColor: Colors.white,
+                                  ),
+                            ),
+                          ),
+                        ],
+                      ))
+                    ],
+                  ),
+                ),
+                verticalSpace(0.04),
               ],
-            ),
-          ),
-          verticalSpace(0.04),
-        ],
-      ).paddingSymmetric(horizontal: 20, vertical: 24),
+            ).paddingSymmetric(horizontal: 20, vertical: 24)
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text.rich(
+                  // style: blackStyle,
+                  TextSpan(
+                    children: [
+                      TextSpan(text: 'Hello, ', style: blackStyle),
+                      TextSpan(
+                        text: currentUser.surname,
+                        style: kPurpleTextStyle.copyWith(
+                            fontWeight: FontWeight.w800, fontSize: 18),
+                      ),
+                    ],
+                  ),
+                ),
+                // verticalSpace(0.015),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      isIndividualCompany(currentCompany)
+                          ? 'Personal Company'
+                          : currentCompany.name,
+                      style: blackStyle,
+                    ),
+                    IconButton(
+                      onPressed: () => Get.offAllNamed(CompaniesPage.routeName),
+                      icon: Icon(
+                        Icons.swap_horizontal_circle_outlined,
+                        color: kPurpleColor,
+                      ),
+                    ),
+                  ],
+                ),
+                verticalSpace(0.02),
+                Expanded(
+                  flex: 2,
+                  child: Obx(
+                    () => DashboardCard(
+                      title: 'Total Paid',
+                      titleStyle: bigWhiteStyle,
+                      smallStyle: bigWhiteStyle,
+                      amountStyle: bigWhiteStyle, //.copyWith(fontSize: 24),
+                      amount: mainController.accountOverviewMini.value.paidSales
+                          .toMoney('GHS'),
+                      assetCount: mainController
+                          .accountOverviewMini.value.propertyCount
+                          .toString(),
+                      transactionCount: mainController
+                          .accountOverviewMini.value.paidSalesCount
+                          .toString(),
+                    ).marginSymmetric(vertical: 16),
+                  ),
+                ),
+                verticalSpace(0.02),
+                BusinessCard(
+                  singleContent: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            mainController.accountOverviewMini.value.paidSales
+                                        .toMoney('GHS')
+                                        .length >=
+                                    10
+                                ? FittedBox(child: paidTextAmount)
+                                : paidTextAmount,
+                            Text('Payments made', style: kPurpleTextStyle),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          child: CircularPercentIndicator(
+                            radius: 48,
+                            lineWidth: 8.0,
+                            percent: paidPercentage,
+                            center: Text(
+                                '${(paidPercentage * 100).toPrecision(2)}%',
+                                style: boldPurple),
+                            progressColor: kPurpleColor,
+                            backgroundColor: Colors.white,
+                            animation: true,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                verticalSpace(0.02),
+                BusinessCard(
+                  singleContent: Row(
+                    children: [
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          child: CircularPercentIndicator(
+                            radius: 48,
+                            lineWidth: 8.0,
+                            percent: unPaidPercentage,
+                            center: Text(
+                                '${(unPaidPercentage * 100).toPrecision(2)}%',
+                                style: boldPurple),
+                            progressColor: kPurpleColor,
+                            backgroundColor: Colors.white,
+                            animation: true,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            mainController.accountOverviewMini.value.leftSales
+                                        .toMoney('GHS')
+                                        .length >=
+                                    10
+                                ? FittedBox(child: unPaidTextAmount)
+                                : unPaidTextAmount,
+                            Text('Remaining Balance', style: kPurpleTextStyle),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                verticalSpace(0.02),
+                Text(
+                  'Last updated: ${mainController.accountOverviewMini.value.date.format('dd MMM yyyy At hh:mm')}',
+                  // style: blackStyle,
+                ),
+
+                verticalSpace(0.1),
+              ],
+            ).paddingSymmetric(horizontal: 20, vertical: 24),
     );
   }
 }
