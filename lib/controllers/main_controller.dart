@@ -70,6 +70,19 @@ class MainController extends GetxController {
     updatedAt: DateTime.now(),
   ).obs;
 
+  Rx<AccountOverviewMini> accountOverviewMini = AccountOverviewMini(
+    companyId: 0,
+    riderId: 0,
+    date: DateTime.timestamp(),
+    expectedSales: 0,
+    expectedSalesCount: 0,
+    leftSales: 0,
+    leftSalesCount: 0,
+    paidSales: 0,
+    paidSalesCount: 0,
+    propertyCount: 0,
+  ).obs;
+
   final RxList<Company> companies = <Company>[
     // Company(id: 1, email: 'email.com', isActive: true, name: 'CompanyName'),
     // Company(
@@ -467,11 +480,28 @@ class MainController extends GetxController {
       {bool loadData = true, bool refresh = false}) async {
     // accountOverview.value = defaultAccountOverview;
     try {
+      if (currentUser.isOwner) {
+        await _getAccountOverviewForOwner(loadData: loadData, refresh: refresh);
+      } else if (currentUser.isRider) {
+        await _getAccountOverviewForRider(loadData: loadData, refresh: refresh);
+      } else {
+        throw Exception('Wrong user type identified');
+      }
+    } catch (e) {
+      handleException(e, null, refresh);
+      logInfo('main.getAccountOverviewData => $e');
+    }
+  }
+
+  Future<void> _getAccountOverviewForOwner(
+      {bool loadData = true, bool refresh = false}) async {
+    // accountOverview.value = defaultAccountOverview;
+    try {
       if (loadData == false && refresh == false) return;
 
       if (isLoggedIn() && isCompanySet && refresh) {
         loading.value = true;
-        final url = '$_reportsUrl/dashboard/${currentCompany.id}';
+        final url = '$_reportsUrl/owner-dashboard/${currentCompany.id}';
         final calRes = await _requestManager.sendGetRequest(url,
             headers: headers, returnBodyOnError: true);
 
@@ -491,11 +521,51 @@ class MainController extends GetxController {
       if (loadData && isCompanySet) {
         accountOverview.value =
             await DBManager.getAccountOverview(currentCompany.id);
-        logInfo('accountOverview = ${accountOverview.value.toMap()}');
+        logInfo(
+            '_getAccountOverviewForOwner = ${accountOverview.value.toMap()}');
       }
     } catch (e) {
       handleException(e, null, refresh);
-      logInfo('main.getAccountOverviewData => $e');
+      logInfo('main._getAccountOverviewForOwner => $e');
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  Future<void> _getAccountOverviewForRider(
+      {bool loadData = true, bool refresh = false}) async {
+    // accountOverview.value = defaultAccountOverview;
+    try {
+      if (loadData == false && refresh == false) return;
+
+      if (isLoggedIn() && isCompanySet && refresh) {
+        loading.value = true;
+        final url = '$_reportsUrl/rider-dashboard/${currentCompany.id}';
+        final calRes = await _requestManager.sendGetRequest(url,
+            headers: headers, returnBodyOnError: true);
+
+        logInfo(calRes);
+        final BaseResponse res =
+            BaseResponse.fromMap(calRes as Map<String, dynamic>);
+
+        if (!res.isSuccess) {
+          HlkDialog.showErrorSnackBar(
+              res.message ?? 'Failed to get dashboard data');
+          return;
+        }
+        var overview = AccountOverviewMini.fromMap(res.data);
+        await DBManager.upsertAccountOverviewMini(overview);
+      }
+
+      if (loadData && isCompanySet) {
+        accountOverviewMini.value = await DBManager.getAccountOverviewMini(
+            currentCompany.id, currentUser.riderId);
+        logInfo(
+            '_getAccountOverviewForRider = ${accountOverviewMini.value.toMap()}');
+      }
+    } catch (e) {
+      handleException(e, null, refresh);
+      logInfo('main._getAccountOverviewForRider => $e');
     } finally {
       loading.value = false;
     }

@@ -338,6 +338,64 @@ class AssetOverview {
       };
 }
 
+class AccountOverviewMini {
+  num expectedSales;
+  num paidSales;
+  num leftSales;
+  int propertyCount;
+  int expectedSalesCount;
+  int paidSalesCount;
+  int leftSalesCount;
+  int companyId;
+  int riderId;
+  DateTime date;
+
+  AccountOverviewMini({
+    required this.expectedSales,
+    required this.paidSales,
+    required this.leftSales,
+    required this.propertyCount,
+    required this.expectedSalesCount,
+    required this.paidSalesCount,
+    required this.leftSalesCount,
+    required this.companyId,
+    required this.riderId,
+    required this.date,
+  });
+
+  factory AccountOverviewMini.fromJson(String str) =>
+      AccountOverviewMini.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory AccountOverviewMini.fromMap(Map<String, dynamic> json) =>
+      AccountOverviewMini(
+        expectedSales: json["expectedSales"],
+        paidSales: json["paidSales"],
+        leftSales: json["leftSales"],
+        propertyCount: json["propertyCount"],
+        expectedSalesCount: json["expectedSalesCount"],
+        paidSalesCount: json["paidSalesCount"],
+        leftSalesCount: json["leftSalesCount"],
+        companyId: json["companyId"],
+        riderId: json["riderId"],
+        date: DateTime.parse(json["date"]),
+      );
+
+  Map<String, dynamic> toMap() => {
+        "expectedSales": expectedSales,
+        "paidSales": paidSales,
+        "leftSales": leftSales,
+        "propertyCount": propertyCount,
+        "expectedSalesCount": expectedSalesCount,
+        "paidSalesCount": paidSalesCount,
+        "leftSalesCount": leftSalesCount,
+        "companyId": companyId,
+        "riderId": riderId,
+        "date": date.toIso8601String(),
+      };
+}
+
 class Expense {
   String description;
   num amount;

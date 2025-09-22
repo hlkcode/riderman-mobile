@@ -151,3 +151,16 @@ AccountOverview get defaultAccountOverview => AccountOverview(
       trucSalesCount: 0,
       updatedAt: DateTime.now(),
     );
+
+AccountOverviewMini get defaultAccountOverviewMini => AccountOverviewMini(
+      companyId: 0,
+      riderId: 0,
+      date: DateTime.timestamp(),
+      expectedSales: 0,
+      expectedSalesCount: 0,
+      leftSales: 0,
+      leftSalesCount: 0,
+      paidSales: 0,
+      paidSalesCount: 0,
+      propertyCount: 0,
+    );

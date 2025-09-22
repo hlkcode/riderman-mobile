@@ -12,6 +12,7 @@ class DBManager {
   // static const String RIDERS_TABLE_NAME = 'Riders';
   static const String PROPERTIES_TABLE_NAME = 'Properties';
   static const String ACCOUNT_OVERVIEW_TABLE_NAME = 'AccountOverviews';
+  static const String ACCOUNT_OVERVIEW_MINI_TABLE_NAME = 'AccountOverviewMinis';
   //
   static const String COLUMN_ID = 'id';
   static const String COLUMN_NAME = 'name';
@@ -91,6 +92,11 @@ class DBManager {
   static final String _sql_create_account_overview_table =
       'CREATE TABLE IF NOT EXISTS $ACCOUNT_OVERVIEW_TABLE_NAME ($COLUMN_ID INTEGER PRIMARY KEY, '
       '$COLUMN_COMPANY_ID INTEGER UNIQUE, $COLUMN_RAW_DATA TEXT)';
+  //
+  static final String _sql_create_account_overview_min_table =
+      'CREATE TABLE IF NOT EXISTS $ACCOUNT_OVERVIEW_MINI_TABLE_NAME '
+      '($COLUMN_COMPANY_ID INTEGER NOT NULL, $COLUMN_RIDER_ID INTEGER NOT NULL, '
+      '$COLUMN_RAW_DATA TEXT, PRIMARY KEY ($COLUMN_COMPANY_ID, $COLUMN_RIDER_ID))';
   // todo run this in app first widget build // in MyApp build
 
   static late DBHelper dbHelper;
@@ -105,6 +111,7 @@ class DBManager {
         // _sql_create_riders_table,
         _sql_create_guarantors_table,
         _sql_create_account_overview_table,
+        _sql_create_account_overview_min_table,
       ];
 
       dbHelper = DBHelper.getInstance(DB_NAME);
@@ -345,6 +352,87 @@ class DBManager {
       logInfo(ex);
     }
     return defaultAccountOverview;
+  }
+
+  //
+  static Future<bool> _insertAccountOverviewMini(
+      AccountOverviewMini input) async {
+    try {
+      var map = {
+        COLUMN_COMPANY_ID: input.companyId,
+        COLUMN_RIDER_ID: input.riderId,
+        COLUMN_RAW_DATA: input.toJson(),
+      };
+      // logInfo('_insertAccountOverviewMini => $map');
+      return await dbHelper.insert(ACCOUNT_OVERVIEW_MINI_TABLE_NAME, map) > 0;
+    } catch (ex) {
+      logInfo('_insertAccountOverviewMini db.error => $ex');
+    }
+    return false;
+  }
+
+  static Future<bool> _updateAccountOverviewMini(
+      AccountOverviewMini input) async {
+    try {
+      var map = {
+        COLUMN_COMPANY_ID: input.companyId,
+        COLUMN_RIDER_ID: input.riderId,
+        COLUMN_RAW_DATA: input.toJson(),
+      };
+      // logInfo('_updateAccountOverviewMini => $map');
+      return await dbHelper.database.update(
+              ACCOUNT_OVERVIEW_MINI_TABLE_NAME, map,
+              where: '$COLUMN_COMPANY_ID = ? and $COLUMN_RIDER_ID = ?',
+              whereArgs: [input.companyId, input.riderId]) >
+          0;
+      // return await dbHelper.update(
+      //         tableName: ACCOUNT_OVERVIEW_TABLE_NAME,
+      //         whereColumnName: COLUMN_ID,
+      //         whereValue: idToUpdate,
+      //         map: map) >
+      //     0;
+    } catch (ex) {
+      logInfo('_updateAccountOverviewMini db.error => $ex');
+    }
+    return false;
+  }
+
+  static Future<bool> upsertAccountOverviewMini(
+      AccountOverviewMini input) async {
+    try {
+      var isGood = await _insertAccountOverviewMini(input);
+      if (isGood) return true;
+      return await _updateAccountOverviewMini(input);
+    } catch (ex) {
+      logInfo('upsertAccountOverview db.error => $ex');
+    }
+    return false;
+  }
+
+  static Future<AccountOverviewMini> getAccountOverviewMini(
+      int companyId, int riderId) async {
+    try {
+      // var tempData = await dbHelper.getSingleDataFromTable(
+      //   tableName: ACCOUNT_OVERVIEW_MINI_TABLE_NAME,
+      //   whereColumnName: COLUMN_COMPANY_ID,
+      //   whereValue: companyId,
+      // );
+
+      var tempData = await dbHelper.database.query(
+          ACCOUNT_OVERVIEW_MINI_TABLE_NAME,
+          columns: null,
+          where: '$COLUMN_COMPANY_ID = ? and $COLUMN_RIDER_ID = ?',
+          whereArgs: [companyId, riderId]);
+
+      return tempData.isNotEmpty
+          ? AccountOverviewMini.fromJson(
+              getString(tempData.first[COLUMN_RAW_DATA] as String?))
+          : defaultAccountOverviewMini;
+    } catch (ex) {
+      logInfo('getAccountOverviewMini db.error => $ex');
+      logInfo(ex);
+    }
+    return defaultAccountOverviewMini;
   }
 
   //
