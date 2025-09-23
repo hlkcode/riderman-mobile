@@ -310,6 +310,9 @@ class AssetOverview {
   double paidPercentage;
   int propertyId;
   double remaining;
+  int expectedSalesCount;
+  int paidSalesCount;
+  int leftSalesCount;
 
   AssetOverview({
     this.amountAgreed = 0,
@@ -319,6 +322,9 @@ class AssetOverview {
     this.paidPercentage = 0,
     this.propertyId = 0,
     this.remaining = 0,
+    this.expectedSalesCount = 0,
+    this.paidSalesCount = 0,
+    this.leftSalesCount = 0,
   });
 
   factory AssetOverview.fromMap(Map<String, dynamic> json) => AssetOverview(
@@ -329,6 +335,9 @@ class AssetOverview {
         paidPercentage: json["paidPercentage"],
         propertyId: json["propertyId"],
         remaining: json["remaining"],
+        expectedSalesCount: json["expectedSalesCount"],
+        paidSalesCount: json["paidSalesCount"],
+        leftSalesCount: json["leftSalesCount"],
       );
 
   Map<String, dynamic> toMap() => {
@@ -339,6 +348,9 @@ class AssetOverview {
         "paidPercentage": paidPercentage,
         "propertyId": propertyId,
         "remaining": remaining,
+        "expectedSalesCount": expectedSalesCount,
+        "paidSalesCount": paidSalesCount,
+        "leftSalesCount": leftSalesCount,
       };
 }
 

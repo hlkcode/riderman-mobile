@@ -50,7 +50,7 @@ class Dashboard extends StatelessWidget {
 
     return Container(
       color: kPurpleLightColor.withOpacity(.1),
-      child: (currentUser.isOwner || isCompanyAdmin(currentCompany))
+      child: currentUser.isOwner
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -260,7 +260,7 @@ class Dashboard extends StatelessWidget {
                                     10
                                 ? FittedBox(child: paidTextAmount)
                                 : paidTextAmount,
-                            Text('Payments made', style: kPurpleTextStyle),
+                            Text('Transactions', style: kPurpleTextStyle),
                           ],
                         ),
                       ),
@@ -322,9 +322,11 @@ class Dashboard extends StatelessWidget {
                   ),
                 ),
                 verticalSpace(0.02),
-                Text(
-                  'Last updated: ${mainController.accountOverviewMini.value.date.format('dd MMM yyyy At hh:mm')}',
-                  // style: blackStyle,
+                Center(
+                  child: Text(
+                    'Last updated: ${mainController.accountOverviewMini.value.date.format('dd MMM yyyy At hh:mm')}',
+                    // style: blackStyle,
+                  ),
                 ),
 
                 verticalSpace(0.1),

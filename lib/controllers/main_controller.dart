@@ -316,8 +316,9 @@ class MainController extends GetxController {
 
   Future<void> getAssetOverviewData(Property prop) async {
     sales.value = await DBManager.getPropertySales(prop.id);
-    var amountPaid = sales
-        .where((s) => s.saleStatus.toLowerCase() == 'paid')
+    var paidSales = sales.where((s) => s.saleStatus.toLowerCase() == 'paid');
+
+    var amountPaid = paidSales
         .map((s) => s.amount)
         .fold(0.0, (p, c) => p + c)
         .toPrecision(2);
@@ -337,6 +338,9 @@ class MainController extends GetxController {
       propertyId: prop.id,
       remaining: left,
       totalExpected: total,
+      expectedSalesCount: prop.expectedSalesCount,
+      paidSalesCount: paidSales.length,
+      leftSalesCount: prop.expectedSalesCount - paidSales.length,
     );
   }
 
@@ -480,7 +484,7 @@ class MainController extends GetxController {
       {bool loadData = true, bool refresh = false}) async {
     // accountOverview.value = defaultAccountOverview;
     try {
-      if (currentUser.isOwner || isCompanyAdmin(currentCompany)) {
+      if (currentUser.isOwner) {
         await _getAccountOverviewForOwner(loadData: loadData, refresh: refresh);
       } else if (currentUser.isRider) {
         await _getAccountOverviewForRider(loadData: loadData, refresh: refresh);

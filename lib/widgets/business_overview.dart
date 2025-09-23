@@ -57,20 +57,20 @@ class BusinessOverview extends StatelessWidget {
           content: [
             Expanded(
               child: VerticalText(
-                  amount: 'GHS${data.totalExpected}',
-                  title: 'Total',
+                  amount: data.expectedSalesCount.toString().padLeft(2, '0'),
+                  title: 'Total Txn',
                   dotColor: kPurpleColor),
             ),
             Expanded(
               child: VerticalText(
-                  amount: 'GHS${data.paid}',
-                  title: 'Paid',
+                  amount: data.paidSalesCount.toString().padLeft(2, '0'),
+                  title: 'Paid Txn',
                   dotColor: Colors.green),
             ),
             Expanded(
               child: VerticalText(
-                  amount: 'GHS${data.remaining}',
-                  title: 'Remaining',
+                  amount: data.leftSalesCount.toString().padLeft(2, '0'),
+                  title: 'Balance Txn',
                   dotColor: Colors.deepOrange),
             ),
           ],
@@ -92,7 +92,7 @@ class BusinessOverview extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  DottedText(dotColor: Colors.deepOrange, title: 'Remaining'),
+                  DottedText(dotColor: Colors.deepOrange, title: 'Balance'),
                   FittedBox(
                     child: Text('GHS ${data.remaining}', style: purple20),
                   ),
@@ -113,7 +113,9 @@ class BusinessOverview extends StatelessWidget {
         ),
         verticalSpace(0.02),
         GestureDetector(
-          onTap: () {},
+          onTap: () {
+            // go to form use to register property, but make input text read only
+          },
           child: BusinessCard(
             cardColor: kPurpleColor,
             singleContent: Text(
@@ -172,8 +174,9 @@ class VerticalText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var textAmount =
-        Text(amount, style: kPurpleTextStyle /*.copyWith(fontSize: 20)*/);
+    var textAmount = Text(amount,
+        style: kPurpleTextStyle.copyWith(
+            fontSize: 20, fontWeight: FontWeight.bold));
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

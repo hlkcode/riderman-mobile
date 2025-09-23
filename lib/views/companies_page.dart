@@ -20,6 +20,7 @@ class CompaniesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     mainController.getCompanies(loadData: true);
+    var profile = currentUser.profile.toUpperCase();
     return Scaffold(
       // backgroundColor: kPurpleLightColor,
       appBar: AppBar(
@@ -30,6 +31,14 @@ class CompaniesPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 16,
         children: [
+          Card(
+            color: kPurpleLightColor,
+            child: Text(
+              'Note:\n'
+              'Current profile is $profile, so only companies where you are $profile will show',
+            ).marginAll(16),
+          ),
+          verticalSpace(0.01),
           Text(
             'Select company/account to proceed',
             style: kPurpleTextStyle,

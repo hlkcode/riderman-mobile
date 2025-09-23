@@ -102,6 +102,7 @@ class SelectableListPage extends StatelessWidget {
   final List<Map<String, String>> rowsList;
   final List dataList;
   final RxBool loading;
+  final bool reversed;
   // final Function()? onSubmit;
   final Function(RxList<int> selectedIndexes)? onSelectedSubmit;
 
@@ -113,8 +114,8 @@ class SelectableListPage extends StatelessWidget {
     required this.dataList,
     required this.submitText,
     required this.loading,
-    // this.onSubmit,
     this.onSelectedSubmit,
+    this.reversed = false,
   });
 
   final RxList<int> _selectedIndexes = <int>[].obs;
@@ -125,7 +126,9 @@ class SelectableListPage extends StatelessWidget {
       itemCount: dataList.length,
       itemBuilder: (ctx, index) {
         var rowData = rowsList[index];
-        var title = '$cardFor #${index + 1}';
+        var title = reversed
+            ? '$cardFor #${dataList.length - index}'
+            : '$cardFor #${index + 1}';
         var status = (rowData['Status'] ?? '').toLowerCase();
         return Obx(() => SelectableCard(
               actionText: cardActionText,

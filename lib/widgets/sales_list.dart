@@ -32,11 +32,12 @@ class SalesList extends StatelessWidget {
         .toList();
     //
     return SelectableListPage(
-      dataList: sales,
+      reversed: true,
+      dataList: sales.reversed.toList(),
       loading: mainController.paymentLoading,
       cardFor: 'Payment',
       cardActionText: 'Select to Pay',
-      rowsList: rowsMap,
+      rowsList: rowsMap.reversed.toList(),
       submitText: 'Pay',
       onSelectedSubmit: onSubmit,
       // onSelectedSubmit: (selectedIndexes) async {
