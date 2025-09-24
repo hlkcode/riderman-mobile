@@ -23,9 +23,10 @@ class ExpensesList extends StatelessWidget {
         .toList();
     //
     return SelectableListPage(
+      reversed: true,
       cardFor: 'Expense',
       cardActionText: 'Select to Delete',
-      dataList: mainController.expenses,
+      dataList: mainController.expenses.reversed.toList(),
       rowsList: rowsMap,
       submitText: 'Delete',
       loading: mainController.deletingExpenses,

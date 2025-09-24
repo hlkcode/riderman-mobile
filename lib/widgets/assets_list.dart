@@ -47,7 +47,10 @@ class AssetsList extends StatelessWidget {
                   ),
                   // validator: requiredValidator,
                   controller: riderCtrl,
-                  keyboardType: TextInputType.name,
+                  keyboardType: TextInputType.text,
+                  onChanged: (text) {
+                    mainController.offlinePropertySearch(text);
+                  },
                 ).marginAll(6),
                 verticalSpace(0.03),
                 Expanded(

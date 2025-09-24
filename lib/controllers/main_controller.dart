@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter_tools/common.dart';
 import 'package:flutter_tools/tools_models.dart';
+import 'package:flutter_tools/utilities/extension_methods.dart';
 import 'package:flutter_tools/utilities/request_manager.dart';
 import 'package:flutter_tools/utilities/utils.dart';
 import 'package:get/get.dart';
@@ -314,6 +315,25 @@ class MainController extends GetxController {
     //     id: 6),
   ].obs;
 
+  List<Property> propertyList = [];
+  //
+  void offlinePropertySearch(String text) {
+    if (text.isNotEmpty) {
+      properties.value = propertyList
+          .where((p) =>
+              p.contractType.containsIgnoreCase(text) ||
+              p.paymentFrequency.containsIgnoreCase(text) ||
+              p.plateNumber.containsIgnoreCase(text) ||
+              p.propertyStatus.containsIgnoreCase(text) ||
+              getString(p.rider?.phoneNumber).containsIgnoreCase(text) ||
+              getString(p.rider?.fullName).containsIgnoreCase(text) ||
+              p.propertyType.containsIgnoreCase(text))
+          .toList();
+    } else {
+      _loadProperties();
+    }
+  }
+
   Future<void> getAssetOverviewData(Property prop) async {
     sales.value = await DBManager.getPropertySales(prop.id);
     var paidSales = sales.where((s) => s.saleStatus.toLowerCase() == 'paid');
@@ -616,6 +636,7 @@ class MainController extends GetxController {
 
   Future<void> _loadProperties() async {
     properties.value = await DBManager.getAllProperties();
+    propertyList = properties.value;
     logInfo('properties = ${properties.length}');
   }
 
