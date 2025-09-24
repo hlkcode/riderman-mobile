@@ -9,6 +9,7 @@ class LabeledSelector extends StatelessWidget {
   final String instruction;
   final Function(String? newValue) onSelectionChange;
   final InputDecoration? decoration;
+  final int? selectedIndex;
   const LabeledSelector({
     super.key,
     required this.title,
@@ -16,6 +17,7 @@ class LabeledSelector extends StatelessWidget {
     required this.instruction,
     required this.onSelectionChange,
     this.decoration,
+    this.selectedIndex,
   });
 
   @override
@@ -23,6 +25,7 @@ class LabeledSelector extends StatelessWidget {
     return LabeledWidget(
       title: title,
       widget: DropDownSelector(
+        selectedIndex: selectedIndex ?? -1,
         list: options,
         onSelectionChange: onSelectionChange,
         instruction: instruction,

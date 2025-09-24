@@ -13,16 +13,19 @@ class DropDownSelector extends StatelessWidget {
     required this.onSelectionChange,
     required this.instruction,
     this.inputDecoration,
+    this.selectedIndex = -1,
   });
 
   final List<String> list;
   final Function(String? newValue) onSelectionChange;
   final String instruction;
+  final int selectedIndex;
   final RxString _selected = ''.obs;
   final InputDecoration? inputDecoration;
 
   @override
   Widget build(BuildContext context) {
+    _selected.value = selectedIndex == -1 ? '' : list[selectedIndex];
     return Obx(() => DropdownButtonFormField<String>(
           decoration: inputDecoration ?? InputDecoration(border: purpleBorder),
           isExpanded: true,

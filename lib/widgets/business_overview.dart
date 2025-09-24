@@ -5,10 +5,13 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 
 import '../models/core_models.dart';
 import '../shared/constants.dart';
+import '../views/asset_details_page.dart';
 
 class BusinessOverview extends StatelessWidget {
   final AssetOverview data;
-  const BusinessOverview({super.key, required this.data});
+  final Property property;
+  const BusinessOverview(
+      {super.key, required this.data, required this.property});
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +117,8 @@ class BusinessOverview extends StatelessWidget {
         verticalSpace(0.02),
         GestureDetector(
           onTap: () {
-            // go to form use to register property, but make input text read only
+            // go to asset/property details page
+            Get.to(() => AssetDetailsPage(property: property));
           },
           child: BusinessCard(
             cardColor: kPurpleColor,
