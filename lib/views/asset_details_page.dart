@@ -5,7 +5,9 @@ import 'package:flutter_tools/utilities/extension_methods.dart';
 import 'package:flutter_tools/utilities/utils.dart';
 import 'package:get/get.dart';
 
+import '../controllers/main_controller.dart';
 import '../models/core_models.dart';
+import '../models/dto_models.dart';
 import '../shared/constants.dart';
 import '../widgets/labeled_widgets.dart';
 
@@ -16,9 +18,16 @@ class AssetDetailsPage extends StatelessWidget {
   AssetDetailsPage({super.key, required this.property});
 
   Rx<DateTime> startDate = DateTime.now().obs;
+  final MainController mainController = Get.find();
   Rx<String> nExpectedPayments = '0'.obs;
   final _formKey = GlobalKey<FormState>();
   final _formKey2 = GlobalKey<FormState>();
+  final txtRiderPhone = TextEditingController();
+  final txtPlateNumber = TextEditingController();
+  final txtNGuarantors = TextEditingController();
+  final txtTotalExpected = TextEditingController();
+  final txtAmountAgreed = TextEditingController();
+  final txtDeposit = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +40,15 @@ class AssetDetailsPage extends StatelessWidget {
 
     nExpectedPayments.value = property.expectedSalesCount.toString();
     startDate.value = property.startDate;
+    txtRiderPhone.text = property.rider?.phoneNumber ?? '';
+    txtPlateNumber.text = property.plateNumber;
+    txtNGuarantors.text = property.guarantorsNeeded.toString();
+    txtTotalExpected.text = property.totalExpected.toString();
+    txtAmountAgreed.text = property.amountAgreed.toString();
+    txtDeposit.text = property.amountAgreed.toString();
+    var contractType = property.contractType.toUpperCase();
+    var propertyType = property.propertyType.toUpperCase();
+    var paymentFrequency = property.paymentFrequency.toUpperCase();
 
     return Scaffold(
       // backgroundColor: kPurpleLightColor,
@@ -61,15 +79,13 @@ class AssetDetailsPage extends StatelessWidget {
                       title: 'Rider\'s Phone Number',
                       validator: phoneNumberValidator,
                       inputType: TextInputType.phone,
-                      controller: TextEditingController(
-                          text: property.rider?.phoneNumber),
+                      controller: txtRiderPhone,
                     ),
                     LabeledTextField(
                       title: 'Number plate',
                       validator: requiredValidator,
                       inputType: TextInputType.text,
-                      controller:
-                          TextEditingController(text: property.plateNumber),
+                      controller: txtPlateNumber,
                     ),
                     LabeledSelector(
                       selectedIndex: contracts
@@ -77,7 +93,8 @@ class AssetDetailsPage extends StatelessWidget {
                       title: 'Contract type',
                       options: contracts,
                       instruction: 'Select contract type',
-                      onSelectionChange: (newValue) {},
+                      onSelectionChange: (newValue) =>
+                          contractType = getString(newValue),
                     ),
                     LabeledSelector(
                       selectedIndex: assetTypes
@@ -85,11 +102,11 @@ class AssetDetailsPage extends StatelessWidget {
                       title: 'Type of Asset',
                       options: assetTypes,
                       instruction: 'Select Asset type',
-                      onSelectionChange: (newValue) {},
+                      onSelectionChange: (newValue) =>
+                          propertyType = getString(newValue),
                     ),
                     LabeledTextField(
-                      controller: TextEditingController(
-                          text: property.guarantorsNeeded.toString()),
+                      controller: txtNGuarantors,
                       title: 'Number of Guarantor(s) Required',
                       inputType: TextInputType.number,
                     ),
@@ -116,8 +133,7 @@ class AssetDetailsPage extends StatelessWidget {
                   children: [
                     // verticalSpace(0.02),
                     LabeledTextField(
-                      controller: TextEditingController(
-                          text: property.totalExpected.toString()),
+                      controller: txtTotalExpected,
                       title: 'Total Expected',
                       validator: (newValue) {
                         var res = requiredValidator(newValue);
@@ -132,8 +148,7 @@ class AssetDetailsPage extends StatelessWidget {
                       inputType: TextInputType.numberWithOptions(decimal: true),
                     ),
                     LabeledTextField(
-                      controller: TextEditingController(
-                          text: property.amountAgreed.toString()),
+                      controller: txtAmountAgreed,
                       title: 'Instalment Amount',
                       validator: (newValue) {
                         var res = requiredValidator(newValue);
@@ -148,8 +163,7 @@ class AssetDetailsPage extends StatelessWidget {
                       inputType: TextInputType.numberWithOptions(decimal: true),
                     ),
                     LabeledTextField(
-                      controller: TextEditingController(
-                          text: property.deposit.toString()),
+                      controller: txtDeposit,
                       title: 'Initial Deposit / Amount Paid Previously',
                       inputType: TextInputType.numberWithOptions(decimal: true),
                     ),
@@ -159,7 +173,8 @@ class AssetDetailsPage extends StatelessWidget {
                       title: 'Payment Frequency',
                       options: frequencies,
                       instruction: 'Select Payment Frequency',
-                      onSelectionChange: (newValue) {},
+                      onSelectionChange: (newValue) =>
+                          paymentFrequency = getString(newValue),
                     ),
                     Obx(
                       () => LabeledTextField(
@@ -220,9 +235,49 @@ class AssetDetailsPage extends StatelessWidget {
               buttonColor: kPurpleColor,
               style: kWhiteTextStyle,
               buttonRadius: 12,
-              onTapped: () {
+              onTapped: () async {
                 //
                 // check if anything change before allowing the call to go through
+                var nPhoneNumber = txtRiderPhone.text.trim();
+                var nPlateNumber = txtPlateNumber.text.trim();
+                var nGuarantors = int.parse(txtNGuarantors.text.trim());
+                //
+                var nTotalExpected = double.parse(txtTotalExpected.text.trim());
+                var nDeposit = double.parse(txtDeposit.text.trim());
+                var nAgreed = double.parse(txtAmountAgreed.text.trim());
+                //
+                if (property.rider?.phoneNumber != nPhoneNumber ||
+                        property.plateNumber != nPlateNumber ||
+                        property.contractType.toUpperCase() !=
+                            contractType.toUpperCase() ||
+                        property.propertyType.toUpperCase() !=
+                            propertyType.toUpperCase() ||
+                        property.guarantorsNeeded != nGuarantors ||
+                        property.totalExpected != nTotalExpected ||
+                        nAgreed != property.amountAgreed ||
+                        property.deposit != nDeposit ||
+                        property.paymentFrequency.toUpperCase() !=
+                            paymentFrequency.toUpperCase() ||
+                        startDate.value != property.startDate
+                    //
+                    ) {
+                  //
+                  var dto = PropertyDto(
+                    companyId: property.companyId,
+                    amountAgreed: nAgreed,
+                    contractType: contracts.indexOf(contractType),
+                    deposit: nDeposit,
+                    guarantorsNeeded: nGuarantors,
+                    paymentFrequency: frequencies.indexOf(paymentFrequency),
+                    managementType: 0,
+                    plateNumber: nPlateNumber,
+                    propertyType: assetTypes.indexOf(propertyType),
+                    riderPhoneNumber: nPhoneNumber,
+                    startDate: startDate.value,
+                    totalExpected: nTotalExpected,
+                  );
+                  await mainController.updateProperty(property.id, dto);
+                }
               },
             ),
           ),

@@ -6,11 +6,13 @@ enum PropertyType { Motorcycle, Tricycle, Car, Truck }
 
 enum PaymentFrequency { Daily, Weekly, Monthly, Yearly }
 
-enum ContractType { WorkAndPay, Continuous }
+enum ContractType { WorkAndPay, Continuous, TrackExpenses }
 
 enum PropertyStatus { CONNECTING, VERIFYING, READY, ONGOING, PAUSED, COMPLETED }
 
 enum VerificationStatus { Unset, Pending, Verified, Rejected, Expired }
+
+enum ManagementType { None, Managed, Partner }
 
 class Property {
   int userId;

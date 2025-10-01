@@ -4,9 +4,9 @@ class PropertyDto {
   String plateNumber;
   int propertyType;
   int contractType;
-  int amountAgreed;
-  int totalExpected;
-  int deposit;
+  double amountAgreed;
+  double totalExpected;
+  double deposit;
   int paymentFrequency;
   DateTime startDate;
   int companyId;

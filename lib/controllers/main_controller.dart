@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import 'package:riderman/data/db_manager.dart';
 
 import '../models/core_models.dart';
+import '../models/dto_models.dart';
 import '../shared/common.dart';
 import '../shared/config.dart';
 
@@ -781,6 +782,66 @@ class MainController extends GetxController {
       logInfo('main.initiatePayment => $e');
     } finally {
       paymentLoading.value = false;
+    }
+  }
+
+  Future<void> createProperty(PropertyDto prop) async {
+    try {
+      final url = '$_propertiesUrl/create';
+      if (!isLoggedIn()) return;
+      loading.value = true;
+      //
+      final calRes = await _requestManager.sendPostRequest(url, prop.toJson(),
+          headers: headers, returnBodyOnError: true);
+
+      logInfo(calRes);
+      final BaseResponse res =
+          BaseResponse.fromMap(calRes as Map<String, dynamic>);
+
+      if (!res.isSuccess) {
+        HlkDialog.showErrorSnackBar(
+            res.message ?? 'Failed to create property/asset');
+        return;
+      }
+      // Get.back();
+      // showSuccessMessage(
+      //     'Request was successful, you can refresh the page after payment is made');
+      await getProperties(refresh: true);
+    } catch (e) {
+      handleException(e, null, true);
+      logInfo('main.createProperty => $e');
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  Future<void> updateProperty(int propId, PropertyDto prop) async {
+    try {
+      final url = '$_propertiesUrl/$propId';
+      if (!isLoggedIn()) return;
+      loading.value = true;
+      //
+      final calRes = await _requestManager.sendUpdateRequest(url, prop.toJson(),
+          headers: headers, returnBodyOnError: true);
+
+      logInfo(calRes);
+      final BaseResponse res =
+          BaseResponse.fromMap(calRes as Map<String, dynamic>);
+
+      if (!res.isSuccess) {
+        HlkDialog.showErrorSnackBar(
+            res.message ?? 'Failed to update property/asset');
+        return;
+      }
+      // Get.back();
+      // showSuccessMessage(
+      //     'Request was successful, you can refresh the page after payment is made');
+      await getProperties(refresh: true);
+    } catch (e) {
+      handleException(e, null, true);
+      logInfo('main.createProperty => $e');
+    } finally {
+      loading.value = false;
     }
   }
 
