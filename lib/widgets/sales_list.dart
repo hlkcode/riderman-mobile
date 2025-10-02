@@ -9,7 +9,7 @@ import '../models/core_models.dart';
 class SalesList extends StatelessWidget {
   final Rider? rider;
   final List<Sale> sales;
-  final Function(RxList<int> selectedIndexes) onSubmit;
+  final Function(RxList<int> selectedIndexes)? onSubmit;
   SalesList({
     super.key,
     this.rider,

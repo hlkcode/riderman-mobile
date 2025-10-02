@@ -4,6 +4,8 @@ import 'package:flutter_tools/ui/widgets.dart';
 import 'package:flutter_tools/utilities/extension_methods.dart';
 import 'package:flutter_tools/utilities/utils.dart';
 import 'package:get/get.dart';
+import 'package:riderman/shared/common.dart';
+import 'package:riderman/shared/config.dart';
 
 import '../controllers/main_controller.dart';
 import '../models/core_models.dart';
@@ -228,58 +230,70 @@ class AssetDetailsPage extends StatelessWidget {
           ),
           finishButton: SizedBox(
             width: getWidth(0.3),
-            child: LoadingButton(
-              // buttonHeight: getHeight(0.06),
-              text: 'UPDATE',
-              isLoading: false,
-              buttonColor: kPurpleColor,
-              style: kWhiteTextStyle,
-              buttonRadius: 12,
-              onTapped: () async {
-                //
-                // check if anything change before allowing the call to go through
-                var nPhoneNumber = txtRiderPhone.text.trim();
-                var nPlateNumber = txtPlateNumber.text.trim();
-                var nGuarantors = int.parse(txtNGuarantors.text.trim());
-                //
-                var nTotalExpected = double.parse(txtTotalExpected.text.trim());
-                var nDeposit = double.parse(txtDeposit.text.trim());
-                var nAgreed = double.parse(txtAmountAgreed.text.trim());
-                //
-                if (property.rider?.phoneNumber != nPhoneNumber ||
-                        property.plateNumber != nPlateNumber ||
-                        property.contractType.toUpperCase() !=
-                            contractType.toUpperCase() ||
-                        property.propertyType.toUpperCase() !=
-                            propertyType.toUpperCase() ||
-                        property.guarantorsNeeded != nGuarantors ||
-                        property.totalExpected != nTotalExpected ||
-                        nAgreed != property.amountAgreed ||
-                        property.deposit != nDeposit ||
-                        property.paymentFrequency.toUpperCase() !=
-                            paymentFrequency.toUpperCase() ||
-                        startDate.value != property.startDate
-                    //
-                    ) {
-                  //
-                  var dto = PropertyDto(
-                    companyId: property.companyId,
-                    amountAgreed: nAgreed,
-                    contractType: contracts.indexOf(contractType),
-                    deposit: nDeposit,
-                    guarantorsNeeded: nGuarantors,
-                    paymentFrequency: frequencies.indexOf(paymentFrequency),
-                    managementType: 0,
-                    plateNumber: nPlateNumber,
-                    propertyType: assetTypes.indexOf(propertyType),
-                    riderPhoneNumber: nPhoneNumber,
-                    startDate: startDate.value,
-                    totalExpected: nTotalExpected,
-                  );
-                  await mainController.updateProperty(property.id, dto);
-                }
-              },
-            ),
+            child: Obx(() => LoadingButton(
+                  // buttonHeight: getHeight(0.06),
+                  text: 'UPDATE',
+                  isLoading: mainController.deletingExpenses.value,
+                  buttonColor: kPurpleColor,
+                  style: kWhiteTextStyle,
+                  buttonRadius: 12,
+                  onTapped: currentUser.isRider
+                      ? null
+                      : () async {
+                          //
+                          // check if anything change before allowing the call to go through
+                          var nPhoneNumber = txtRiderPhone.text.trim();
+                          var nPlateNumber = txtPlateNumber.text.trim();
+                          var nGuarantors =
+                              int.parse(txtNGuarantors.text.trim());
+                          //
+                          var nTotalExpected =
+                              double.parse(txtTotalExpected.text.trim());
+                          var nDeposit = double.parse(txtDeposit.text.trim());
+                          var nAgreed =
+                              double.parse(txtAmountAgreed.text.trim());
+                          //
+                          if (property.rider?.phoneNumber != nPhoneNumber ||
+                                  property.plateNumber != nPlateNumber ||
+                                  property.contractType.toUpperCase() !=
+                                      contractType.toUpperCase() ||
+                                  property.propertyType.toUpperCase() !=
+                                      propertyType.toUpperCase() ||
+                                  property.guarantorsNeeded != nGuarantors ||
+                                  property.totalExpected != nTotalExpected ||
+                                  nAgreed != property.amountAgreed ||
+                                  property.deposit != nDeposit ||
+                                  property.paymentFrequency.toUpperCase() !=
+                                      paymentFrequency.toUpperCase() ||
+                                  startDate.value != property.startDate
+                              //
+                              ) {
+                            //
+                            var dto = PropertyDto(
+                              companyId: property.companyId,
+                              amountAgreed: nAgreed,
+                              contractType: contracts.indexOf(contractType),
+                              deposit: nDeposit,
+                              guarantorsNeeded: nGuarantors,
+                              paymentFrequency:
+                                  frequencies.indexOf(paymentFrequency),
+                              managementType: 0,
+                              plateNumber: nPlateNumber,
+                              propertyType: assetTypes.indexOf(propertyType),
+                              riderPhoneNumber: nPhoneNumber,
+                              startDate: startDate.value,
+                              totalExpected: nTotalExpected,
+                            );
+                            await mainController.updateProperty(
+                                property.id, dto);
+                          } else {
+                            showInfoToast(
+                                'No update possible as nothing changed');
+                            logInfo(
+                                '============= nothing changed ==============');
+                          }
+                        },
+                )),
           ),
         ),
       ),

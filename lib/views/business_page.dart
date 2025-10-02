@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:riderman/shared/constants.dart';
 
 import '../controllers/main_controller.dart';
+import '../shared/common.dart';
+import '../shared/config.dart';
 import '../widgets/business_overview.dart';
 import '../widgets/expenses_list.dart';
 import '../widgets/rider_info.dart';
@@ -96,6 +98,11 @@ class BusinessPage extends StatelessWidget {
                     rider: property.rider,
                     sales: mainController.sales.value,
                     onSubmit: (RxList<int> selectedIndexes) async {
+                      if (currentUser.isOwner) {
+                        showInfoToast(
+                            'Your current profile does not allow for this action');
+                        return;
+                      }
                       var selectedIds = mainController.sales
                           .whereIndexed((i, s) => selectedIndexes.contains(i))
                           .map((s) => s.id)
@@ -103,8 +110,11 @@ class BusinessPage extends StatelessWidget {
 
                       logInfo('selectedIndexes SALES => $selectedIds');
                       var toCharge = getString(property.rider?.phoneNumber);
+                      // todo: add option to enter number to charge
                       await mainController.initiatePayment(
-                          toCharge, selectedIds);
+                        toCharge,
+                        selectedIds,
+                      );
                       selectedIndexes
                           .clear(); // to deselect the list when request is done
                     },

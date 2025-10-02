@@ -21,6 +21,7 @@ class MainController extends GetxController {
       getMeLoading = false.obs,
       paymentLoading = false.obs,
       deletingExpenses = false.obs,
+      updatingAsset = false.obs,
       setIdCardLoading = false.obs;
   final RequestManager _requestManager = RequestManager();
 
@@ -819,7 +820,7 @@ class MainController extends GetxController {
     try {
       final url = '$_propertiesUrl/$propId';
       if (!isLoggedIn()) return;
-      loading.value = true;
+      updatingAsset.value = true;
       //
       final calRes = await _requestManager.sendUpdateRequest(url, prop.toJson(),
           headers: headers, returnBodyOnError: true);
@@ -841,7 +842,7 @@ class MainController extends GetxController {
       handleException(e, null, true);
       logInfo('main.createProperty => $e');
     } finally {
-      loading.value = false;
+      updatingAsset.value = false;
     }
   }
 
