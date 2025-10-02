@@ -1,7 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 
 import '../shared/constants.dart';
 import 'dropdown_selector.dart';
+
+class LabeledSwitch extends StatelessWidget {
+  final String title;
+  final String? switchTitle;
+  final String? switchSubTitle;
+  final RxBool currentValue;
+
+  final Function(bool newValue)? onChange;
+
+  const LabeledSwitch({
+    super.key,
+    required this.title,
+    this.switchSubTitle,
+    this.switchTitle,
+    this.onChange,
+    required this.currentValue,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return LabeledWidget(
+      title: title,
+      widget: Obx(
+        () => SwitchListTile(
+          // tileColor: Colors.red,
+          shape: RoundedRectangleBorder(
+              side: BorderSide(color: kPurpleColor),
+              borderRadius: BorderRadius.circular(8)),
+          activeColor: kPurpleColor,
+          title: switchTitle != null ? Text(switchTitle!) : null,
+          subtitle: switchSubTitle != null ? Text(switchSubTitle!) : null,
+          // const Text('Is Property managed'),
+          // subtitle:
+          //     const Text('Are you managing this property for a third party ?'),
+          value: currentValue.value,
+          onChanged: (bool? value) {
+            currentValue.value = value ?? false;
+            if (onChange != null) onChange!(value ?? false);
+          },
+        ),
+      ),
+    );
+  }
+}
 
 class LabeledSelector extends StatelessWidget {
   final String title;

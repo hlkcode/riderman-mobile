@@ -22,6 +22,7 @@ class AssetDetailsPage extends StatelessWidget {
   Rx<DateTime> startDate = DateTime.now().obs;
   final MainController mainController = Get.find();
   Rx<String> nExpectedPayments = '0'.obs;
+  RxBool isManaged = false.obs;
   final _formKey = GlobalKey<FormState>();
   final _formKey2 = GlobalKey<FormState>();
   final txtRiderPhone = TextEditingController();
@@ -30,6 +31,7 @@ class AssetDetailsPage extends StatelessWidget {
   final txtTotalExpected = TextEditingController();
   final txtAmountAgreed = TextEditingController();
   final txtDeposit = TextEditingController();
+  final txtPartnerClientRate = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +42,8 @@ class AssetDetailsPage extends StatelessWidget {
     var frequencies =
         PaymentFrequency.values.map((e) => e.name.toUpperCase()).toList();
 
+    isManaged.value = property.partnerClientRate > 0;
+
     nExpectedPayments.value = property.expectedSalesCount.toString();
     startDate.value = property.startDate;
     txtRiderPhone.text = property.rider?.phoneNumber ?? '';
@@ -48,6 +52,7 @@ class AssetDetailsPage extends StatelessWidget {
     txtTotalExpected.text = property.totalExpected.toString();
     txtAmountAgreed.text = property.amountAgreed.toString();
     txtDeposit.text = property.amountAgreed.toString();
+    txtPartnerClientRate.text = property.partnerClientRate.toString();
     var contractType = property.contractType.toUpperCase();
     var propertyType = property.propertyType.toUpperCase();
     var paymentFrequency = property.paymentFrequency.toUpperCase();
@@ -113,6 +118,30 @@ class AssetDetailsPage extends StatelessWidget {
                       inputType: TextInputType.number,
                     ),
                     // verticalSpace(0.1),
+                    // if (currentCompany.isPartner)
+                    LabeledSwitch(
+                      currentValue: isManaged,
+                      title: 'Managed Property',
+                      switchSubTitle:
+                          'Enable this if you are you managing this property for a third party',
+                      // switchTitle:
+                      //     'Enable this if you are you managing this property for a third party',
+                    ),
+                    Obx(
+                      () => isManaged.value
+                          ? LabeledTextField(
+                              controller: txtPartnerClientRate,
+                              title: 'Management Interest rate',
+                              inputType: TextInputType.numberWithOptions(
+                                  decimal: true),
+                            )
+                          : SizedBox.shrink(),
+                    ),
+                    Obx(
+                      () => isManaged.value
+                          ? verticalSpace(0.05)
+                          : SizedBox.shrink(),
+                    ),
                   ],
                 ).marginSymmetric(horizontal: 12),
               ),
@@ -252,6 +281,8 @@ class AssetDetailsPage extends StatelessWidget {
                           var nDeposit = double.parse(txtDeposit.text.trim());
                           var nAgreed =
                               double.parse(txtAmountAgreed.text.trim());
+                          var nPartnerRate =
+                              double.parse(txtPartnerClientRate.text.trim());
                           //
                           if (property.rider?.phoneNumber != nPhoneNumber ||
                                   property.plateNumber != nPlateNumber ||
@@ -265,25 +296,34 @@ class AssetDetailsPage extends StatelessWidget {
                                   property.deposit != nDeposit ||
                                   property.paymentFrequency.toUpperCase() !=
                                       paymentFrequency.toUpperCase() ||
-                                  startDate.value != property.startDate
+                                  startDate.value != property.startDate ||
+                                  property.partnerClientRate != nPartnerRate
                               //
                               ) {
                             //
+                            var manType =
+                                currentCompany.email == 'halikapps@gmail.com' &&
+                                        isManaged.value
+                                    ? ManagementType.Managed
+                                    : isManaged.value && nPartnerRate > 0
+                                        ? ManagementType.Partner
+                                        : ManagementType.None;
+                            //
                             var dto = PropertyDto(
-                              companyId: property.companyId,
-                              amountAgreed: nAgreed,
-                              contractType: contracts.indexOf(contractType),
-                              deposit: nDeposit,
-                              guarantorsNeeded: nGuarantors,
-                              paymentFrequency:
-                                  frequencies.indexOf(paymentFrequency),
-                              managementType: 0,
-                              plateNumber: nPlateNumber,
-                              propertyType: assetTypes.indexOf(propertyType),
-                              riderPhoneNumber: nPhoneNumber,
-                              startDate: startDate.value,
-                              totalExpected: nTotalExpected,
-                            );
+                                companyId: property.companyId,
+                                amountAgreed: nAgreed,
+                                contractType: contracts.indexOf(contractType),
+                                deposit: nDeposit,
+                                guarantorsNeeded: nGuarantors,
+                                paymentFrequency:
+                                    frequencies.indexOf(paymentFrequency),
+                                managementType: manType.index,
+                                plateNumber: nPlateNumber,
+                                propertyType: assetTypes.indexOf(propertyType),
+                                riderPhoneNumber: nPhoneNumber,
+                                startDate: startDate.value,
+                                totalExpected: nTotalExpected,
+                                partnerClientRate: nPartnerRate);
                             await mainController.updateProperty(
                                 property.id, dto);
                           } else {

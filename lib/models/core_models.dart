@@ -21,6 +21,7 @@ class Property {
   String contractType;
   num amountAgreed;
   num totalExpected;
+  num partnerClientRate;
   num deposit;
   String paymentFrequency;
   DateTime startDate;
@@ -51,6 +52,7 @@ class Property {
     required this.createdAt,
     required this.updatedAt,
     required this.id,
+    required this.partnerClientRate,
   });
 
   // factory Property fromJson(String str) => Property.fromJson(json.decode(str));
@@ -66,6 +68,7 @@ class Property {
         amountAgreed: json["amountAgreed"],
         totalExpected: json["totalExpected"],
         deposit: json["deposit"],
+        partnerClientRate: json["partnerClientRate"],
         paymentFrequency: json["paymentFrequency"],
         startDate: DateTime.parse(json["startDate"]),
         companyId: json["companyId"],
@@ -88,6 +91,7 @@ class Property {
         "amountAgreed": amountAgreed,
         "totalExpected": totalExpected,
         "deposit": deposit,
+        "partnerClientRate": partnerClientRate,
         "paymentFrequency": paymentFrequency,
         "startDate": startDate.toIso8601String(),
         "companyId": companyId,
@@ -272,6 +276,7 @@ class Company {
   String email;
   String role;
   bool isActive;
+  bool isPartner;
 
   Company({
     required this.id,
@@ -279,6 +284,7 @@ class Company {
     required this.email,
     required this.isActive,
     required this.role,
+    this.isPartner = false,
   });
 
   factory Company.fromJson(String str) => Company.fromJson(json.decode(str));
@@ -290,6 +296,7 @@ class Company {
         email: json["email"],
         isActive: json["isActive"],
         role: json["role"],
+        isPartner: json["isPartner"],
       );
 
   Map<String, dynamic> toMap() => {
@@ -298,6 +305,7 @@ class Company {
         "email": email,
         "isActive": isActive,
         "role": role,
+        "isPartner": isPartner,
       };
 
   static List<Company> parseToGetList(dynamic responseBody) =>

@@ -7,6 +7,7 @@ class PropertyDto {
   double amountAgreed;
   double totalExpected;
   double deposit;
+  double partnerClientRate;
   int paymentFrequency;
   DateTime startDate;
   int companyId;
@@ -27,6 +28,7 @@ class PropertyDto {
     required this.guarantorsNeeded,
     required this.managementType,
     required this.riderPhoneNumber,
+    this.partnerClientRate = 0,
   });
 
   factory PropertyDto.fromJson(String str) =>
@@ -47,6 +49,7 @@ class PropertyDto {
         guarantorsNeeded: json["guarantorsNeeded"],
         managementType: json["managementType"],
         riderPhoneNumber: json["riderPhoneNumber"],
+        partnerClientRate: json["partnerClientRate"],
       );
 
   Map<String, dynamic> toMap() => {
@@ -61,7 +64,7 @@ class PropertyDto {
         "companyId": companyId,
         "guarantorsNeeded": guarantorsNeeded,
         "managementType": managementType,
-        "riderPhoneNumber": riderPhoneNumber,
+        "partnerClientRate": partnerClientRate,
       };
 }
 

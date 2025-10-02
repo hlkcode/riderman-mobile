@@ -14,6 +14,8 @@ import '../shared/constants.dart';
 import 'controllers/main_controller.dart';
 import 'data/db_manager.dart';
 
+// todo: Enforce track expenses only at both mobile and backend level when adding new property
+
 // todo: make sure if logged in user is a rider and id card expires,
 /// action are only in view mode, and set new Id card is the only action that can be performed
 
@@ -22,9 +24,13 @@ void main() async {
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
       overlays: <SystemUiOverlay>[SystemUiOverlay.bottom, SystemUiOverlay.top]);
   await initStorage();
+
+  //======================================================================
   // await storage.erase();
-//   await DBManager.initiate();
+  // await DBManager.initiate();
   // await DBManager.dbHelper.deleteCurrentDatabase();
+  //======================================================================
+
   await DBManager.initiate();
   runApp(MyApp());
 }

@@ -18,6 +18,8 @@ class DBManager {
   static const String COLUMN_NAME = 'name';
   static const String COLUMN_EMAIL = 'email';
   static const String COLUMN_IS_ACTIVE = 'isActive';
+  static const String COLUMN_IS_PARTNER = 'isPartner';
+  static const String COLUMN_PARTNER_CLIENT_RATE = 'partnerClientRate';
   static const String COLUMN_DESCRIPTION = 'description';
   static const String COLUMN_AMOUNT = 'amount';
   static const String COLUMN_DATE = 'date';
@@ -53,7 +55,7 @@ class DBManager {
   //
   static final String _sql_create_companies_table =
       'CREATE TABLE IF NOT EXISTS $COMPANIES_TABLE_NAME ($COLUMN_ID INTEGER PRIMARY KEY, '
-      '$COLUMN_NAME TEXT, $COLUMN_EMAIL TEXT, $COLUMN_ROLE TEXT, $COLUMN_IS_ACTIVE INTEGER)';
+      '$COLUMN_NAME TEXT, $COLUMN_EMAIL TEXT, $COLUMN_ROLE TEXT, $COLUMN_IS_ACTIVE INTEGER, $COLUMN_IS_PARTNER INTEGER)';
 //
   static final String _sql_create_expenses_table =
       'CREATE TABLE IF NOT EXISTS $EXPENSES_TABLE_NAME ($COLUMN_ID INTEGER PRIMARY KEY, '
@@ -84,6 +86,7 @@ class DBManager {
       '$COLUMN_USER_ID INTEGER, $COLUMN_PLATE_NUMBER TEXT, '
       '$COLUMN_PROPERTY_TYPE TEXT, $COLUMN_CONTRACT_TYPE TEXT, '
       '$COLUMN_AMOUNT_AGREED REAL, $COLUMN_TOTAL_EXPECTED REAL, '
+      '$COLUMN_PARTNER_CLIENT_RATE REAL, '
       '$COLUMN_DEPOSIT REAL, $COLUMN_PAYMENT_FREQUENCY TEXT, '
       '$COLUMN_START_DATE DATETIME, $COLUMN_COMPANY_ID INTEGER, '
       '$COLUMN_GUARANTORS_NEEDED INTEGER, $COLUMN_EXPECTED_SALES_COUNT INTEGER, '
@@ -143,6 +146,7 @@ class DBManager {
     try {
       var map = company.toMap();
       map[COLUMN_IS_ACTIVE] = company.isActive ? 1 : 0;
+      map[COLUMN_IS_PARTNER] = company.isPartner ? 1 : 0;
       // logInfo('_insertCompany => $map');
       return await dbHelper.insert(COMPANIES_TABLE_NAME, map) > 0;
     } catch (ex) {
@@ -156,6 +160,7 @@ class DBManager {
       var map = company.toMap();
       map.remove(COLUMN_ID);
       map[COLUMN_IS_ACTIVE] = company.isActive ? 1 : 0;
+      map[COLUMN_IS_PARTNER] = company.isPartner ? 1 : 0;
       // logInfo('_updateCompany => $map');
       return await dbHelper.update(
               tableName: COMPANIES_TABLE_NAME,
@@ -187,8 +192,10 @@ class DBManager {
       List<Company> res = [];
       for (var m in tempList) {
         var isActive = m[COLUMN_IS_ACTIVE] as int == 1;
+        var isPartner = m[COLUMN_IS_PARTNER] as int == 1;
         var map = Map<String, dynamic>.from(m);
         map[COLUMN_IS_ACTIVE] = isActive;
+        map[COLUMN_IS_PARTNER] = isPartner;
         // logInfo('getAllCompanies2 => $map');
         res.add(Company.fromMap(map));
       }
