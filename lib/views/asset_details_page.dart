@@ -18,13 +18,16 @@ class AssetDetailsPage extends StatelessWidget {
 
   final Property property;
   AssetDetailsPage({super.key, required this.property});
-
-  Rx<DateTime> startDate = DateTime.now().obs;
+  //
   final MainController mainController = Get.find();
+  //
+  Rx<DateTime> startDate = DateTime.now().obs;
   Rx<String> nExpectedPayments = '0'.obs;
   RxBool isManaged = false.obs;
+  //
   final _formKey = GlobalKey<FormState>();
   final _formKey2 = GlobalKey<FormState>();
+  //
   final txtRiderPhone = TextEditingController();
   final txtPlateNumber = TextEditingController();
   final txtNGuarantors = TextEditingController();
@@ -118,18 +121,19 @@ class AssetDetailsPage extends StatelessWidget {
                       inputType: TextInputType.number,
                     ),
                     // verticalSpace(0.1),
-                    // if (currentCompany.isPartner)
-                    LabeledSwitch(
-                      currentValue: isManaged,
-                      title: 'Managed Property',
-                      switchSubTitle:
-                          'Enable this if you are you managing this property for a third party',
-                      // switchTitle:
-                      //     'Enable this if you are you managing this property for a third party',
-                    ),
+                    if (currentCompany.isPartner)
+                      LabeledSwitch(
+                        currentValue: isManaged,
+                        title: 'Managed Property',
+                        switchSubTitle:
+                            'Enable this if you are you managing this property for a third party',
+                        // switchTitle:
+                        //     'Enable this if you are you managing this property for a third party',
+                      ),
                     Obx(
                       () => isManaged.value
                           ? LabeledTextField(
+                              validator: requiredValidator,
                               controller: txtPartnerClientRate,
                               title: 'Management Interest rate',
                               inputType: TextInputType.numberWithOptions(
@@ -310,22 +314,30 @@ class AssetDetailsPage extends StatelessWidget {
                                         : ManagementType.None;
                             //
                             var dto = PropertyDto(
-                                companyId: property.companyId,
-                                amountAgreed: nAgreed,
-                                contractType: contracts.indexOf(contractType),
-                                deposit: nDeposit,
-                                guarantorsNeeded: nGuarantors,
-                                paymentFrequency:
-                                    frequencies.indexOf(paymentFrequency),
-                                managementType: manType.index,
-                                plateNumber: nPlateNumber,
-                                propertyType: assetTypes.indexOf(propertyType),
-                                riderPhoneNumber: nPhoneNumber,
-                                startDate: startDate.value,
-                                totalExpected: nTotalExpected,
-                                partnerClientRate: nPartnerRate);
+                              companyId: property.companyId,
+                              amountAgreed: nAgreed,
+                              contractType: contracts.indexOf(contractType),
+                              deposit: nDeposit,
+                              guarantorsNeeded: nGuarantors,
+                              paymentFrequency:
+                                  frequencies.indexOf(paymentFrequency),
+                              managementType: manType.index,
+                              plateNumber: nPlateNumber,
+                              propertyType: assetTypes.indexOf(propertyType),
+                              riderPhoneNumber: nPhoneNumber,
+                              startDate: startDate.value,
+                              totalExpected: nTotalExpected,
+                              partnerClientRate: nPartnerRate,
+                            );
+                            //
                             await mainController.updateProperty(
                                 property.id, dto);
+                            // refresh the properties
+                            await mainController.getProperties(
+                              refresh: true,
+                              loadData: true,
+                            );
+                            Get.back();
                           } else {
                             showInfoToast(
                                 'No update possible as nothing changed');

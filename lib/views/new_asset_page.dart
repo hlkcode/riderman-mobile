@@ -5,7 +5,11 @@ import 'package:flutter_tools/utilities/extension_methods.dart';
 import 'package:flutter_tools/utilities/utils.dart';
 import 'package:get/get.dart';
 
+import '../controllers/main_controller.dart';
 import '../models/core_models.dart';
+import '../models/dto_models.dart';
+import '../shared/common.dart';
+import '../shared/config.dart';
 import '../shared/constants.dart';
 import '../widgets/labeled_widgets.dart';
 
@@ -13,14 +17,37 @@ class NewAssetPage extends StatelessWidget {
   static const String routeName = '/NewAssetPage';
 
   NewAssetPage({super.key});
-
+  //
+  final MainController mainController = Get.find();
+  //
   Rx<DateTime> startDate = DateTime.now().obs;
   Rx<String> nExpectedPayments = '0'.obs;
+  RxBool isManaged = false.obs;
+  //
   final _formKey = GlobalKey<FormState>();
   final _formKey2 = GlobalKey<FormState>();
+  //
+  final txtRiderPhone = TextEditingController();
+  final txtPlateNumber = TextEditingController();
+  final txtNGuarantors = TextEditingController();
+  final txtTotalExpected = TextEditingController();
+  final txtAmountAgreed = TextEditingController();
+  final txtDeposit = TextEditingController();
+  final txtPartnerClientRate = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    var contracts =
+        ContractType.values.map((e) => e.name.toUpperCase()).toList();
+    var assetTypes =
+        PropertyType.values.map((e) => e.name.toUpperCase()).toList();
+    var frequencies =
+        PaymentFrequency.values.map((e) => e.name.toUpperCase()).toList();
+    //
+    var contractType = '';
+    var propertyType = '';
+    var paymentFrequency = '';
+    //
     return Scaffold(
       // backgroundColor: kPurpleLightColor,
       appBar: AppBar(
@@ -50,29 +77,59 @@ class NewAssetPage extends StatelessWidget {
                       title: 'Rider\'s Phone Number',
                       validator: phoneNumberValidator,
                       inputType: TextInputType.phone,
+                      controller: txtRiderPhone,
                     ),
                     LabeledTextField(
                       title: 'Number plate',
                       validator: requiredValidator,
                       inputType: TextInputType.text,
+                      controller: txtPlateNumber,
                     ),
                     LabeledSelector(
                       title: 'Contract type',
-                      options: ContractType.values.map((e) => e.name).toList(),
+                      options: contracts,
                       instruction: 'Select contract type',
-                      onSelectionChange: (newValue) {},
+                      onSelectionChange: (newValue) =>
+                          contractType = getString(newValue),
                     ),
                     LabeledSelector(
                       title: 'Type of Asset',
-                      options: PropertyType.values.map((e) => e.name).toList(),
+                      options: assetTypes,
                       instruction: 'Select Asset type',
-                      onSelectionChange: (newValue) {},
+                      onSelectionChange: (newValue) =>
+                          propertyType = getString(newValue),
                     ),
                     LabeledTextField(
+                      controller: txtNGuarantors,
                       title: 'Number of Guarantor(s) Required',
                       inputType: TextInputType.number,
                     ),
                     // verticalSpace(0.1),
+                    if (currentCompany.isPartner)
+                      LabeledSwitch(
+                        currentValue: isManaged,
+                        title: 'Managed Property',
+                        switchSubTitle:
+                            'Enable this if you are you managing this property for a third party',
+                        // switchTitle:
+                        //     'Enable this if you are you managing this property for a third party',
+                      ),
+                    Obx(
+                      () => isManaged.value
+                          ? LabeledTextField(
+                              validator: requiredValidator,
+                              controller: txtPartnerClientRate,
+                              title: 'Management Interest rate',
+                              inputType: TextInputType.numberWithOptions(
+                                  decimal: true),
+                            )
+                          : SizedBox.shrink(),
+                    ),
+                    Obx(
+                      () => isManaged.value
+                          ? verticalSpace(0.05)
+                          : SizedBox.shrink(),
+                    ),
                   ],
                 ).marginSymmetric(horizontal: 12),
               ),
@@ -95,6 +152,7 @@ class NewAssetPage extends StatelessWidget {
                   children: [
                     // verticalSpace(0.02),
                     LabeledTextField(
+                      controller: txtTotalExpected,
                       title: 'Total Expected',
                       validator: (newValue) {
                         var res = requiredValidator(newValue);
@@ -109,6 +167,7 @@ class NewAssetPage extends StatelessWidget {
                       inputType: TextInputType.numberWithOptions(decimal: true),
                     ),
                     LabeledTextField(
+                      controller: txtAmountAgreed,
                       title: 'Instalment Amount',
                       validator: (newValue) {
                         var res = requiredValidator(newValue);
@@ -123,15 +182,16 @@ class NewAssetPage extends StatelessWidget {
                       inputType: TextInputType.numberWithOptions(decimal: true),
                     ),
                     LabeledTextField(
+                      controller: txtDeposit,
                       title: 'Initial Deposit / Amount Paid Previously',
                       inputType: TextInputType.numberWithOptions(decimal: true),
                     ),
                     LabeledSelector(
                       title: 'Payment Frequency',
-                      options:
-                          PaymentFrequency.values.map((e) => e.name).toList(),
+                      options: frequencies,
                       instruction: 'Select Payment Frequency',
-                      onSelectionChange: (newValue) {},
+                      onSelectionChange: (newValue) =>
+                          paymentFrequency = getString(newValue),
                     ),
                     Obx(
                       () => LabeledTextField(
@@ -152,7 +212,7 @@ class NewAssetPage extends StatelessWidget {
                             firstDate: DateTime(2020),
                             lastDate: now.add(Duration(days: 30)),
                           );
-                          if (pickedDate != null) startDate.value = pickedDate;
+                          startDate.value = pickedDate ?? now;
                         },
                         child: Container(
                           height: getHeight(0.06),
@@ -185,15 +245,81 @@ class NewAssetPage extends StatelessWidget {
           ),
           finishButton: SizedBox(
             width: getWidth(0.3),
-            child: LoadingButton(
-              // buttonHeight: getHeight(0.06),
-              text: 'CREATE',
-              isLoading: false,
-              buttonColor: kPurpleColor,
-              style: kWhiteTextStyle,
-              buttonRadius: 12,
-              onTapped: () {},
-            ),
+            child: Obx(() => LoadingButton(
+                  // buttonHeight: getHeight(0.06),
+                  text: 'CREATE',
+                  isLoading: mainController.loading.value,
+                  buttonColor: kPurpleColor,
+                  style: kWhiteTextStyle,
+                  buttonRadius: 12,
+                  onTapped: currentUser.isRider
+                      ? null
+                      : () async {
+                          //
+                          // check if anything change before allowing the call to go through
+                          var nPhoneNumber = txtRiderPhone.text.trim();
+                          var nPlateNumber = txtPlateNumber.text.trim();
+                          var nGuarantors =
+                              int.parse(txtNGuarantors.text.trim());
+                          //
+                          var nTotalExpected =
+                              double.parse(txtTotalExpected.text.trim());
+                          var nDeposit = double.parse(txtDeposit.text.trim());
+                          var nAgreed =
+                              double.parse(txtAmountAgreed.text.trim());
+                          var nPartnerRate =
+                              double.parse(txtPartnerClientRate.text.trim());
+                          //
+                          if (nPhoneNumber.isEmpty ||
+                              nPlateNumber.isEmpty ||
+                              contractType.isEmpty ||
+                              propertyType.isEmpty ||
+                              (isManaged.isTrue && nPartnerRate == 0) ||
+                              nTotalExpected == 0 ||
+                              nAgreed == 0 ||
+                              nDeposit == 0 ||
+                              paymentFrequency.isEmpty) {
+                            showInfoToast(
+                                'Please fill all the required fields');
+                            logInfo(
+                                '============= Missing data ==============');
+                            return;
+                          }
+
+                          var manType =
+                              currentCompany.email == 'halikapps@gmail.com' &&
+                                      isManaged.value
+                                  ? ManagementType.Managed
+                                  : isManaged.value && nPartnerRate > 0
+                                      ? ManagementType.Partner
+                                      : ManagementType.None;
+                          //
+                          var dto = PropertyDto(
+                            companyId: currentCompany.id,
+                            amountAgreed: nAgreed,
+                            contractType: contracts.indexOf(contractType),
+                            deposit: nDeposit,
+                            guarantorsNeeded: nGuarantors,
+                            paymentFrequency:
+                                frequencies.indexOf(paymentFrequency),
+                            managementType: manType.index,
+                            plateNumber: nPlateNumber,
+                            propertyType: assetTypes.indexOf(propertyType),
+                            riderPhoneNumber: nPhoneNumber,
+                            startDate: startDate.value,
+                            totalExpected: nTotalExpected,
+                            partnerClientRate: nPartnerRate,
+                          );
+                          //
+                          await mainController.createProperty(dto);
+                          // refresh the properties
+                          await mainController.getProperties(
+                            refresh: true,
+                            loadData: true,
+                          );
+                          Get.back();
+                        },
+                )),
           ),
         ),
       ),
